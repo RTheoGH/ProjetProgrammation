@@ -26,7 +26,8 @@ with app.app_context():
     db.create_all()
     db.session.add(Question(enonce="test"))
 
-# questions=[]
+questions=[]
+quest=[["faze","a"],["kirito","b"],["guts","c"]]
 
 @app.route("/")
 def index():
@@ -108,11 +109,14 @@ def supprimer(id):
 
 @app.route("/QCM")
 def qcm():
-    return render_template("QCM.html")
-
+    return render_template("QCM.html",ListesQuestions=quest)
 @app.route("/MesQCM")
 def Mesqcm():
     return render_template("/MesQCM.html")
+
+@app.route("/generate")
+def generate():
+    print(request.args)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
