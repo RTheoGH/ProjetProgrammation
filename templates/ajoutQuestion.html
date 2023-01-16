@@ -40,12 +40,14 @@
                         });
                     }
                     function supprimerBouton(id) {
-                        fetch('/supprimer_bouton', {
-                            method: 'DELETE',
-                            body: JSON.stringify({'id': id}),
-                            headers: { 'Content-Type': 'application/json' }
-                        });
-                        $("#"+id).remove();
+                        for (let i = 0; i < 2; i++){
+                            fetch('/supprimer_bouton', {
+                                method: 'DELETE',
+                                body: JSON.stringify({'id': id}),
+                                headers: { 'Content-Type': 'application/json' }
+                            });
+                            $("#"+id).remove();
+                        }
                     }
                     function visualiser(){
                         $(".visu").text($("#question").val());
