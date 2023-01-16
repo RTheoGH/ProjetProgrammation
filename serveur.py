@@ -58,6 +58,11 @@ def plusDeReponse():
 def supprimer_bouton():
     id = request.json['id']
     #les questions ne sont pas encore stocké dans une variables donc ne peuvent pas être delete 
+    # cursor = connection.cursor()
+    # cursor.execute("DELETE FROM boutons WHERE id=%s", (id,))
+    # connection.commit()
+    # cursor.close()
+    #qqc comme ça en bdd
     return jsonify(status='success')
 
 @app.route("/lquestion",methods = ['GET'])
