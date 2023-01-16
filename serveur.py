@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db'
 # db.init_app(app)
-# nombreIdQuestion=0
+nombreIdQuestion=0
 
 # class Question(db.Model):
 #     idQ = db.Column(db.Integer, primary_key=True)
@@ -52,7 +52,7 @@ def ajout():
 def plusDeReponse():
     global nombreIdQuestion
     nombreIdQuestion+=1
-    return render_template('nouvelleReponse.html',IdBouton=nombreIdQuestion)
+    return render_template('partials/nouvelleReponse.html',IdBouton=nombreIdQuestion)
 
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
