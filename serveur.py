@@ -21,5 +21,6 @@ def ajout():
 def lquestion():
     return render_template("lquestion.html",lquestion=questions)
 
+print("test")
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
