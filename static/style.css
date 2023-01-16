@@ -79,8 +79,7 @@ footer {
 }
 
 .nav-list {
-    width: 50%;
-    display: flex;
+    text-align: center;
 }
 
 .nav-list li {
@@ -91,9 +90,12 @@ footer {
 .nav-list li a {
     text-decoration: none;
     color: black;
+    padding: 0.5em;
+    border: solid aqua;
+    border-radius: 10%;
+    background-color: aqua;
 }
 
 .navbar_background {
     background-color: royalblue;
-    align-items: center;
 }
