@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +8,22 @@
     <link href="/static/style.css" rel="stylesheet">
     <title>Bienvenue !</title>
 </head>
+
 <body>
+    <nav class="navbar background">
+        <ul class="nav-list">
+            <li>
+                <a href="/ajoutQuestion.html">Créer</a>
+                <a href="/templates/lquestion.html">Consulter</a>
+                <a href="/templates/QCM.html">Crée ton examen</a>
+                <a href="/templates/MesQCM.html">Consulte tes examen</a>
+            </li>
+        </ul>
+        <div class="rightNav">
+            <input type="text" name="Search" id="Search">
+            <button class="btn btn-sm">Chercher</button>
+        </div>
+    </nav>
     <main>
         <div class="menu">
             <h1>Infomaker</h1>
@@ -19,4 +35,5 @@
         <p>&copy; 2023 | THEO REYNIER | ANTHONY HOMMAIS | CORENTIN FAY | SONIA KECHAOU</p>
     </footer>
 </body>
+
 </html>
