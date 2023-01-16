@@ -31,6 +31,17 @@ questions=[]
 def index():
     return render_template("index.html")
 
+@app.route("/visual", methods=['POST','GET'])
+def visual():
+    if request.method == 'POST':
+        question = request.form['question']
+        #reponses=[]
+        #reponses.append(request.form['nouveauBouton']) , reps = reponses
+        return render_template("visualisation.html", question = question)
+    else:
+        return render_template("ajoutQuestion.html")
+
+
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():
     if request.method == 'POST':
