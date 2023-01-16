@@ -38,11 +38,13 @@
                     $(".nouveauBouton").append(data);
                     });
                 }
-            function supprimerBouton() {
-                fetch('/supprimer_bouton', {
-                    method: 'DELETE'
+                function supprimerBouton(id) {
+                    fetch('/supprimer_bouton', {
+                    method: 'DELETE',
+                    body: JSON.stringify({'id': id}),
+                    headers: { 'Content-Type': 'application/json' }
                 });
-                $("bouton_a_supprimer").remove();
+                $("#"+id).remove();
             }
             </script>           
             <p><input class="button" type="submit" value="Confirmer" /></p>

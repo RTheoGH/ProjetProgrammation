@@ -54,6 +54,12 @@ def plusDeReponse():
     nombreIdQuestion+=1
     return render_template('partials/nouvelleReponse.html',IdBouton=nombreIdQuestion)
 
+@app.route("/supprimer_bouton", methods=['DELETE'])
+def supprimer_bouton():
+    id = request.json['id']
+    #les questions ne sont pas encore stocké dans une variables donc ne peuvent pas être delete 
+    return jsonify(status='success')
+
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
     return render_template("lquestion.html",lquestion=questions)
