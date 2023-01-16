@@ -1,18 +1,28 @@
 from flask import Flask, render_template, request, redirect, url_for
-# from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
+db = SQLAlchemy()
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-# db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db'
+db.init_app(app)
 
-# class baseQ(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     question = db.Column(db.String(300), nullable=False)
-#     reponses = db.Column(db.String(200), nullable=False)
+class Question(db.Model):
+    idQ = db.Column(db.Integer, primary_key=True)
+    question = db.Column(db.String(300), nullable=False)
+    reponses = db.Column(db.String(200),db.ForeignKey('reponse.idR'), nullable=False)
 
-#     def __repr__(self):
-#         return '<Question %r' % self.id
+    def __constructeur(u):
+        return 'Question %r'% u.idQ
 
+class Reponse(db.Model):
+    idR = db.Column(db.Integer,primary_key=True)
+    reponse = db.Column(db.String(200), nullable=False)
+
+    def __constructeur(u):
+        return 'Reponse %r'% u.idR
+
+with app.app_context():
+    db.create_all()
 
 questions=[]
 
