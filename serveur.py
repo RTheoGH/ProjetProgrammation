@@ -40,6 +40,11 @@ def ajout():
     else:
         return render_template("ajoutQuestion.html")
 
+@app.route("/plusDeReponse",methods = ['GET'])
+def plusDeReponse():
+    # print('<p> : <br/><input type = "text" name = "reponse" /></p>')
+    return render_template('nouvelleReponse.html')
+
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
     return render_template("lquestion.html",lquestion=questions)
