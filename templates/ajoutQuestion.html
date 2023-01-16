@@ -5,13 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/style.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$','$']]
+            }
+        }
+    </script>
+    
     <title>Ajout</title>
 </head>
 <body>
     <div class="menu">
         <form action = "/ajout" method = "POST">
             <h1>Ecrivez une question</h1>
-            <p>Question : <br/><input type = "text" name = "question" /></p>
+            <p>Question : <br/><input type = "text" name = "question" id="question"/></p>
+            <p><input class="button" type="submit" value="Visualiser" onclick="visualiser()" /></p>
             <p><input class="button" type="submit" value="Confirmer" /></p>
         </form>
         <a class="button" name="menu" href="/">Retour au menu</a><br/>
