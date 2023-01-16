@@ -32,12 +32,12 @@
             </tr>
             {% for questions in lquestion %}
             <tr>
-                <td>{{questions.question}}</td>
+                <td>{{questions.enonce}}</td>
                 <!-- <td>{{questions.reponse}}</td> -->
                 <td>
                     <a href="/modifier">Modifier</a>
                     <br>
-                    <a href="/supprimer">Supprimer</a>
+                    <a href="/supprimer/{{questions.idQ}}">Supprimer</a>
                 </td>
             </tr>
             {% endfor %}

@@ -1,31 +1,32 @@
 from flask import Flask, render_template, request, redirect, url_for
-# from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
-# db = SQLAlchemy()
+db = SQLAlchemy()
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db'
-# db.init_app(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db'
+db.init_app(app)
 nombreIdQuestion=0
 
-# class Question(db.Model):
-#     idQ = db.Column(db.Integer, primary_key=True)
-#     enonce = db.Column(db.String(300), nullable=False)
-#     reponses = db.Column(db.String(200),db.ForeignKey('reponse.idR'), nullable=False)
+class Question(db.Model):
+    idQ = db.Column(db.Integer, primary_key=True)
+    enonce = db.Column(db.String(300), nullable=False)
 
-#     def __constructeur(u):
-#         return 'Question %r'% u.idQ
+    def __constructeur__(u):
+        return 'Question %r'% u.idQ
 
-# class Reponse(db.Model):
-#     idR = db.Column(db.Integer,primary_key=True)
-#     reponse = db.Column(db.String(200), nullable=False)
+class Reponse(db.Model):
+    idR = db.Column(db.Integer,primary_key=True)
+    reponse = db.Column(db.String(200), nullable=False)
+    idQ = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False)
 
-#     def __constructeur(u):
-#         return 'Reponse %r'% u.idR
+    def __constructeur__(u):
+        return 'Reponse %r'% u.idR
 
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
-questions=[["faze","a"],["kirito","b"],["guts","c"]]
+questions=[]
+quest=[["faze","a"],["kirito","b"],["guts","c"]]
 
 @app.route("/")
 def index():
@@ -46,17 +47,14 @@ def visual():
 def ajout():
     if request.method == 'POST':
         question = request.form['question']
-        # new_question = Question(enonce=question)
-        # try:
-        #     db.session.add(new_question)
-        #     db.session.commit()
-        #     return redirect('/lquestion')
-        # except:
-        #     return 'erreur'
-        reponse = request.form['reponse']
-        questions.append({"question":question,"reponse":reponse})
-        print(questions)
-        return redirect(url_for('lquestion'))
+        new_question = Question(enonce=question)
+
+        try:
+            db.session.add(new_question)
+            db.session.commit()
+            return redirect('/lquestion')
+        except:
+            return 'erreur'
     else:
         return render_template("ajoutQuestion.html")
 
@@ -79,18 +77,30 @@ def supprimer_bouton():
 
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
+    questions = db.session.query(Question).all()
     return render_template("lquestion.html",lquestion=questions)
 
-@app.route("/supprimer")
-def modifier():
-    questions.remove()
-    return redirect(url_for("lquestion"))
+@app.route("/supprimer/<int:id>")
+def supprimer(id):
+    questionSupp = Question.query.get_or_404(id)
+
+    try:
+        db.session.delete(questionSupp)
+        db.session.commit()
+        return redirect('lquestion')
+    except:
+        return 'Erreur lors de la suppression de la question'
+
 @app.route("/QCM")
 def qcm():
-    return render_template("QCM.html", ListesQuestions = questions)
+    return render_template("QCM.html",ListesQuestions=quest)
 @app.route("/MesQCM")
 def Mesqcm():
     return render_template("/MesQCM.html")
+
+@app.route("/generate")
+def generate():
+    print(request.args)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
