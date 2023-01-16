@@ -48,6 +48,12 @@ def lquestion():
 def modifier():
     questions.remove()
     return redirect(url_for("lquestion"))
+@app.route("/QCM")
+def qcm():
+    return render_template("QCM.html")
+@app.route("/MesQCM")
+def Mesqcm():
+    return render_template("/MesQCM.html")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,12 +8,14 @@
     <link href="/static/style.css" rel="stylesheet">
     <title>Ajout</title>
 </head>
+
 <body>
+    {%include 'partials/_nav.html'%}
     <div class="menu">
-        <form action = "/ajout" method = "POST">
+        <form action="/ajout" method="POST">
             <h1>Ecrivez une question</h1>
-            <p>Question : <br/><input type = "text" name = "question" /></p>
-            <p>Réponse : <br/><input type = "text" name = "reponse" /></p>
+            <p>Question : <br/><input type="text" name="question" /></p>
+            <p>Réponse : <br/><input type="text" name="reponse" /></p>
             <p><input class="button" type="submit" value="Confirmer" /></p>
         </form>
         <a class="button" name="menu" href="/">Retour au menu</a><br/>
