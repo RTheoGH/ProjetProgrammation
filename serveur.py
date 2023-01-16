@@ -12,7 +12,8 @@ def index():
 def ajout():
     if request.method == 'POST':
         question = request.form['question']
-        questions.append(question)
+        reponse = request.form['reponse']
+        questions.append({"question":question,"reponse":reponse})
         return redirect(url_for('lquestion'))
     else:
         return render_template("ajoutQuestion.html")

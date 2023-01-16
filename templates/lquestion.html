@@ -12,9 +12,9 @@
     <div class="menu">
         <h1>Liste des questions</h1>
         <table>
-            <!-- <tr class="top"><td>Questions</td><td>Description</td><td>Prix</td><td>Quantite</td></tr> -->
+            <tr class="top"><td>Question</td><td>Réponse</td></tr>
             {% for questions in lquestion %}
-            <tr><td>{{questions}}</td></tr>
+            <tr><td>{{questions.question}}</td><td>{{questions.reponse}}</td></tr>
             {% endfor %}
         </table>
         <a class="button" name="ajout" href="/ajout">Ajout d'une autre question</a>
