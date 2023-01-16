@@ -28,12 +28,14 @@
                     $(".nouveauBouton").append(data);
                     });
                 }
-                function supprimerBouton() {
+                function supprimerBouton(id) {
                     fetch('/supprimer_bouton', {
-                        method: 'DELETE'
-                    });
-                    $("bouton_a_supprimer").remove();
-                }
+                    method: 'DELETE',
+                    body: JSON.stringify({'id': id}),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                $("#"+id).remove();
+            }
             </script>           
             <p><input class="button" type="submit" value="Visualiser" /></p>
         </form>

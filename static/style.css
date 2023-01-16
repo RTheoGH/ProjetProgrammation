@@ -79,21 +79,23 @@ footer {
 }
 
 .nav-list {
-    width: 50%;
-    display: flex;
+    text-align: center;
 }
 
 .nav-list li {
     list-style: none;
-    padding: 26px 30px;
 }
 
 .nav-list li a {
     text-decoration: none;
     color: black;
+    padding: 0.7em;
+    border-radius: 50%;
+    background-color: whitesmoke;
 }
 
 .navbar_background {
-    background-color: royalblue;
-    align-items: center;
+    background-color: black;
+    position: absolute;
+    width: 100%;
 }
