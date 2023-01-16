@@ -5,6 +5,7 @@ db = SQLAlchemy()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db'
 db.init_app(app)
+nombreIdQuestion=0
 
 class Question(db.Model):
     idQ = db.Column(db.Integer, primary_key=True)
@@ -42,8 +43,9 @@ def ajout():
 
 @app.route("/plusDeReponse",methods = ['GET'])
 def plusDeReponse():
-    # print('<p> : <br/><input type = "text" name = "reponse" /></p>')
-    return render_template('nouvelleReponse.html')
+    global nombreIdQuestion
+    nombreIdQuestion+=1
+    return render_template('nouvelleReponse.html',IdBouton=nombreIdQuestion)
 
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():

@@ -17,7 +17,7 @@
             <h1>Ecrivez une question</h1>
             <p>Question : <br/><input type="text" name="question" /></p>
             <div class="nouveauBouton"></div>
-            <button type="button" onclick="demandePlusReponse()">Cliquez ici</button>
+            <button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button>
             <script>
                 function demandePlusReponse() {
                     fetch('/plusDeReponse')
@@ -26,7 +26,14 @@
                     $(".nouveauBouton").append(data);
                     });
                 }
-            </script>            <p><input class="button" type="submit" value="Confirmer" /></p>
+            function supprimerBouton() {
+                fetch('/supprimer_bouton', {
+                    method: 'DELETE'
+                });
+                $("bouton_a_supprimer").remove();
+            }
+            </script>           
+            <p><input class="button" type="submit" value="Confirmer" /></p>
         </form>
         <a class="button" name="menu" href="/">Retour au menu</a><br/>
     </div>
