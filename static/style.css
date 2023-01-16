@@ -84,21 +84,18 @@ footer {
 
 .nav-list li {
     list-style: none;
-    padding: 26px 30px;
 }
 
 .nav-list li a {
     text-decoration: none;
     color: black;
-    padding: 0.5em;
-    border: solid aqua;
-    border-radius: 10%;
-    background-color: aqua;
+    padding: 0.7em;
+    border-radius: 50%;
+    background-color: whitesmoke;
 }
 
 .navbar_background {
-    background-color: royalblue;
+    background-color: black;
     position: absolute;
     width: 100%;
-    opacity: 0.8;
 }
