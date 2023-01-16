@@ -25,7 +25,7 @@ nombreIdQuestion=0
 # with app.app_context():
 #     db.create_all()
 
-questions=[]
+questions=[["faze","a"],["kirito","b"],["guts","c"]]
 
 @app.route("/")
 def index():
@@ -87,7 +87,7 @@ def modifier():
     return redirect(url_for("lquestion"))
 @app.route("/QCM")
 def qcm():
-    return render_template("QCM.html")
+    return render_template("QCM.html", ListesQuestions = questions)
 @app.route("/MesQCM")
 def Mesqcm():
     return render_template("/MesQCM.html")
