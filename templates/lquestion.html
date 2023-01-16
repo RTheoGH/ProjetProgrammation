@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/style.css" rel="stylesheet">
+    <title>Bibliothèque</title>
+</head>
+
+<body>
+    <div class="menu">
+        <h1>Liste des questions</h1>
+        <table>
+            <!-- <tr class="top"><td>Questions</td><td>Description</td><td>Prix</td><td>Quantite</td></tr> -->
+            {% for questions in lquestion %}
+            <tr><td>{{questions}}</td></tr>
+            {% endfor %}
+        </table>
+        <a class="button" name="ajout" href="/ajout">Ajout d'une autre question</a>
+        <a class="button" name="menu" href="/">Retour au menu</a>
+    </div> 
+</body>
