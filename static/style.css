@@ -17,6 +17,10 @@ table{
     margin-bottom: 1em;
 }
 
+td{
+    border:1px solid black;
+}
+
 .top{
     background-color: darkgray;
 }

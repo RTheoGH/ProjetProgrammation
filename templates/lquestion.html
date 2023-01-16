@@ -12,14 +12,24 @@
     <div class="menu">
         <h1>Liste des questions</h1>
         <table>
-            <tr class="top"><td>Question</td><td>Réponse</td></tr>
+            <tr class="top">
+                <td>Question</td>
+                <td>Réponse</td>
+                <td>Modifier/Supprimer</td>
+            </tr>
             {% for questions in lquestion %}
-            <tr><td>{{questions.question}}</td><td>{{questions.reponse}}</td></tr>
+            <tr>
+                <td>{{questions.question}}</td>
+                <td>{{questions.reponse}}</td>
+                <td>
+                    <a href="/modifier">Modifier</a>
+                    <br>
+                    <a href="/supprimer">Supprimer</a>
+                </td>
+            </tr>
             {% endfor %}
         </table>
         <a class="button" name="ajout" href="/ajout">Ajout d'une autre question</a>
-        <a class="button" name="modifier" href="/modifier">Modifier une question</a>
-        <a class="button" name="supprimer" href="/supprimer">Supprimer une question</a>
         <a class="button" name="menu" href="/">Retour au menu</a>
     </div> 
 </body>
