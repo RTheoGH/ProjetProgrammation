@@ -44,6 +44,7 @@ def ajout():
         #     return 'erreur'
         reponse = request.form['reponse']
         questions.append({"question":question,"reponse":reponse})
+        print(questions)
         return redirect(url_for('lquestion'))
     else:
         return render_template("ajoutQuestion.html")
