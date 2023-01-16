@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/style.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    
+    <title>Ajout</title>
+</head>
+
+<body>
+    {%include 'partials/_nav.html'%}
+    <div class="menu">
+        <!-- <form action="/visual" method="POST"> -->
+        <form action="{{ url_for('modifier', id=idQ)}}" method="POST">
+            <h1>Modifier votre enoncé</h1>
+            <p><input type="text" name="question" value="{{ enonce }}" /></p>
+            <p><input class="button" type="submit" value="Modifier" /></p>
+        </form>
+        <!-- <a class="button" name="menu" href="/">Retour au menu</a><br/> -->
+    </div>
+</body>

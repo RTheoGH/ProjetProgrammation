@@ -24,6 +24,7 @@ class Reponse(db.Model):
 
 with app.app_context():
     db.create_all()
+    db.session.add(Question(enonce="test"))
 
 # questions=[]
 
@@ -51,9 +52,9 @@ def ajout():
         try:
             db.session.add(new_question)
             db.session.commit()
-            return redirect('/lquestion')
+            return redirect(url_for('lquestion'))
         except:
-            return 'erreur'
+            return 'Erreur création de la question'
     else:
         return render_template("ajoutQuestion.html")
 
@@ -79,14 +80,29 @@ def lquestion():
     questions = db.session.query(Question).all()
     return render_template("lquestion.html",lquestion=questions)
 
+@app.route("/modifier/<int:id>",methods=['POST','GET'])
+def modifier(id):
+    questionModif = Question.query.get_or_404(id)
+
+    if request.method == 'POST':
+        questionModif.enonce = request.form['question']
+        try:
+            db.session.commit()
+            return redirect(url_for('lquestion'))
+        except:
+            return 'Erreur de modification'
+    else:
+        return render_template("modifQuestion.html",enonce=questionModif.enonce,idQ=questionModif.idQ)
+
+
 @app.route("/supprimer/<int:id>")
 def supprimer(id):
     questionSupp = Question.query.get_or_404(id)
-
+    print(questionSupp)
     try:
         db.session.delete(questionSupp)
         db.session.commit()
-        return redirect('lquestion')
+        return redirect(url_for('lquestion'))
     except:
         return 'Erreur lors de la suppression de la question'
 

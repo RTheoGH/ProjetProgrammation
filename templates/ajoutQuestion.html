@@ -8,37 +8,58 @@
     <link href="/static/style.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$','$']]
+            }
+        }
+    </script>
     <title>Ajout</title>
 </head>
 
 <body>
     {%include 'partials/_nav.html'%}
-    <div class="menu">
-        <form action="/visual" method="POST">
-            <h1>Ecrivez une question</h1>
-            <p>Question : <br/><input type="text" name="question" /></p>
-            <div class="nouveauBouton"></div>
-            <button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button>
-            <script>
-                function demandePlusReponse() {
-                    fetch('/plusDeReponse')
-                    .then(response => response.text())
-                    .then(data => {
-                    $(".nouveauBouton").append(data);
-                    });
-                }
-                function supprimerBouton(id) {
-                    fetch('/supprimer_bouton', {
-                    method: 'DELETE',
-                    body: JSON.stringify({'id': id}),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                $("#"+id).remove();
-            }
-            </script>           
-            <p><input class="button" type="submit" value="Visualiser" /></p>
-        </form>
-        <a class="button" name="menu" href="/">Retour au menu</a><br/>
+    <div class="mid double">
+        <div class="code">
+            <!-- <form action="/visual" method="POST"> -->
+            <form action="/ajout" method="POST">
+                <h1>Ecrivez une question</h1>
+                <p>Question : <br/><textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiser()"></textarea></p>
+                    <!-- <input type="text" name="question" id="question" onkeyup="visualiser()"/> -->
+                <div class="nouveauBouton"></div>
+                <button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button>
+                <script>
+                    function demandePlusReponse() {
+                        fetch('/plusDeReponse')
+                            .then(response => response.text())
+                            .then(data => {
+                            $(".nouveauBouton").append(data);
+                        });
+                    }
+                    function supprimerBouton(id) {
+                        fetch('/supprimer_bouton', {
+                            method: 'DELETE',
+                            body: JSON.stringify({'id': id}),
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        $("#"+id).remove();
+                    }
+                    function visualiser(){
+                        $(".visu").text($("#question").val());
+                        MathJax.typeset()
+                    }
+                </script>           
+                <p><input class="button" type="submit" value="Ajouter" /></p>
+                <!-- <p><input type="button" class="button" value="Visualiser" onClick="visualiser()"/></p> -->
+                
+            </form>
+            <a class="button" name="menu" href="/">Retour au menu</a><br/>
+        </div>
+        <div class="visu">
+            Cliquez sur visualiser pour voir la visualisation de votre visuel
+        </div>
     </div>
 </body>

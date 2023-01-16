@@ -28,7 +28,7 @@ h1 {
     padding: 0.5em;
 }
 
-.menu {
+.menu{
     border: 0.5em solid black;
     border-radius: 10px;
     padding: 2em;
@@ -39,6 +39,38 @@ h1 {
     transform: translate(-50%, -50%);
     text-align: center;
     background-color: whitesmoke;
+}
+
+.mid{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    opacity: 0.9;
+}
+
+.double{
+    display: flex;
+}
+
+.code{
+    border: 0.5em solid black;
+    border-radius: 10px;
+    padding: 2em;
+    width: 20em;
+    background-color: whitesmoke;
+    text-align: center;
+    margin-right: 5em;
+}
+
+.visu{
+    border: 0.5em solid black;
+    border-radius: 10px;
+    padding: 2em;
+    width: 20em;
+    background-color: whitesmoke;
+    text-align: center;
+    margin-left: 5em;
 }
 
 .button {

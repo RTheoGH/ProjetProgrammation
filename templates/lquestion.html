@@ -35,9 +35,9 @@
                 <td>{{questions.enonce}}</td>
                 <!-- <td>{{questions.reponse}}</td> -->
                 <td>
-                    <a href="/modifier">Modifier</a>
+                    <a href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
                     <br>
-                    <a href="/supprimer/{{questions.idQ}}">Supprimer</a>
+                    <a href="{{ url_for('supprimer', id=questions.idQ)}}">Supprimer</a>
                 </td>
             </tr>
             {% endfor %}
