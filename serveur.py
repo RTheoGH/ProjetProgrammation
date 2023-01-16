@@ -74,7 +74,7 @@ def supprimer_bouton():
     # connection.commit()
     # cursor.close()
     #qqc comme ça en bdd
-    return jsonify(status='success')
+    return 'SUCCES'
 
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
