@@ -1,0 +1,68 @@
+
+body{
+    background-color: white;
+    background-image:url("copains.jpg");
+    background-size: cover;
+    width: 100vw;
+    margin:0;
+}
+
+table{
+    background: lightgray;
+    width:75vw;
+    text-align: center;
+    border:1px solid black;
+    padding: 0.5em;
+    font-size: 1.5em;
+    margin-bottom: 1em;
+}
+
+.top{
+    background-color: darkgray;
+}
+
+h1{
+    padding:0.5em;
+}
+
+.menu{
+    border: 0.5em solid black;
+    border-radius: 10px;
+    padding:2em;
+    position:absolute;
+    opacity:0.9;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    text-align: center;
+    background-color: whitesmoke;
+}
+
+.button{
+    /* outline: none; */
+    text-align: center;
+    background-color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    padding:0.5em;
+    border: 1px solid black;
+    transition: 0.25s;
+}
+
+.button:visited{
+    color: black;
+}
+
+.button:hover{
+    background-color: lightgray;
+    transition: 0.25s;
+}
+
+footer{
+    position: absolute;
+    bottom: 0;
+    width: 100vw;
+    background-color: black;
+    color: white;
+    text-align:center;
+}
