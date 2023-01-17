@@ -24,7 +24,7 @@
                 </tr>
                 {% for questions in lquestion %}
                 <tr>
-                    <td id="{{questions.idQ}}">{{questions.enonce}}</td>
+                    <td class="left" id="{{questions.idQ}}">{{questions.enonce}}</td>
                     <script>
                         $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
                     </script>
