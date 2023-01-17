@@ -112,34 +112,32 @@ footer {
     text-align: center;
 }
 
-.navbar {
-    display: flex;
-    position: sticky;
-    align-items: center;
-    justify-content: center;
-    top: 0px;
-}
-
-.nav-list {
-    text-align: center;
+.nav-list{
+    list-style-type:none;
+    margin: 0;
+    padding: 0;
+    overflow:hidden;
+    background-color: #333;
 }
 
 .nav-list li {
-    list-style: none;
+    float: left;
 }
 
 .nav-list li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
     text-decoration: none;
-    color: black;
-    padding: 0.7em;
-    border-radius: 1em;
-    background-color: whitesmoke;
 }
 
-.navbar_background {
-    background-color: black;
-    position: absolute;
-    width: 100%;
+.nav-list li a:hover{
+    background-color: #111;
+}
+
+.active{
+    background-color: darkred;
 }
 
 [type="checkbox"].newReponse:not(:checked),

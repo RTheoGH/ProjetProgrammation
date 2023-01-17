@@ -32,7 +32,7 @@ quest=["faze","kirito","guts"]
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html",page="Menu")
 
 # @app.route("/accueil",methods=['GET'])
 # def accueil():
@@ -52,7 +52,7 @@ def ajout():
         except:
             return 'Erreur création de la question'
     else:
-        return render_template("ajoutQuestion.html")
+        return render_template("ajoutQuestion.html",page="Créer")
 
 @app.route("/plusDeReponse",methods = ['GET'])
 def plusDeReponse():
@@ -75,7 +75,7 @@ def supprimer_bouton():
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
     questions = db.session.query(Question).all()
-    return render_template("lquestion.html",lquestion=questions)
+    return render_template("lquestion.html",lquestion=questions,page="Consulter")
 
 @app.route("/modifier/<int:id>",methods=['POST','GET'])
 def modifier(id):
@@ -105,10 +105,10 @@ def supprimer(id):
 
 @app.route("/QCM")
 def qcm():
-    return render_template("QCM.html",ListesQuestions=quest)
+    return render_template("QCM.html",ListesQuestions=quest,page="CréerQcm")
 @app.route("/MesQCM")
 def Mesqcm():
-    return render_template("/MesQCM.html")
+    return render_template("/MesQCM.html",page="ConsulterQcm")
 
 @app.route("/generate")
 def generate():
