@@ -25,14 +25,23 @@ class Reponse(db.Model):
 
 with app.app_context():
     db.create_all()
-    db.session.add(Question(enonce="test"))
+    # db.session.add(Question(enonce="test"))
 
 questions=[]
 quest=[["faze","a"],["kirito","b"],["guts","c"]]
 
-@app.route("/")
+@app.route("/",methods=['POST','GET'])
 def index():
-    return render_template("index.html")
+    if request.method == 'POST':
+        idUtilisateur = request.form['nomU']
+        passUtilisateur = request.form['passU']
+
+        try:
+            return redirect(url_for('accueil.html'))
+        except:
+            return 'Erreur lors de la connexion'
+    else:
+        return render_template("index.html")
 
 # @app.route("/visual", methods=['POST','GET'])
 # def visual():
@@ -43,6 +52,10 @@ def index():
 #         return render_template("visualisation.html", question = question)
 #     else:
 #         return render_template("ajoutQuestion.html")
+
+@app.route("/accueil",methods=['POST','GET'])
+def connexion():
+    return render_template("accueil.html")
 
 
 @app.route("/ajout",methods = ['POST', 'GET'])
