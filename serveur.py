@@ -23,12 +23,19 @@ class Reponse(db.Model):
     def __constructeur__(u):
         return 'Reponse %r'% u.idR
 
+class QCM(db.Model):
+    idE = db.Column(db.Integer,primary_key=True)
+    Nom = db.Column(db.String(200), nullable = False)
+
+class Contient(db.Model):
+    RidE = db.Column(db.Integer, db.ForeignKey(QCM.idE),nullable=False,primary_key=True)
+    RidQ = db.Column(db.Integer,db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
+
+
 with app.app_context():
     db.create_all()
     # db.session.add(Question(enonce="test"))
 
-questions=[]
-quest=["faze","kirito","guts"]
 
 @app.route("/")
 def index():
@@ -105,7 +112,11 @@ def supprimer(id):
 
 @app.route("/QCM")
 def qcm():
-    return render_template("QCM.html",ListesQuestions=quest)
+            LQ = db.session.query(Question).all()
+            print(LQ)
+            return render_template("QCM.html",ListesQuestions=LQ)
+        
+    
 @app.route("/MesQCM")
 def Mesqcm():
     return render_template("/MesQCM.html")
