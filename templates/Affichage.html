@@ -17,9 +17,10 @@
             fetch('/generate')
                 .then(response => response.text())
                 .then(data => {
-                $(".affQCM").append(data);
-            });
+                    $(".affQCM").append(data);
+                });
         }
+<<<<<<< HEAD
         afficherQCM();
     </script>
     <div class="affQCM">
@@ -28,6 +29,11 @@
         {% endfor %}
     </div>
     
+=======
+        afficherQCM()
+    </script>
+
+>>>>>>> 8c4f7a2f872521c1fd86797402e08061f77ddfb3
 </body>
 
 </html>

@@ -18,7 +18,7 @@
         <!-- <form action="/visual" method="POST"> -->
         <form action="{{ url_for('modifier', id=idQ)}}" method="POST">
             <h1>Modifier votre enoncé</h1>
-            <p><input type="text" name="question" value="{{ enonce }}" /></p>
+            <p><textarea name="question" rows="4" cols="40">{{enonce}}</textarea></p>
             <p><input class="button" type="submit" value="Modifier" /></p>
         </form>
         <!-- <a class="button" name="menu" href="/">Retour au menu</a><br/> -->
