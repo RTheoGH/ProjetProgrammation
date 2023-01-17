@@ -28,7 +28,7 @@ with app.app_context():
     # db.session.add(Question(enonce="test"))
 
 questions=[]
-quest=[["faze","a"],["kirito","b"],["guts","c"]]
+quest=["faze","kirito","guts"]
 
 @app.route("/")
 def index():
