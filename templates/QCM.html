@@ -15,7 +15,7 @@
         <h1>Créer ton examen</h1>
         {%for element in ListesQuestions%}
         <button>test</button>
-        <input type="checkbox" name="lq">{{element}}{%endfor%}
+        <input type="checkbox" name="lq" id={{element}}>{{element}}{%endfor%}
         <button type="submit">Envoyer</button>
     </form>
     <!-- <script>
