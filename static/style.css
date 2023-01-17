@@ -132,26 +132,26 @@ footer {
     width: 100%;
 }
 
-[type="checkbox"]:not(:checked),
-[type="checkbox"]:checked {
+[type="checkbox"].newReponse:not(:checked),
+[type="checkbox"].newReponse:checked {
     position: absolute;
     left: -9999px;
 }
-[type="checkbox"]:not(:checked) + label,
-[type="checkbox"]:checked + label {
+[type="checkbox"].newReponse:not(:checked) + label,
+[type="checkbox"].newReponse:checked + label {
     position: relative;
     padding-left: 75px;
     cursor: pointer;
 }
-[type="checkbox"]:not(:checked) + label::before,
-[type="checkbox"]:checked + label::before,
-[type="checkbox"]:not(:checked) + label::after,
-[type="checkbox"]:checked + label::after {
+[type="checkbox"].newReponse:not(:checked) + label::before,
+[type="checkbox"].newReponse:checked + label::before,
+[type="checkbox"].newReponse:not(:checked) + label::after,
+[type="checkbox"].newReponse:checked + label::after {
     content: '';
     position: absolute;
 }
-[type="checkbox"]:not(:checked) + label::before,
-[type="checkbox"]:checked + label::before {
+[type="checkbox"].newReponse:not(:checked) + label::before,
+[type="checkbox"].newReponse:checked + label::before {
     left:0; top: -3px;
     width: 65px; height: 30px;
     background: #eb0000;
@@ -161,8 +161,8 @@ footer {
     -ms-transition: background-color .2s;
     transition: background-color .2s;
 }
-[type="checkbox"]:not(:checked) + label::after,
-[type="checkbox"]:checked + label::after {
+[type="checkbox"].newReponse:not(:checked) + label::after,
+[type="checkbox"].newReponse:checked + label::after {
     width: 20px; height: 20px;
     -webkit-transition: all .2s;
     -moz-transition: all .2s;
@@ -174,17 +174,17 @@ footer {
 }
 
 /* on checked */
-[type="checkbox"]:checked + label::before {
+[type="checkbox"].newReponse:checked + label::before {
     background:#2fb41a; 
 }
-[type="checkbox"]:checked + label::after {
+[type="checkbox"].newReponse:checked + label::after {
     /* background: #000000; */
     top: 2px; left: 40px;
 }
 
-[type="checkbox"]:checked + label .Checked,
-[type="checkbox"]:not(:checked) + label .Checked::before,
-[type="checkbox"]:checked + label .Checked::after {
+[type="checkbox"].newReponse:checked + label .Checked,
+[type="checkbox"].newReponse:not(:checked) + label .Checked::before,
+[type="checkbox"].newReponse:checked + label .Checked::after {
     position: absolute;
     left: 6px;
     width: 65px;
@@ -197,7 +197,7 @@ footer {
     -ms-transition: all .2s;
     transition: all .2s;
 }
-[type="checkbox"]:focus + label::before {
+[type="checkbox"].newReponse:focus + label::before {
     border: 1px dashed #777;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
