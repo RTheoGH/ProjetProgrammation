@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet">
+    <!-- <link href="/static/style.css" rel="stylesheet"> -->
     <title>QCM</title>
 </head>
 
@@ -13,10 +13,22 @@
     <form action="/generate" method="GET">
         {%include 'partials/_nav.html'%}
         <h1>Créer ton examen</h1>
+        <script>
+            i = "1";
+        </script>
         {%for element in ListesQuestions%}
-        <button>test</button>
-        <input type="checkbox" name="lq" id={{element}}>{{element}}{%endfor%}
+
+        <input type="checkbox" name="lq" id="jdr">{{element}}
+
+        <script>
+            // document.getElementById("jdr").id = i;
+
+            // i = i.concat("1");
+        </script>
+
+        <br> {%endfor%}
         <button type="submit">Envoyer</button>
+
     </form>
     <!-- <script>
         function test() {
