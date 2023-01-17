@@ -118,7 +118,9 @@ def Mesqcm():
 
 @app.route("/generate")
 def generate():
-    print(request.args)
+    # print(request.args)
+    print("fuck")
+    return "ratio"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
