@@ -11,11 +11,11 @@
 </head>
 
 <body>
-    <form action="/generate" method="GET">
+    <form action="/generate" method="POST">
         {%include 'partials/_nav.html'%}
         <h1>Créer ton examen</h1>
         {%for element in ListesQuestions%}
-        <input type="checkbox" name={{element}}>{{element}}
+        <input type="checkbox" name="{{element.idQ}}">{{element.enonce}}
         <br> {%endfor%}
         <button type="submit">Envoyer</button>
 

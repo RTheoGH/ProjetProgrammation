@@ -121,13 +121,15 @@ def qcm():
 def Mesqcm():
     return render_template("/MesQCM.html")
 
-@app.route("/generate")
+@app.route("/generate",methods = ['POST'])
 def generate():
-    print(request.args.items)
+    print(request.form.items)
     checked_checkboxes = []
-    for key, value in request.args.items():
+    for key, value in request.form.items():
         if value == 'on':
-            checked_checkboxes.append(key)
+            # checked_checkboxes.append(key)
+            EL = db.session.query(Question.enonce).filter(Question.idQ == key).first()
+            checked_checkboxes.append(EL[0])
     return render_template("affichage.html", question=checked_checkboxes)
 
 if __name__ == '__main__':
