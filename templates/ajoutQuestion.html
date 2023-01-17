@@ -22,7 +22,8 @@
     <script>
         var converter = new showdown.Converter();
     </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@8.8.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
     <title>Ajout</title>
 </head>
 
@@ -33,7 +34,7 @@
             <!-- <form action="/visual" method="POST"> -->
             <form action="/ajout" method="POST">
                 <h1>Ecrivez une question</h1>
-                <p>Question : <br/><textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiser()"></textarea></p>
+                <p>Question : <br/><textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiserQ()"></textarea></p>
                     <!-- <input type="text" name="question" id="question" onkeyup="visualiser()"/> -->
                 <div class="nouveauBouton"></div>
                 <button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button>
@@ -55,11 +56,10 @@
                             $("#"+id).remove();
                         }
                     }
-                    function visualiser(){
-                        let textQuestion = converter.makeHtml($("#question").val())
+                    function visualiserQ(){
+                        let textQuestion = converter.makeHtml($("#question").val());
                         $(".visu").html(textQuestion);
                         MathJax.typeset()
-
                     }
                 </script> 
                 </div>          

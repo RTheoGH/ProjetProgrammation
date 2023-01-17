@@ -111,6 +111,7 @@ def supprimer(id):
 
 @app.route("/QCM")
 def qcm():
+    
     return render_template("QCM.html",ListesQuestions=quest)
 @app.route("/MesQCM")
 def Mesqcm():
@@ -118,9 +119,9 @@ def Mesqcm():
 
 @app.route("/generate")
 def generate():
-    # print(request.args)
-    print("fuck")
-    return "ratio"
+    print(request.args)
+    # print("fuck")
+    return render_template("/Affichage.html")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
