@@ -124,7 +124,6 @@ def supprimer(id):
 
 @app.route("/QCM")
 def qcm():
-    
     return render_template("QCM.html",ListesQuestions=quest)
 @app.route("/MesQCM")
 def Mesqcm():
@@ -132,12 +131,15 @@ def Mesqcm():
 
 @app.route("/generate")
 def generate():
+    print(request.args.items)
+    checked_checkboxes = []
     print(request.args)
-    # checked_checkboxes = []
-    # for key, value in request.form.items():
-    #     if value == 'on':
-    #         checked_checkboxes.append(key)
-    # return 'Checked checkboxes: {}'.format(checked_checkboxes)
+    print(request.args.items)
+    for key, value in request.args.items():
+        if value == 'on':
+            checked_checkboxes.append(key)
+    
+    return 'Checked checkboxes: {}'.format(checked_checkboxes)
     return render_template("/Affichage.html")
 
 if __name__ == '__main__':
