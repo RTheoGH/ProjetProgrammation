@@ -114,8 +114,6 @@ def Mesqcm():
 def generate():
     print(request.args.items)
     checked_checkboxes = []
-    print(request.args)
-    print(request.args.items)
     for key, value in request.args.items():
         if value == 'on':
             checked_checkboxes.append(key)
