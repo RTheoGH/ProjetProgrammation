@@ -30,33 +30,14 @@ with app.app_context():
 questions=[]
 quest=[["faze","a"],["kirito","b"],["guts","c"]]
 
-@app.route("/",methods=['POST','GET'])
+@app.route("/")
 def index():
-    if request.method == 'POST':
-        idUtilisateur = request.form['nomU']
-        passUtilisateur = request.form['passU']
+    return render_template("index.html")
 
-        try:
-            return redirect(url_for('accueil.html'))
-        except:
-            return 'Erreur lors de la connexion'
-    else:
-        return render_template("index.html")
-
-# @app.route("/visual", methods=['POST','GET'])
-# def visual():
-#     if request.method == 'POST':
-#         question = request.form['question']
-#         #reponses=[]
-#         #reponses.append(request.form['nouveauBouton']) , reps = reponses
-#         return render_template("visualisation.html", question = question)
-#     else:
-#         return render_template("ajoutQuestion.html")
-
-@app.route("/accueil",methods=['POST','GET'])
-def connexion():
-    return render_template("accueil.html")
-
+# @app.route("/accueil",methods=['GET'])
+# def accueil():
+#     utiCO=db.session.query(Utilisateur)
+#     return render_template("accueil.html",accueil=utiCO)
 
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():

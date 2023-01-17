@@ -12,7 +12,9 @@
     {%include 'partials/_nav.html'%}
     <div class="menu">
         <h1>Bienvenue<br/>sur<br/>Infomaker !</h1>
-        <p>Connecté avec : </p>
+        {% for user in accueil %}
+        <p>Connecté avec : {{Utilisateur.nom}}</p>
+        {% endfor %}
     </div>
 </body>
 </html>
