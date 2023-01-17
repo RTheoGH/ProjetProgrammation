@@ -154,7 +154,7 @@ footer {
 [type="checkbox"]:checked + label::before {
     left:0; top: -3px;
     width: 65px; height: 30px;
-    background: #DDDDDD;
+    background: #eb0000;
     border-radius: 15px;
     -webkit-transition: background-color .2s;
     -moz-transition: background-color .2s;
@@ -175,10 +175,10 @@ footer {
 
 /* on checked */
 [type="checkbox"]:checked + label::before {
-    background:#34495E; 
+    background:#2fb41a; 
 }
 [type="checkbox"]:checked + label::after {
-    background: #39D2B4;
+    /* background: #000000; */
     top: 2px; left: 40px;
 }
 
@@ -196,15 +196,6 @@ footer {
     -moz-transition: all .2s;
     -ms-transition: all .2s;
     transition: all .2s;
-}
-[type="checkbox"]:not(:checked) + label .Checked::before {
-    content: "Faux";
-    left: 10px;
-}
-[type="checkbox"]:checked + label ::after {
-    content: "Vrai";
-    color: #58dd0b;
-    left:100px;
 }
 [type="checkbox"]:focus + label::before {
     border: 1px dashed #777;
