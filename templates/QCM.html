@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <form action="{{url_for('generate')}}" method="GET">
+    <form action="/generate" method="GET">
         {%include 'partials/_nav.html'%}
         <h1>Créer ton examen</h1>
         {%for element in ListesQuestions%}
