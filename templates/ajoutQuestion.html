@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="icon" type="image/x-icon" href="/static/icone.png">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +23,8 @@
     <script>
         var converter = new showdown.Converter();
     </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@8.8.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
     <title>Ajout</title>
 </head>
 
@@ -30,43 +32,39 @@
     {%include 'partials/_nav.html'%}
     <div class="mid double">
         <div class="code">
-            <!-- <form action="/visual" method="POST"> -->
             <form action="/ajout" method="POST">
                 <h1>Ecrivez une question</h1>
-                <p>Question : <br/><textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiser()"></textarea></p>
-                    <!-- <input type="text" name="question" id="question" onkeyup="visualiser()"/> -->
-                <div class="nouveauBouton"></div>
-                <button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button>
-                <script>
-                    function demandePlusReponse() {
-                        fetch('/plusDeReponse')
-                            .then(response => response.text())
-                            .then(data => {
-                            $(".nouveauBouton").append(data);
-                        });
-                    }
-                    function supprimerBouton(id) {
-                        for (let i = 0; i < 3; i++){
-                            fetch('/supprimer_bouton', {
-                                method: 'DELETE',
-                                body: JSON.stringify({'id': id}),
-                                headers: { 'Content-Type': 'application/json' }
+                <p>Question : <br/><textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiserQ()"></textarea></p>
+                <p>------------------------------------------------------</p>
+                <div class="nouveauBouton">
+                    <button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button>
+                    <script>
+                        function demandePlusReponse() {
+                            fetch('/plusDeReponse')
+                                .then(response => response.text())
+                                .then(data => {
+                                $(".nouveauBouton").append(data);
                             });
-                            $("#"+id).remove();
                         }
-                    }
-                    function visualiser(){
-                        let textQuestion = converter.makeHtml($("#question").val())
-                        $(".visu").html(textQuestion);
-                        MathJax.typeset()
-
-                    }
-                </script>           
-                <p><input class="button" type="submit" value="Ajouter" /></p>
-                <!-- <p><input type="button" class="button" value="Visualiser" onClick="visualiser()"/></p> -->
-                
+                        function supprimerBouton(id) {
+                            for (let i = 0; i < 3; i++){
+                                fetch('/supprimer_bouton', {
+                                    method: 'DELETE',
+                                    body: JSON.stringify({'id': id}),
+                                    headers: { 'Content-Type': 'application/json' }
+                                });
+                                $("#"+id).remove();
+                            }
+                        }
+                        function visualiserQ(){
+                            let textQuestion = converter.makeHtml($("#question").val());
+                            $(".visu").html(textQuestion);
+                            MathJax.typeset()
+                        }
+                    </script> 
+                </div>          
+                <p><input class="button" type="submit" value="Ajouter la question" /></p>
             </form>
-            <a class="button" name="menu" href="/">Retour au menu</a><br/>
         </div>
         <div class="visu">
             Cliquez sur visualiser pour voir la visualisation de votre visuel

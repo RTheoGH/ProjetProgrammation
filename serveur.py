@@ -25,7 +25,7 @@ class Reponse(db.Model):
 
 with app.app_context():
     db.create_all()
-    db.session.add(Question(enonce="test"))
+    # db.session.add(Question(enonce="test"))
 
 questions=[]
 quest=[["faze","a"],["kirito","b"],["guts","c"]]
@@ -34,16 +34,10 @@ quest=[["faze","a"],["kirito","b"],["guts","c"]]
 def index():
     return render_template("index.html")
 
-# @app.route("/visual", methods=['POST','GET'])
-# def visual():
-#     if request.method == 'POST':
-#         question = request.form['question']
-#         #reponses=[]
-#         #reponses.append(request.form['nouveauBouton']) , reps = reponses
-#         return render_template("visualisation.html", question = question)
-#     else:
-#         return render_template("ajoutQuestion.html")
-
+# @app.route("/accueil",methods=['GET'])
+# def accueil():
+#     utiCO=db.session.query(Utilisateur)
+#     return render_template("accueil.html",accueil=utiCO)
 
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():
@@ -118,7 +112,16 @@ def Mesqcm():
 
 @app.route("/generate")
 def generate():
+    print(request.args.items)
+    checked_checkboxes = []
     print(request.args)
+    print(request.args.items)
+    for key, value in request.args.items():
+        if value == 'on':
+            checked_checkboxes.append(key)
+    
+    return 'Checked checkboxes: {}'.format(checked_checkboxes)
+    return render_template("/Affichage.html")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
