@@ -20,10 +20,12 @@
             fetch('/generate')
                 .then(response => response.text())
                 .then(data => {
-                $(".affQCM").append(data);
-            });
+                    $(".affQCM").append(data);
+                });
         }
+        afficherQCM()
     </script>
+
 </body>
 
 </html>
