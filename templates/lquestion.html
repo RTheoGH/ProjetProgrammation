@@ -39,8 +39,10 @@
             </tr>
             {% for questions in lquestion %}
             <tr>
-                <td><script>document.write(converter.makeHtml('{{questions.enonce}}'))</script></td>
-                <!-- <td>{{questions.reponse}}</td> -->
+                <td id="{{questions.idQ}}">{{questions.enonce}}</td>
+                <script>
+                    $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
+                </script>
                 <td>
                     <a href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
                     <br>

@@ -8,12 +8,12 @@ body {
 
 table {
     background: lightgray;
-    width: 75vw;
+    width: 50vw;
     text-align: center;
     border: 1px solid black;
     padding: 0.5em;
-    font-size: 1.5em;
-    margin-bottom: 1em;
+    /* font-size: 1.5em;
+    margin-bottom: 1em; */
 }
 
 td {
