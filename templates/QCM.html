@@ -11,8 +11,8 @@
 </head>
 
 <body>
-    <form action="/generate" method="POST">
-        {%include 'partials/_nav.html'%}
+    {%include 'partials/_nav.html'%}
+    <form action="/generate" method="GET">
         <h1>Créer ton examen</h1>
         {%for element in ListesQuestions%}
         <input type="checkbox" name="{{element.idQ}}">{{element.enonce}}
@@ -20,6 +20,7 @@
         <button type="submit">Envoyer</button>
 
     </form>
+    {%include 'partials/footer.html'%}
 </body>
 
 </html>
