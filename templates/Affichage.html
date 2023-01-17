@@ -12,9 +12,6 @@
 </head>
 
 <body>
-    <div class="affQCM">
-
-    </div>
     <script>
         function afficherQCM() {
             fetch('/generate')
@@ -23,7 +20,14 @@
                 $(".affQCM").append(data);
             });
         }
+        afficherQCM();
     </script>
+    <div class="affQCM">
+        {% for checkbox in question %}
+            <p>{{ checkbox }}</p>
+        {% endfor %}
+    </div>
+    
 </body>
 
 </html>

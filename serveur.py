@@ -138,9 +138,7 @@ def generate():
     for key, value in request.args.items():
         if value == 'on':
             checked_checkboxes.append(key)
-    
-    return 'Checked checkboxes: {}'.format(checked_checkboxes)
-    return render_template("/Affichage.html")
+    return render_template("affichage.html", question=checked_checkboxes)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
