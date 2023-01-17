@@ -12,20 +12,24 @@
 </head>
 
 <body>
-    <script>
-        function afficherQCM() {
-            fetch('/generate')
-                .then(response => response.text())
-                .then(data => {
-                    $(".affQCM").append(data);
-                });
-        }
-    </script>
-    <div class="affQCM">
-        {% for checkbox in question %}
+
+    <div class="menu">
+        <script>
+            function afficherQCM() {
+                fetch('/generate')
+                    .then(response => response.text())
+                    .then(data => {
+                        $(".affQCM").append(data);
+                    });
+            }
+        </script>
+        <div class="affQCM">
+            {% for checkbox in question %}
             <p>{{ checkbox }}</p>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
     {%include 'partials/footer.html'%}
 </body>
+
 </html>

@@ -114,7 +114,7 @@ def supprimer(id):
 def qcm():
     LQ = db.session.query(Question).all()
     print(LQ)
-    return render_template("QCM.html",ListesQuestions=quest,page="CréerQcm")
+    return render_template("QCM.html",ListesQuestions=LQ,page="CréerQcm")
 @app.route("/MesQCM")
 def Mesqcm():
     return render_template("/MesQCM.html",page="ConsulterQcm")
