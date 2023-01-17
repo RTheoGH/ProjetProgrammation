@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/style.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -15,6 +16,11 @@
                 inlineMath: [['$','$']]
             }
         }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+    <script>
+        var converter = new showdown.Converter();
     </script>
     
     <title>Bibliothèque</title>
@@ -32,7 +38,7 @@
             </tr>
             {% for questions in lquestion %}
             <tr>
-                <td>{{questions.enonce}}</td>
+                <td><script>document.write(converter.makeHtml('{{questions.enonce}}'))</script></td>
                 <!-- <td>{{questions.reponse}}</td> -->
                 <td>
                     <a href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
