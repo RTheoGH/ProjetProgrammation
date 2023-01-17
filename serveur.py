@@ -120,7 +120,7 @@ def generate():
         if value == 'on':
             checked_checkboxes.append(key)
     
-    return 'Checked checkboxes: {}'.format(checked_checkboxes)
+    # return 'Checked checkboxes: {}'.format(checked_checkboxes)
     return render_template("/Affichage.html")
 
 if __name__ == '__main__':
