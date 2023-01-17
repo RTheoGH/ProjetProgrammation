@@ -6,6 +6,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db'
 db.init_app(app)
 nombreIdQuestion=0
+nombreIdCheck=0
 
 class Question(db.Model):
     idQ = db.Column(db.Integer, primary_key=True)
@@ -33,15 +34,15 @@ quest=[["faze","a"],["kirito","b"],["guts","c"]]
 def index():
     return render_template("index.html")
 
-@app.route("/visual", methods=['POST','GET'])
-def visual():
-    if request.method == 'POST':
-        question = request.form['question']
-        #reponses=[]
-        #reponses.append(request.form['nouveauBouton']) , reps = reponses
-        return render_template("visualisation.html", question = question)
-    else:
-        return render_template("ajoutQuestion.html")
+# @app.route("/visual", methods=['POST','GET'])
+# def visual():
+#     if request.method == 'POST':
+#         question = request.form['question']
+#         #reponses=[]
+#         #reponses.append(request.form['nouveauBouton']) , reps = reponses
+#         return render_template("visualisation.html", question = question)
+#     else:
+#         return render_template("ajoutQuestion.html")
 
 
 @app.route("/ajout",methods = ['POST', 'GET'])
@@ -61,9 +62,10 @@ def ajout():
 
 @app.route("/plusDeReponse",methods = ['GET'])
 def plusDeReponse():
-    global nombreIdQuestion
+    global nombreIdQuestion,nombreIdCheck
     nombreIdQuestion+=1
-    return render_template('partials/nouvelleReponse.html',IdBouton=nombreIdQuestion)
+    nombreIdCheck+=1
+    return render_template('partials/nouvelleReponse.html',IdBouton=nombreIdQuestion,IdCheck=nombreIdCheck)
 
 @app.route("/supprimer_bouton", methods=['DELETE'])
 def supprimer_bouton():
@@ -84,9 +86,9 @@ def lquestion():
 @app.route("/modifier/<int:id>",methods=['POST','GET'])
 def modifier(id):
     questionModif = Question.query.get_or_404(id)
-
     if request.method == 'POST':
         questionModif.enonce = request.form['question']
+
         try:
             db.session.commit()
             return redirect(url_for('lquestion'))
