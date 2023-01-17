@@ -14,9 +14,9 @@
     <form action="/generate" method="GET">
         {%include 'partials/_nav.html'%}
         <h1>Créer ton examen</h1>
-        <script>
+        <!-- <script>
             i = "1";
-        </script>
+        </script> -->
         {%for element in ListesQuestions%}
 
         <input type="checkbox" name={{element}}>{{element[0]}}
