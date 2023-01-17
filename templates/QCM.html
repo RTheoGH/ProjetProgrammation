@@ -14,6 +14,7 @@
         {%include 'partials/_nav.html'%}
         <h1>Créer ton examen</h1>
         {%for element in ListesQuestions%}
+        <button>test</button>
         <input type="checkbox" name="lq">{{element}}{%endfor%}
         <button type="submit">Envoyer</button>
     </form>
