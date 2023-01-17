@@ -41,6 +41,12 @@ h1 {
     background-color: whitesmoke;
 }
 
+.listeQ{
+    height:40vh;
+    border:2px solid black;
+    overflow-y: scroll;
+}
+
 .mid{
     position:absolute;
     top:50%;
