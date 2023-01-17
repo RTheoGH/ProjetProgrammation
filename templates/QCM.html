@@ -11,26 +11,29 @@
 </head>
 
 <body>
-    <form action="/generate" method="GET">
-        {%include 'partials/_nav.html'%}
-        <h1>Créer ton examen</h1>
-        <!-- <script>
-            i = "1";
-        </script> -->
-        {%for element in ListesQuestions%}
+    {%include 'partials/_nav.html'%}
+    <div class="menu">
+        <form action="/generate" method="GET">
+            
+            
+            <h1>Créer ton examen</h1>
+            <!-- <script>
+                i = "1";
+            </script> -->
+            {%for element in ListesQuestions%}
 
-        <input type="checkbox" name={{element}}>{{element}}
+            <input type="checkbox" name={{element}}>{{element}}
 
-        <script>
-            // document.getElementById("jdr").id = i;
+            <script>
+                // document.getElementById("jdr").id = i;
 
-            // i = i.concat("1");
-        </script>
+                // i = i.concat("1");
+            </script>
 
-        <br> {%endfor%}
-        <button type="submit">Envoyer</button>
-
-    </form>
+            <br> {%endfor%}
+            <button type="submit">Envoyer</button>
+        </form>
+    </div>
     <!-- <script>
         function test() {
             test = document.getElementsByClassName("LQ" + element).checked;
