@@ -17,6 +17,12 @@
             }
         }
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+    <script>
+        var converter = new showdown.Converter();
+    </script>
+
     <title>Ajout</title>
 </head>
 
@@ -40,7 +46,7 @@
                         });
                     }
                     function supprimerBouton(id) {
-                        for (let i = 0; i < 2; i++){
+                        for (let i = 0; i < 3; i++){
                             fetch('/supprimer_bouton', {
                                 method: 'DELETE',
                                 body: JSON.stringify({'id': id}),
@@ -50,8 +56,10 @@
                         }
                     }
                     function visualiser(){
-                        $(".visu").text($("#question").val());
+                        let textQuestion = converter.makeHtml($("#question").val())
+                        $(".visu").html(textQuestion);
                         MathJax.typeset()
+
                     }
                 </script>           
                 <p><input class="button" type="submit" value="Ajouter" /></p>
