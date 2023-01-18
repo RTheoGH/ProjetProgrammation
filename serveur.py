@@ -21,6 +21,14 @@ class Question(db.Model):
     def __constructeur__(u):
         return 'Question %r'% u.idQ
 
+class Etiquette(db.Model):
+    idE = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(100))
+
+class Associe(db.Model):
+    RidE = db.Column(db.Integer, db.ForeingKey(Etiquette.idE),nullable=False,primary_key=True)
+    RidQCM = db.Column(db.Integer, db.ForeingKey(Question.idQ),nullable=False,primary_key=True)
+
 class Reponse(db.Model):
     idR = db.Column(db.Integer,primary_key=True)
     reponse = db.Column(db.String(200), nullable=False)
@@ -30,11 +38,11 @@ class Reponse(db.Model):
         return 'Reponse %r'% u.idR
 
 class QCM(db.Model):
-    idE = db.Column(db.Integer,primary_key=True)
+    idQCM = db.Column(db.Integer,primary_key=True)
     Nom = db.Column(db.String(200), nullable = False)
 
 class Contient(db.Model):
-    RidE = db.Column(db.Integer, db.ForeignKey(QCM.idE),nullable=False,primary_key=True)
+    RidQCM = db.Column(db.Integer, db.ForeignKey(QCM.idQCM),nullable=False,primary_key=True)
     RidQ = db.Column(db.Integer,db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
 
 with app.app_context():
@@ -134,16 +142,20 @@ def Mesqcm():
 @app.route("/generate",methods = ['POST'])
 def generate():
     print(request.form.items)
-    checked_checkboxes = []                             #Initialisation liste pour stocker les questions cochées
+    checked_checkboxes = [] 
+    reponse_checkboxes = []                            #Initialisation liste pour stocker les questions cochées
     for key, value in request.form.items():
         if value == 'on':
-            # checked_checkboxes.append(key)            #Récupération enoncé de la question correspondant à l'id reçu
-            EL = db.session.query(Question.enonce).filter(Question.idQ == key).first()
-            checked_checkboxes.append(EL[0])            #Ajout de l'enoncé à la liste des questions cochées
+            # checked_checkboxes.append(key)
+            # Récupération de l'enoncé de la question correspondant à l'id reçu
+            EL = db.session.query(Question).filter(Question.idQ == key).first()
+            # Ajout de l'enoncé à la liste des questions cochées
+            checked_checkboxes.append(EL)
             ListeReponse = db.session.query(Reponse.reponse).filter(Reponse.idQ==key).all()
             reponse_checkboxes.append(ListeReponse)
-    return render_template("Affichage.html",reponse = ListeReponse, question=checked_checkboxes)
-            #Rendu template Affichage.html, variable question contenant la liste des questions cochées
+    return render_template("affichage.html", listereponse = ListeReponse, listequestion=checked_checkboxes)
+            # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
