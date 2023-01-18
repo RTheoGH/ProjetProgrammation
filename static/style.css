@@ -107,9 +107,10 @@ footer {
     position: absolute;
     bottom: 0;
     width: 100vw;
-    background-color: black;
+    background-color: #333;
     color: white;
     text-align: center;
+    font: menu;
 }
 
 .nav-list{
@@ -118,6 +119,7 @@ footer {
     padding: 0;
     overflow:hidden;
     background-color: #333;
+    font: menu;
 }
 
 .nav-list li {
@@ -138,6 +140,11 @@ footer {
 
 .active{
     background-color: darkred;
+}
+
+.delete{
+    width: 1.5vw;
+    height: 1.5vw;
 }
 
 [type="checkbox"].newReponse:not(:checked),
@@ -216,6 +223,5 @@ footer {
 
 .affQCM{
     background-color: wheat;
-    width: 5em;
-
+    width: 30vw;
 }

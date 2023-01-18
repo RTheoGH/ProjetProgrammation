@@ -133,7 +133,7 @@ def generate():
             # checked_checkboxes.append(key)            #Récupération enoncé de la question correspondant à l'id reçu
             EL = db.session.query(Question.enonce).filter(Question.idQ == key).first() 
             checked_checkboxes.append(EL[0])            #Ajout enoncé à la liste des questions cochées
-    return render_template("affichage.html", question=checked_checkboxes)
+    return render_template("Affichage.html", question=checked_checkboxes)
     #Rendu template affichage.html, variable question contenant liste des questions cochées
 
 if __name__ == '__main__':
