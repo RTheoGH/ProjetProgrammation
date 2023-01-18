@@ -153,7 +153,7 @@ def generate():
             checked_checkboxes.append(EL)
             ListeReponse = db.session.query(Reponse.reponse).filter(Reponse.idQ==key).all()
             reponse_checkboxes.append(ListeReponse)
-    return render_template("affichage.html", listereponse = ListeReponse, listequestion=checked_checkboxes)
+    return render_template("Affichage.html", listereponse = ListeReponse, listequestion=checked_checkboxes)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
     
 

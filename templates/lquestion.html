@@ -27,6 +27,7 @@
                     <td class="left" id="{{questions.idQ}}">{{questions.enonce}}</td>
                     <script>
                         $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
+                        hljs.highlightAll();
                     </script>
                     <td>
                         <a href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
