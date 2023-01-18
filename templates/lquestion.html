@@ -29,7 +29,11 @@
                         $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
                         hljs.highlightAll();
                     </script>
-                    <td>j'attend le code d'antho</td>
+                    <td>                    
+                        {% for t in tag %}
+                            {{t}}
+                        {% endfor %}
+                    </td>
                     <td>
                         <a href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
                         <br>

@@ -52,6 +52,8 @@ with app.app_context():
     db.create_all()
 
 with app.app_context():
+    db.session.query(Etiquette).delete()
+    db.session.commit()
     etiquettes = [Etiquette(nom='Etiquette1'), Etiquette(nom='Etiquette2'), Etiquette(nom='Etiquette3')]
     db.session.bulk_save_objects(etiquettes)
     db.session.commit()
@@ -95,8 +97,14 @@ def ajout():
             selected_tags = request.form.getlist('tag')
             for tag_id in selected_tags:
                 tag = db.session.query(Etiquette).filter(Etiquette.idE == tag_id).first()
-                new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ)               
-            db.session.commit()                         #Envoie des changements
+                print(tag_id,new_question.idQ)
+                new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ)
+                print(new_assos.RidE,new_assos.RidQ)
+                # db.session.add(new_assos)
+                # print(new_assos,"add ?")
+                # db.session.commit()
+                # print("encore vivant")
+            # db.session.commit()                         #Envoie des changements
             return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
         except:
             return 'Erreur création de la question'
@@ -131,7 +139,9 @@ def supprimer_bouton():
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
     questions = db.session.query(Question).all()        #Récupération questions de la base de données
-    return render_template("lquestion.html",lquestion=questions,page="Consulter")
+    tag = db.session.query(Etiquette).filter(Etiquette.idE == Associe.RidE).all()
+    # print(db.session.query(Associe).all())
+    return render_template("lquestion.html",lquestion=questions,page="Consulter",tag=tag)
     #Rendu template lquestion.html, questions récupérées, parametre nav
 
 @app.route("/modifier/<int:id>",methods=['POST','GET'])
