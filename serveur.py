@@ -123,12 +123,17 @@ def Mesqcm():
 def generate():
     print(request.form.items)
     checked_checkboxes = []
+    reponse_checkboxes = []
     for key, value in request.form.items():
         if value == 'on':
             # checked_checkboxes.append(key)
             EL = db.session.query(Question.enonce).filter(Question.idQ == key).first()
             checked_checkboxes.append(EL[0])
-    return render_template("affichage.html", question=checked_checkboxes)
+            ListeReponse = db.session.query(Reponse.reponse).filter(Reponse.idQ==key).all()
+            reponse_checkboxes.append(ListeReponse)
+            print(ListeReponse)
+
+    return render_template("affichage.html",reponse = ListeReponse, question=checked_checkboxes)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
