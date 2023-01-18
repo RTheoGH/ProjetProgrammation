@@ -16,6 +16,14 @@ class Question(db.Model):
     def __constructeur__(u):
         return 'Question %r'% u.idQ
 
+class Etiquette(db.Model):
+    idE = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(100))
+
+class Associe(db.Model):
+    RidE = db.Column(db.Integer, db.ForeingKey(Etiquette.idE),nullable=False,primary_key=True)
+    RidQCM = db.Column(db.Integer, db.ForeingKey(Question.idQ),nullable=False,primary_key=True)
+
 class Reponse(db.Model):
     idR = db.Column(db.Integer,primary_key=True)
     reponse = db.Column(db.String(200), nullable=False)
@@ -25,11 +33,11 @@ class Reponse(db.Model):
         return 'Reponse %r'% u.idR
 
 class QCM(db.Model):
-    idE = db.Column(db.Integer,primary_key=True)
+    idQCM = db.Column(db.Integer,primary_key=True)
     Nom = db.Column(db.String(200), nullable = False)
 
 class Contient(db.Model):
-    RidE = db.Column(db.Integer, db.ForeignKey(QCM.idE),nullable=False,primary_key=True)
+    RidQCM = db.Column(db.Integer, db.ForeignKey(QCM.idQCM),nullable=False,primary_key=True)
     RidQ = db.Column(db.Integer,db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
 
 
