@@ -74,14 +74,14 @@ def ajout():
     if request.method == 'POST':
         question = request.form['question']             #Recup question du formulaire
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
-        etiquette = request.form['etiquette']           
-        new_assos = Associe(RidE=etiquette,RidQ=new_question.idQ)
-        
         recupForm = request.form.getlist("reponse")
         #for i in range(len(recupForm)):
-    
         try:
             db.session.add(new_question)                #Ajout question -> base de donnée
+            selected_tags = request.form.getlist('tag')
+            for tag_id in selected_tags:
+                tag = db.session.query(Etiquette).filter(Etiquette.idE == tag_id).first()
+                new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ)               
             db.session.commit()                         #Envoie des changements
             return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
         except:
