@@ -22,16 +22,19 @@
                 <div class="nouveauBouton">
                     <button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button>
                     <script>
-                        function demandePlusReponse() {
+                        function demandePlusReponse() { // Fonction JavaScript pour envoyer une requête GET à la route /plusDeReponse
+                            // Utilisation de l'API Fetch pour envoyer une requête GET à /plusDeReponse
                             fetch('/plusDeReponse')
                                 .then(response => response.text())
                                 .then(data => {
+                                    // Ajout du texte de la réponse à un élément ayant la classe 'nouveauBouton'
                                     $(".nouveauBouton").append(data);
                                 });
                         }
 
                         function supprimerBouton(id) {
                             for (let i = 0; i < 3; i++) {
+                                // Envoi d'une requête DELETE à la route '/supprimer_bouton' avec un objet JSON contenant l'id en paramètre
                                 fetch('/supprimer_bouton', {
                                     method: 'DELETE',
                                     body: JSON.stringify({
@@ -41,12 +44,17 @@
                                         'Content-Type': 'application/json'
                                     }
                                 });
+                                // Suppression de l'élément HTML ayant pour id l'id passé en paramètre
                                 $("#" + id).remove();
                             }
                         }
 
                         function visualiserQ() {
+                            // Déclaration de la variable textQuestion qui contient le résultat 
+                            // de la conversion de la valeur de l'élément avec l'id 'question' en HTML
                             let textQuestion = converter.makeHtml($("#question").val());
+                            // Utilisation de jQuery pour remplacer le contenu HTML de l'élément ayant 
+                            // la classe 'visu' avec la valeur de textQuestion
                             $(".visu").html(textQuestion);
                             MathJax.typeset()
                         }
