@@ -1,9 +1,9 @@
 <nav>
     <ul class="nav-list">
         <li {% if page=="Menu" %} class="active" {% endif %}><a href="/">Menu</a></li>
-        <li {% if page=="Créer" %} class="active" {% endif %}><a href="/creerQuestion">Créer Question</a></li>
+        {% if session['nomU'] %}<li {% if page=="Créer" %} class="active" {% endif %}><a href="/creerQuestion">Créer Question</a></li>{% endif %}
         <li {% if page=="Consulter" %} class="active" {% endif %}><a href="/lquestion">Consulter Questions</a></li>
-        <li {% if page=="CréerQcm" %} class="active" {% endif %}><a href="/QCM">Créer QCM</a></li>
+        {% if session['nomU'] %}<li {% if page=="CréerQcm" %} class="active" {% endif %}><a href="/QCM">Créer QCM</a></li>{% endif %}
         <li {% if page=="ConsulterQcm" %} class="active" {% endif %}><a href="/MesQCM">Consulter QCM</a></li>
     </ul>
 </nav>

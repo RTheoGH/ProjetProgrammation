@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
 
 db = SQLAlchemy()
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  #Pour la session sinon ça marche pas
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db'
 db.init_app(app)
 nombreIdQuestion=0
@@ -19,6 +20,7 @@ class Utilisateur(db.Model):
 class Question(db.Model):
     idQ = db.Column(db.Integer, primary_key=True)
     enonce = db.Column(db.String(300), nullable=False)
+    # idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)
 
     def __constructeur__(u):
         return 'Question %r'% u.idQ
@@ -64,9 +66,16 @@ def index():
 @app.route("/connexion",methods=['POST','GET'])
 def connexion():
     if request.method == 'POST':
-        return render_template("index.html",page="Menu")
+        if request.form['nomU'] == request.form['passU']:
+            session['nomU'] = request.form['nomU']
+        return redirect(url_for("index"))
     else:                       
         return render_template("connexion.html")
+
+@app.route("/deconnexion")
+def deconnexion():
+    session.pop('nomU',None)
+    return redirect(url_for("index"))
 
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():

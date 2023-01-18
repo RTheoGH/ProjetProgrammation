@@ -15,8 +15,12 @@
     {%include 'partials/_nav.html'%}
     <div class="menu">
         <h1>Bienvenue<br/>sur<br/>Infomaker !</h1>
-
+        {% if session['nomU'] %}
+        <p>Bonjour, {{session['nomU']}}</p>
+        <a class="button" name="deconnexion" href="/deconnexion">Deconnexion</a>
+        {% else %}
         <a class="button" name="connexion" href="/connexion">Connexion</a>
+        {% endif %}
         <!-- <a class="button" name="ajout" href="/ajout">Ajout d'une question</a>
         <a class="button" name="lquestion" href="/lquestion">Liste de questions</a> -->
         
