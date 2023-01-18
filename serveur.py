@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.datastructures import MultiDict, ImmutableMultiDict
+
 
 db = SQLAlchemy()
 app = Flask(__name__)
@@ -32,6 +34,7 @@ class Associe(db.Model):
 class Reponse(db.Model):
     idR = db.Column(db.Integer,primary_key=True)
     reponse = db.Column(db.String(200), nullable=False)
+    correction = db.Column(db.Boolean, nullable=False)
     idQ = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False)
 
     def __constructeur__(u):
@@ -66,6 +69,9 @@ def ajout():
         question = request.form['question']             #Recup question du formulaire
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
 
+        recupForm = request.form.getlist("reponse")
+        #for i in range(len(recupForm)):
+    
         try:
             db.session.add(new_question)                #Ajout question -> base de donnée
             db.session.commit()                         #Envoie des changements
