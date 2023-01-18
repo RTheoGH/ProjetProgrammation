@@ -19,7 +19,7 @@
             <table>
                 <tr class="top">
                     <td>Question</td>
-                    <!-- <td>Réponse</td> -->
+                    <td>Tag</td>
                     <td>Modifier/Supprimer</td>
                 </tr>
                 {% for questions in lquestion %}
@@ -27,7 +27,9 @@
                     <td class="left" id="{{questions.idQ}}">{{questions.enonce}}</td>
                     <script>
                         $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
+                        hljs.highlightAll();
                     </script>
+                    <td>j'attend le code d'antho</td>
                     <td>
                         <a href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
                         <br>

@@ -29,7 +29,7 @@ class Etiquette(db.Model):
 
 class Associe(db.Model):
     RidE = db.Column(db.Integer, db.ForeignKey(Etiquette.idE),nullable=False,primary_key=True)
-    RidQCM = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
+    RidQ = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
 
 class Reponse(db.Model):
     idR = db.Column(db.Integer,primary_key=True)
@@ -51,6 +51,12 @@ class Contient(db.Model):
 with app.app_context():
     db.create_all()
 
+with app.app_context():
+    etiquettes = [Etiquette(nom='Etiquette1'), Etiquette(nom='Etiquette2'), Etiquette(nom='Etiquette3')]
+    db.session.bulk_save_objects(etiquettes)
+    db.session.commit()
+
+
 @app.route("/")
 def index():
     return render_template("index.html",page="Menu")    #Rendu template index.html et parametre nav 
@@ -68,6 +74,8 @@ def ajout():
     if request.method == 'POST':
         question = request.form['question']             #Recup question du formulaire
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
+        etiquette = request.form['etiquette']           
+        new_assos = Associe(RidE=etiquette,RidQ=new_question.idQ)
         
         recupForm = request.form.getlist("reponse")
 
@@ -97,6 +105,11 @@ def ajout():
     else:                                            
         return render_template("ajoutQuestion.html",page="Créer")
     #Rendu template ajoutQuestion.html et parametre nav 
+
+@app.route("/creerQuestion",methods=['GET','POST'])
+def creerQ():
+    etiquettes = Etiquette.query.all()
+    return render_template('ajoutQuestion.html', etiquettes=etiquettes, page="Créer")
 
 @app.route("/plusDeReponse",methods = ['GET'])
 def plusDeReponse():
@@ -128,7 +141,6 @@ def modifier(id):
     questionModif = Question.query.get_or_404(id)       #Recup question avec id correspondant, erreur sinon
     if request.method == 'POST':
         questionModif.enonce = request.form['question'] #Modification de l'enoncé de la question
-        
         try:
             db.session.commit()                         #Envoi des modifications à la base de données
             return redirect(url_for('lquestion'))       #Redirection vers la page de liste des questions
@@ -176,7 +188,7 @@ def generate():
             checked_checkboxes.append(EL)
             ListeReponse = db.session.query(Reponse.reponse).filter(Reponse.idQ==key).all()
             reponse_checkboxes.append(ListeReponse)
-    return render_template("affichage.html", listereponse = ListeReponse, listequestion=checked_checkboxes)
+    return render_template("Affichage.html", listereponse = ListeReponse, listequestion=checked_checkboxes)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
     
 

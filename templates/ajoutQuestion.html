@@ -19,6 +19,7 @@
                 <h1>Ecrivez une question</h1>
                 <p>Question : <br/><textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiserQ()"></textarea></p>
                 <hr/>
+                
                 <div class="nouveauBouton">
                     <script>
                         function demandePlusReponse() { // Fonction JavaScript pour envoyer une requête GET à la route /plusDeReponse
@@ -55,16 +56,20 @@
                             // Utilisation de jQuery pour remplacer le contenu HTML de l'élément ayant 
                             // la classe 'visu' avec la valeur de textQuestion
                             $(".visu").html(textQuestion);
-                            MathJax.typeset()
+                            MathJax.typeset();
+                            hljs.highlightAll();
                         }
                     </script>
+                    {% for etiquette in etiquettes %}
+                        <input type="checkbox" name="{{ etiquette.nom }}" value="{{ etiquette.idE }}"> {{ etiquette.nom }}<br>
+                    {% endfor %}
                 </div>
                 <p><button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button></p>
                 <p><input class="button" type="submit" value="Ajouter la question" /></p>
             </form>
         </div>
         <div class="visu">
-            Cliquez sur visualiser pour voir la visualisation de votre visuel
+            <h1 class="middle">Visualisation</h1>
         </div>
     </div>
     {%include 'partials/footer.html'%}
