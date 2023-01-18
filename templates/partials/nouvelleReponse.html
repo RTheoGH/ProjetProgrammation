@@ -2,4 +2,4 @@
 <label for="{{IdCheck}}" aria-describedby="label">
 <span class="Checked"></span></label>
 <textarea id="{{ IdBouton }}" name="reponse" rows="2" cols="40" placeholder="Réponse"></textarea></p>
-<input type="button" onclick="supprimerBouton({{ IdBouton }})" onclick="supprimerBouton({{ IdCheck }})" value="Supprimer" id="{{ IdBouton }}">
+<input class="delete" type="image" src="/static/delete.png" onclick="supprimerBouton({{ IdBouton }})" onclick="supprimerBouton({{ IdCheck }})" id="{{ IdBouton }}">
