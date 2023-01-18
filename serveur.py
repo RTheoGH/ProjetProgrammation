@@ -70,10 +70,26 @@ def ajout():
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
         
         recupForm = request.form.getlist("reponse")
-        #for i in range(len(recupForm)):
+
+        
     
         try:
             db.session.add(new_question)                #Ajout question -> base de donnée
+            db.session.commit()                         #Envoie des changements
+            listeOn = []
+            for key,value in request.form.items():
+                if value == 'on':
+                    listeOn.append(key)
+            print(listeOn)
+            idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
+            print("id question = ",idQuestion[0])
+            for rep in recupForm:
+                if recupForm.index(rep)-1 in listeOn:
+                    db.session.add(Reponse(reponse= rep,correction = True,idQ =idQuestion[0]))
+                # else:
+                #     db.session.add(Reponse(reponse= rep,correction = False,idQ =idQuestion[0]))
+            print("test final = ",db.session.query(Reponse).all())
+
             db.session.commit()                         #Envoie des changements
             return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
         except:
