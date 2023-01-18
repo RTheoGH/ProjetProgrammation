@@ -222,5 +222,7 @@ footer {
 }
 
 .affQCM{
+    height:60vh;
     background-color: whitesmoke;
+    overflow-y:scroll;
 }
