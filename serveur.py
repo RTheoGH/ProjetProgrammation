@@ -23,16 +23,23 @@ class Reponse(db.Model):
     def __constructeur__(u):
         return 'Reponse %r'% u.idR
 
+class QCM(db.Model):
+    idE = db.Column(db.Integer,primary_key=True)
+    Nom = db.Column(db.String(200), nullable = False)
+
+class Contient(db.Model):
+    RidE = db.Column(db.Integer, db.ForeignKey(QCM.idE),nullable=False,primary_key=True)
+    RidQ = db.Column(db.Integer,db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
+
+
 with app.app_context():
     db.create_all()
     # db.session.add(Question(enonce="test"))
 
-questions=[]
-quest=["faze","kirito","guts"]
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html",page="Menu")
 
 # @app.route("/accueil",methods=['GET'])
 # def accueil():
@@ -52,7 +59,7 @@ def ajout():
         except:
             return 'Erreur création de la question'
     else:
-        return render_template("ajoutQuestion.html")
+        return render_template("ajoutQuestion.html",page="Créer")
 
 @app.route("/plusDeReponse",methods = ['GET'])
 def plusDeReponse():
@@ -75,7 +82,7 @@ def supprimer_bouton():
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
     questions = db.session.query(Question).all()
-    return render_template("lquestion.html",lquestion=questions)
+    return render_template("lquestion.html",lquestion=questions,page="Consulter")
 
 @app.route("/modifier/<int:id>",methods=['POST','GET'])
 def modifier(id):
@@ -105,18 +112,22 @@ def supprimer(id):
 
 @app.route("/QCM")
 def qcm():
-    return render_template("QCM.html",ListesQuestions=quest)
+    LQ = db.session.query(Question).all()
+    print(LQ)
+    return render_template("QCM.html",ListesQuestions=LQ,page="CréerQcm")
 @app.route("/MesQCM")
 def Mesqcm():
-    return render_template("/MesQCM.html")
+    return render_template("/MesQCM.html",page="ConsulterQcm")
 
-@app.route("/generate")
+@app.route("/generate",methods = ['POST'])
 def generate():
-    print(request.args.items)
+    print(request.form.items)
     checked_checkboxes = []
-    for key, value in request.args.items():
+    for key, value in request.form.items():
         if value == 'on':
-            checked_checkboxes.append(key)
+            # checked_checkboxes.append(key)
+            EL = db.session.query(Question.enonce).filter(Question.idQ == key).first()
+            checked_checkboxes.append(EL[0])
     return render_template("affichage.html", question=checked_checkboxes)
 
 if __name__ == '__main__':

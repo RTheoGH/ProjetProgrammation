@@ -7,24 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/style.css" rel="stylesheet">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>
-        MathJax = {
-            tex: {
-                inlineMath: [['$','$']]
-            }
-        }
-    </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
-    <script>
-        var converter = new showdown.Converter();
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@8.8.0/dist/mermaid.min.js"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
+    {%include 'partials/Biblio.html'%}
     <title>Ajout</title>
 </head>
 
@@ -35,7 +18,7 @@
             <form action="/ajout" method="POST">
                 <h1>Ecrivez une question</h1>
                 <p>Question : <br/><textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiserQ()"></textarea></p>
-                <p>------------------------------------------------------</p>
+                <hr/>
                 <div class="nouveauBouton">
                     <button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button>
                     <script>
@@ -43,26 +26,32 @@
                             fetch('/plusDeReponse')
                                 .then(response => response.text())
                                 .then(data => {
-                                $(".nouveauBouton").append(data);
-                            });
+                                    $(".nouveauBouton").append(data);
+                                });
                         }
+
                         function supprimerBouton(id) {
-                            for (let i = 0; i < 3; i++){
+                            for (let i = 0; i < 3; i++) {
                                 fetch('/supprimer_bouton', {
                                     method: 'DELETE',
-                                    body: JSON.stringify({'id': id}),
-                                    headers: { 'Content-Type': 'application/json' }
+                                    body: JSON.stringify({
+                                        'id': id
+                                    }),
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
                                 });
-                                $("#"+id).remove();
+                                $("#" + id).remove();
                             }
                         }
-                        function visualiserQ(){
+
+                        function visualiserQ() {
                             let textQuestion = converter.makeHtml($("#question").val());
                             $(".visu").html(textQuestion);
                             MathJax.typeset()
                         }
-                    </script> 
-                </div>          
+                    </script>
+                </div>
                 <p><input class="button" type="submit" value="Ajouter la question" /></p>
             </form>
         </div>
@@ -70,4 +59,5 @@
             Cliquez sur visualiser pour voir la visualisation de votre visuel
         </div>
     </div>
+    {%include 'partials/footer.html'%}
 </body>
