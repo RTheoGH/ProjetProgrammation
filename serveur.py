@@ -130,11 +130,15 @@ def generate():
     checked_checkboxes = []                             #Initialisation liste pour stocker les questions cochées
     for key, value in request.form.items():
         if value == 'on':
-            # checked_checkboxes.append(key)            #Récupération enoncé de la question correspondant à l'id reçu
-            EL = db.session.query(Question.enonce).filter(Question.idQ == key).first() 
-            checked_checkboxes.append(EL[0])            #Ajout enoncé à la liste des questions cochées
-    return render_template("Affichage.html", question=checked_checkboxes)
-    #Rendu template affichage.html, variable question contenant liste des questions cochées
+            # checked_checkboxes.append(key)
+            # Récupération de l'enoncé de la question correspondant à l'id reçu
+            EL = db.session.query(Question.enonce).filter(Question.idQ == key).first()
+            # Ajout de l'enoncé à la liste des questions cochées
+            checked_checkboxes.append(EL[0])
+            ListeReponse = db.session.query(Reponse.reponse).filter(Reponse.idQ==key).all()
+            reponse_checkboxes.append(ListeReponse)
+    return render_template("Affichage.html",reponse = ListeReponse, question=checked_checkboxes)
+            # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
