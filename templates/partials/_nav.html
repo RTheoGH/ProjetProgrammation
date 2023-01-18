@@ -1,15 +1,9 @@
-<nav class="navbar_background">
+<nav>
     <ul class="nav-list">
-        <li>
-            <a href="/">Menu</a>
-            <a href="/ajout">Créer</a>
-            <a href="/lquestion">Consulter</a>
-            <a href="/QCM">Crée ton examen</a>
-            <a href="/MesQCM">Consulte tes examen</a>
-        </li>
+        <li {% if page=="Menu" %} class="active" {% endif %}><a href="/">Menu</a></li>
+        <li {% if page=="Créer" %} class="active" {% endif %}><a href="/ajout">Créer Question</a></li>
+        <li {% if page=="Consulter" %} class="active" {% endif %}><a href="/lquestion">Consulter Questions</a></li>
+        <li {% if page=="CréerQcm" %} class="active" {% endif %}><a href="/QCM">Créer QCM</a></li>
+        <li {% if page=="ConsulterQcm" %} class="active" {% endif %}><a href="/MesQCM">Consulter QCM</a></li>
     </ul>
-    <!-- <div class="rightNav">
-        <input type="text" name="Search" id="Search">
-        <button class="btn btn-sm">Chercher</button>
-    </div> -->
 </nav>

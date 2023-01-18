@@ -7,37 +7,33 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/style.css" rel="stylesheet">
+    {%include 'partials/Biblio.html'%}
     <title>QCM</title>
 </head>
 
 <body>
-    <form action="/generate" method="GET">
-        {%include 'partials/_nav.html'%}
-        <h1>Créer ton examen</h1>
-        <!-- <script>
-            i = "1";
-        </script> -->
-        {%for element in ListesQuestions%}
-
-        <input type="checkbox" name={{element}}>{{element}}
-
-        <script>
-            // document.getElementById("jdr").id = i;
-
-            // i = i.concat("1");
-        </script>
-
-        <br> {%endfor%}
-        <button type="submit">Envoyer</button>
-
-    </form>
-    <!-- <script>
-        function test() {
-            test = document.getElementsByClassName("LQ" + element).checked;
-            console.log(test);
-
-        }
-    </script> -->
+    {%include 'partials/_nav.html'%}
+    <div class="menu">
+        <form action="/generate" method="POST">
+            <!--ce form permet d'afficher la liste des question -->
+            <h1>Créer ton examen</h1>
+            <div class="listeQ">
+                <table>
+                    <tr class="top"><td>Sélectionner</td><td>Questions</td></tr>
+                    {%for element in ListesQuestions%}
+                    <tr>
+                        <td><input type="checkbox" name="{{element.idQ}}"></td><td id="{{element.idQ}}">{{element.enonce}}</td>
+                        <script>
+                            $('#{{element.idQ}}').html(converter.makeHtml($('#{{element.idQ}}').text()));
+                        </script>
+                    </tr>
+                    {%endfor%}
+                </table>
+            </div>
+            <p><input class="button" type="submit" value="Confirmer"/></p>
+        </form>
+    </div>
+    {%include 'partials/footer.html'%}
 </body>
 
 </html>

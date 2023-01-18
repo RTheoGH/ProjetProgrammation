@@ -7,27 +7,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/style.css" rel="stylesheet">
+    {%include 'partials/Biblio.html'%}
     <title>Bienvenue !</title>
 </head>
 
 <body>
     {%include 'partials/_nav.html'%}
-    <main>
-        <div class="menu">
-            <h1>Bienvenue<br/>sur<br/>Infomaker !</h1>
-            
-            <!-- <a class="button" name="connexion" href="/connexion">Connexion</a> -->
-            <!-- <a class="button" name="ajout" href="/ajout">Ajout d'une question</a>
-            <a class="button" name="lquestion" href="/lquestion">Liste de questions</a> -->
-            <!-- <form action="/accueil" method="POST">
-                <p> Nom d'utilisateur : </p><input type="text" name="nomU" id="nomU"/>
-                <p> Mot de passe : </p><input type="password" name="passU" id="passU"/>
-                <p><input class="button" type="submit" value="Connexion" /></p>
-            </form> -->
-        </div>
-    </main>
-    <footer>
-        <p>&copy; 2023 | THEO REYNIER | ANTHONY HOMMAIS | CORENTIN FAY | SONIA KECHAOU</p>
-    </footer>
+    <div class="menu">
+        <h1>Bienvenue<br/>sur<br/>Infomaker !</h1>
+
+        <!-- <a class="button" name="connexion" href="/connexion">Connexion</a> -->
+        <!-- <a class="button" name="ajout" href="/ajout">Ajout d'une question</a>
+        <a class="button" name="lquestion" href="/lquestion">Liste de questions</a> -->
+        <!-- <form action="/accueil" method="POST">
+            <p> Nom d'utilisateur : </p><input type="text" name="nomU" id="nomU"/>
+            <p> Mot de passe : </p><input type="password" name="passU" id="passU"/>
+            <p><input class="button" type="submit" value="Connexion" /></p>
+        </form> -->
+    </div>
+    {%include 'partials/footer.html'%}
 </body>
+
 </html>
