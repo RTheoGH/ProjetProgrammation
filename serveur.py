@@ -61,6 +61,7 @@ def connexion():
 
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():
+    print(request.form.items)
     if request.method == 'POST':
         question = request.form['question']             #Recup question du formulaire
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
