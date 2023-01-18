@@ -9,6 +9,11 @@ nombreIdQuestion=0
 nombreIdCheck=0
 
 # Voir README pour le schèma de la base de données
+class Utilisateur(db.Model):
+    idU = db.Column(db.Integer, primary_key=True)
+    nomU = db.Column(db.String(20), nullable=False)
+    passU = db.Column(db.String(20), nullable=False)
+
 class Question(db.Model):
     idQ = db.Column(db.Integer, primary_key=True)
     enonce = db.Column(db.String(300), nullable=False)
@@ -47,10 +52,12 @@ with app.app_context():
 def index():
     return render_template("index.html",page="Menu")    #Rendu template index.html et parametre nav 
 
-# @app.route("/accueil",methods=['GET'])
-# def accueil():
-#     utiCO=db.session.query(Utilisateur)
-#     return render_template("accueil.html",accueil=utiCO)
+@app.route("/connexion",methods=['POST','GET'])
+def connexion():
+    if request.method == 'POST':
+        return render_template("index.html",page="Menu")
+    else:                       
+        return render_template("connexion.html")
 
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():
