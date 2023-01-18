@@ -37,7 +37,7 @@ with app.app_context():
 
 @app.route("/")
 def index():
-    return render_template("index.html",page="Menu") #Rendu template index.html et parametre nav 
+    return render_template("index.html",page="Menu")    #Rendu template index.html et parametre nav 
 
 # @app.route("/accueil",methods=['GET'])
 # def accueil():
@@ -47,13 +47,13 @@ def index():
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():
     if request.method == 'POST':
-        question = request.form['question']          #Recup question du formulaire
-        new_question = Question(enonce=question)     #Création nouvelle question avec enoncé correspondant
+        question = request.form['question']             #Recup question du formulaire
+        new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
 
         try:
-            db.session.add(new_question)             #Ajout question -> base de donnée
-            db.session.commit()                      #Envoie des changements
-            return redirect(url_for('lquestion'))    #Redirection vers la liste des questions
+            db.session.add(new_question)                #Ajout question -> base de donnée
+            db.session.commit()                         #Envoie des changements
+            return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
         except:
             return 'Erreur création de la question'
     else:                                            
@@ -62,9 +62,9 @@ def ajout():
 
 @app.route("/plusDeReponse",methods = ['GET'])
 def plusDeReponse():
-    global nombreIdQuestion,nombreIdCheck    #Déclaration variables globales nombreIdQuestion, nombreIdCheck
-    nombreIdQuestion+=1                      #Incrémentation de nombreIdQuestion et nombreIdCheck
-    nombreIdCheck+=1                         #de 1 (pour avoir des id différent pour chaque objet)
+    global nombreIdQuestion,nombreIdCheck               #Déclaration variables globales nombreIdQuestion, nombreIdCheck
+    nombreIdQuestion+=1                                 #Incrémentation de nombreIdQuestion et nombreIdCheck
+    nombreIdCheck+=1                                    #de 1 (pour avoir des id différent pour chaque objet)
     return render_template('partials/nouvelleReponse.html',IdBouton=nombreIdQuestion,IdCheck=nombreIdCheck)
     # Rendu template 'partials/nouvelleReponse.html' et passage des paramètres IdBouton et IdCheck
 
@@ -81,7 +81,7 @@ def supprimer_bouton():
 
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
-    questions = db.session.query(Question).all()   #Récupération questions de la base de données
+    questions = db.session.query(Question).all()        #Récupération questions de la base de données
     return render_template("lquestion.html",lquestion=questions,page="Consulter")
     #Rendu template lquestion.html, questions récupérées, parametre nav
 
@@ -127,12 +127,12 @@ def Mesqcm():
 @app.route("/generate",methods = ['POST'])
 def generate():
     print(request.form.items)
-    checked_checkboxes = []                        #Initialisation liste pour stocker les questions cochées
+    checked_checkboxes = []                             #Initialisation liste pour stocker les questions cochées
     for key, value in request.form.items():
         if value == 'on':
-            # checked_checkboxes.append(key)       #Récupération enoncé de la question correspondant à l'id reçu
+            # checked_checkboxes.append(key)            #Récupération enoncé de la question correspondant à l'id reçu
             EL = db.session.query(Question.enonce).filter(Question.idQ == key).first() 
-            checked_checkboxes.append(EL[0])       #Ajout enoncé à la liste des questions cochées
+            checked_checkboxes.append(EL[0])            #Ajout enoncé à la liste des questions cochées
     return render_template("affichage.html", question=checked_checkboxes)
     #Rendu template affichage.html, variable question contenant liste des questions cochées
 
