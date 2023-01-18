@@ -56,7 +56,8 @@
                             // Utilisation de jQuery pour remplacer le contenu HTML de l'élément ayant 
                             // la classe 'visu' avec la valeur de textQuestion
                             $(".visu").html(textQuestion);
-                            MathJax.typeset()
+                            MathJax.typeset();
+                            hljs.highlightAll();
                         }
                     </script>
                     {% for etiquette in etiquettes %}

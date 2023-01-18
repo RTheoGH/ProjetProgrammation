@@ -6,33 +6,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/style.css" rel="stylesheet"> {%include 'partials/Biblio.html'%}
-    <title>Document</title>
+    <title>Votre Examen</title>
 </head>
 
 <body>
     {%include 'partials/_nav.html'%}
     <div class="menu">
-        <script>
-            function afficherQCM() {
-                fetch('/generate')
-                    .then(response => response.text())
-                    .then(data => {
-                        $(".affQCM").append(data);
-                    });
-            }
-        </script>
+        <h1>Votre QCM</h1>
+        <hr/>
         <div class="affQCM">
-
-            {% for checkbox in question %}
-            <p>{{ checkbox }}</p>
+            {% for question in listequestion %}
+            <div id="{{question.idQ}}">{{question.enonce}}</div>
+                <script>
+                    $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
+                </script>
+                {% for reponse in listereponse %}
+                <div id="{{reponse.idR}}">{{reponse.reponse}}</div>
+                <script>
+                    $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
+                </script>
+                {% endfor %}
+                <hr/> <!-- on a découvert plus tard qu'on pouvait faire une ligne avec la balise <hr/> -->
+                <!-- <script> document.write(converter.makeHtml('---'))</script> -->
             {% endfor %} 
-            {% for checkbox in reponse %}
-            <p>{{ checkbox }}</p>
-            {% endfor %}
-
         </div>
-
-
     </div>
     {%include 'partials/footer.html'%}
 </body>

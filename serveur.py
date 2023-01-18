@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.datastructures import MultiDict, ImmutableMultiDict
+
 
 db = SQLAlchemy()
 app = Flask(__name__)
@@ -9,6 +11,11 @@ nombreIdQuestion=0
 nombreIdCheck=0
 
 # Voir README pour le schèma de la base de données
+class Utilisateur(db.Model):
+    idU = db.Column(db.Integer, primary_key=True)
+    nomU = db.Column(db.String(20), nullable=False)
+    passU = db.Column(db.String(20), nullable=False)
+
 class Question(db.Model):
     idQ = db.Column(db.Integer, primary_key=True)
     enonce = db.Column(db.String(300), nullable=False)
@@ -27,6 +34,7 @@ class Associe(db.Model):
 class Reponse(db.Model):
     idR = db.Column(db.Integer,primary_key=True)
     reponse = db.Column(db.String(200), nullable=False)
+    correction = db.Column(db.Boolean, nullable=False)
     idQ = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False)
 
     def __constructeur__(u):
@@ -53,19 +61,25 @@ with app.app_context():
 def index():
     return render_template("index.html",page="Menu")    #Rendu template index.html et parametre nav 
 
-# @app.route("/accueil",methods=['GET'])
-# def accueil():
-#     utiCO=db.session.query(Utilisateur)
-#     return render_template("accueil.html",accueil=utiCO)
+@app.route("/connexion",methods=['POST','GET'])
+def connexion():
+    if request.method == 'POST':
+        return render_template("index.html",page="Menu")
+    else:                       
+        return render_template("connexion.html")
 
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():
+    print(request.form.items)
     if request.method == 'POST':
         question = request.form['question']             #Recup question du formulaire
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
         etiquette = request.form['etiquette']           
         new_assos = Associe(RidE=etiquette,RidQ=new_question.idQ)
-
+        
+        recupForm = request.form.getlist("reponse")
+        #for i in range(len(recupForm)):
+    
         try:
             db.session.add(new_question)                #Ajout question -> base de donnée
             db.session.commit()                         #Envoie des changements
@@ -147,16 +161,20 @@ def Mesqcm():
 @app.route("/generate",methods = ['POST'])
 def generate():
     print(request.form.items)
-    checked_checkboxes = []                             #Initialisation liste pour stocker les questions cochées
+    checked_checkboxes = [] 
+    reponse_checkboxes = []                            #Initialisation liste pour stocker les questions cochées
     for key, value in request.form.items():
         if value == 'on':
-            # checked_checkboxes.append(key)            #Récupération enoncé de la question correspondant à l'id reçu
-            EL = db.session.query(Question.enonce).filter(Question.idQ == key).first()
-            checked_checkboxes.append(EL[0])            #Ajout de l'enoncé à la liste des questions cochées
+            # checked_checkboxes.append(key)
+            # Récupération de l'enoncé de la question correspondant à l'id reçu
+            EL = db.session.query(Question).filter(Question.idQ == key).first()
+            # Ajout de l'enoncé à la liste des questions cochées
+            checked_checkboxes.append(EL)
             ListeReponse = db.session.query(Reponse.reponse).filter(Reponse.idQ==key).all()
             reponse_checkboxes.append(ListeReponse)
-    return render_template("Affichage.html",reponse = ListeReponse, question=checked_checkboxes)
-            #Rendu template Affichage.html, variable question contenant la liste des questions cochées
+    return render_template("Affichage.html", listereponse = ListeReponse, listequestion=checked_checkboxes)
+            # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
