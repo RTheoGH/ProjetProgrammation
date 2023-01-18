@@ -164,7 +164,7 @@ def generate():
 
     return render_template("affichage.html",reponse = ListeReponse, question=checked_checkboxes)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
-    return render_template("affichage.html", question=checked_checkboxes)
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
