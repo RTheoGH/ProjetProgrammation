@@ -32,16 +32,12 @@ class Contient(db.Model):
     RidE = db.Column(db.Integer, db.ForeignKey(QCM.idE),nullable=False,primary_key=True)
     RidQ = db.Column(db.Integer,db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
 
-
 with app.app_context():
     db.create_all()
-    # db.session.add(Question(enonce="test"))
-
 
 @app.route("/")
 def index():
-        # Rendu du template 'index.html' et passage du paramètre page 
-    return render_template("index.html",page="Menu")
+    return render_template("index.html",page="Menu")    #Rendu template index.html et parametre nav 
 
 # @app.route("/accueil",methods=['GET'])
 # def accueil():
@@ -51,31 +47,26 @@ def index():
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():
     if request.method == 'POST':
-        # Récupération de la question depuis le formulaire
-        question = request.form['question']
-        # Création d'un nouvel objet Question avec l'enoncé de la question
-        new_question = Question(enonce=question)
+        question = request.form['question']             #Recup question du formulaire
+        new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
+
         try:
-            # Ajout de la nouvelle question à la session de la base de données
-            db.session.add(new_question)
-            # Envoi des changements à la base de données
-            db.session.commit()
-            # Redirection vers la page de liste des questions
-            return redirect(url_for('lquestion'))
-        except: # Renvoi d'un message d'erreur en cas d'échec de la création de la question
+            db.session.add(new_question)                #Ajout question -> base de donnée
+            db.session.commit()                         #Envoie des changements
+            return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
+        except:
             return 'Erreur création de la question'
-    else: # Si la méthode de la requête est 'GET', rendu du template 'ajoutQuestion.html' avec la page 'Créer'
+    else:                                            
         return render_template("ajoutQuestion.html",page="Créer")
+    #Rendu template ajoutQuestion.html et parametre nav 
 
 @app.route("/plusDeReponse",methods = ['GET'])
 def plusDeReponse():
-    # Déclaration des variables globales nombreIdQuestion, nombreIdCheck
-    global nombreIdQuestion,nombreIdCheck
-    # Incrémentation de nombreIdQuestion et nombreIdCheck de 1 ( pour avoir des id différent pour chaque objet )
-    nombreIdQuestion+=1
-    nombreIdCheck+=1
-    # Rendu du template 'partials/nouvelleReponse.html' et passage des paramètres IdBouton et IdCheck
+    global nombreIdQuestion,nombreIdCheck               #Déclaration variables globales nombreIdQuestion, nombreIdCheck
+    nombreIdQuestion+=1                                 #Incrémentation de nombreIdQuestion et nombreIdCheck
+    nombreIdCheck+=1                                    #de 1 (pour avoir des id différent pour chaque objet)
     return render_template('partials/nouvelleReponse.html',IdBouton=nombreIdQuestion,IdCheck=nombreIdCheck)
+    # Rendu template 'partials/nouvelleReponse.html' et passage des paramètres IdBouton et IdCheck
 
 @app.route("/supprimer_bouton", methods=['DELETE'])
 def supprimer_bouton():
@@ -90,67 +81,53 @@ def supprimer_bouton():
 
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
-    # Récupération de toutes les questions de la base de données
-    questions = db.session.query(Question).all()
-    # Rendu du template 'lquestion.html' avec les questions récupérées et la variable page = 'Consulter'
+    questions = db.session.query(Question).all()        #Récupération questions de la base de données
     return render_template("lquestion.html",lquestion=questions,page="Consulter")
+    #Rendu template lquestion.html, questions récupérées, parametre nav
 
 @app.route("/modifier/<int:id>",methods=['POST','GET'])
 def modifier(id):
-    # Récupération de la question correspondant à l'id spécifié, ou renvoi d'une erreur 404 si elle n'existe pas
-    questionModif = Question.query.get_or_404(id)
+    questionModif = Question.query.get_or_404(id)       #Recup question avec id correspondant, erreur sinon
     if request.method == 'POST':
-        # Modification de l'enoncé de la question
-        questionModif.enonce = request.form['question']
+        questionModif.enonce = request.form['question'] #Modification de l'enoncé de la question
+        
         try:
-            # Envoi des modifications à la base de données
-            db.session.commit()
-            # Redirection vers la page de liste des questions
-            return redirect(url_for('lquestion'))
+            db.session.commit()                         #Envoi des modifications à la base de données
+            return redirect(url_for('lquestion'))       #Redirection vers la page de liste des questions
         except:
-            # Renvoi d'un message d'erreur en cas d'échec de la modification
-            return 'Erreur de modification'
+            return 'Erreur de modification'             #Renvoi message erreur en cas d'échec de la modification
     else:
-        # Si la méthode de la requête est 'GET', rendu du template 'modifQuestion.html'
-        # avec les variables enonce et idQ
         return render_template("modifQuestion.html",enonce=questionModif.enonce,idQ=questionModif.idQ)
+        #Rendu template modifQuestion.html avec les variables enonce et idQ
 
 
 @app.route("/supprimer/<int:id>")
 def supprimer(id):
-    # Récupération de la question correspondant à l'id spécifié, 
-    # ou renvoi d'une erreur 404 si elle n'existe pas
-    questionSupp = Question.query.get_or_404(id)
-    print(questionSupp)
+    questionSupp = Question.query.get_or_404(id)        #Récupération question correspondant id, sinon erreur
+
     try:
-        # Suppression de la question de la session de la base de données
-        db.session.delete(questionSupp)
-        # Envoi des modifications à la base de données
-        db.session.commit()
-        # Redirection vers la page de liste des questions
-        return redirect(url_for('lquestion'))
+        db.session.delete(questionSupp)                 #Suppression question de la base de données
+        db.session.commit()                             #Envoi des modifications à la base de données
+        return redirect(url_for('lquestion'))           #Redirection vers la page de liste des questions
     except:
-        # Renvoi d'un message d'erreur en cas d'échec de la suppression de la question
         return 'Erreur lors de la suppression de la question'
+        #Renvoi message d'erreur si échec de la suppression de la question
 
 @app.route("/QCM")
 def qcm():
-    # Récupération de toutes les questions de la base de données
-    LQ = db.session.query(Question).all()
+    LQ = db.session.query(Question).all()               #Récupération questions de la base de données
     print(LQ)
-    # Rendu du template 'QCM.html' avec les variables ListesQuestions et la page = 'CréerQcm'
     return render_template("QCM.html",ListesQuestions=LQ,page="CréerQcm")
+    #Rendu template QCM.html, variables ListesQuestions,parametre nav
+
 @app.route("/MesQCM")
 def Mesqcm():
-    # Rendu du template '/MesQCM.html' avec la variable page = 'ConsulterQcm'
-    return render_template("/MesQCM.html",page="ConsulterQcm")
+    return render_template("/MesQCM.html",page="ConsulterQcm") #Rendu template MesQCM.html, parametre nav
 
 @app.route("/generate",methods = ['POST'])
 def generate():
     print(request.form.items)
-    # Initialisation d'une liste pour stocker les questions cochées
-    checked_checkboxes = []
-    reponse_checkboxes = []
+    checked_checkboxes = []                             #Initialisation liste pour stocker les questions cochées
     for key, value in request.form.items():
         if value == 'on':
             # checked_checkboxes.append(key)
@@ -164,7 +141,7 @@ def generate():
 
     return render_template("affichage.html",reponse = ListeReponse, question=checked_checkboxes)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
-    
+    return render_template("affichage.html", question=checked_checkboxes)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
