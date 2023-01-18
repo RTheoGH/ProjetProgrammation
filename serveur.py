@@ -21,8 +21,8 @@ class Etiquette(db.Model):
     nom = db.Column(db.String(100))
 
 class Associe(db.Model):
-    RidE = db.Column(db.Integer, db.ForeingKey(Etiquette.idE),nullable=False,primary_key=True)
-    RidQCM = db.Column(db.Integer, db.ForeingKey(Question.idQ),nullable=False,primary_key=True)
+    RidE = db.Column(db.Integer, db.ForeignKey(Etiquette.idE),nullable=False,primary_key=True)
+    RidQCM = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
 
 class Reponse(db.Model):
     idR = db.Column(db.Integer,primary_key=True)
