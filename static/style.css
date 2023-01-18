@@ -55,6 +55,10 @@ h1 {
     opacity: 0.9;
 }
 
+.middle{
+    text-align: center;
+}
+
 .left{
     text-align: left;
 }
@@ -68,9 +72,11 @@ h1 {
     border-radius: 10px;
     padding: 2em;
     width: 25em;
+    height: 30vw;
     background-color: whitesmoke;
     text-align: center;
     margin-right: 5em;
+    overflow-y: scroll;
 }
 
 .visu{
