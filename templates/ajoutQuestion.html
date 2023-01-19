@@ -55,9 +55,16 @@
                             hljs.highlightAll();
                         }
                     </script>
-                    {% for etiquette in etiquettes %}       <!-- Pour chaque etiquette parmi les etiquettes -->
-                        <input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}<br>
-                    {% endfor %}
+                    <div class="affichageEtiquette">
+                        <fieldset><legend>Étiquettes</legend>
+                        <ul>
+                            {% for etiquette in etiquettes %}       <!-- Pour chaque etiquette parmi les etiquettes -->
+                                <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
+                            {% endfor %}
+                        </ul>
+                        </fieldset>
+                    </div>
+                    <br/>
                 </div>             <!-- Appel de la fonction demandePlusReponse avec la methode onclick -->
                 <p><button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button></p>
                 <p><input class="button" type="submit" value="Ajouter la question" /></p>

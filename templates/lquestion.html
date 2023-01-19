@@ -30,9 +30,8 @@
                         hljs.highlightAll();
                     </script>
                     <td>
-                        <a class="button" href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
-                        <br>
-                        <a class="button" href="{{ url_for('supprimer', id=questions.idQ)}}">Supprimer</a>
+                        <p><a class="button" href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
+                        <a class="button" href="{{ url_for('supprimer', id=questions.idQ)}}">Supprimer</a></p>
                     </td>
                 </tr>
                 {% endfor %}

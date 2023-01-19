@@ -253,3 +253,27 @@ footer {
     background-color: whitesmoke;
     overflow-y:scroll;
 }
+
+.affichageEtiquette{
+    margin: 0;
+}
+
+.affichageEtiquette ul {
+    list-style-type: none;
+}
+
+.affichageEtiquette li{
+    float:left;
+    width: 33%;
+}
+
+fieldset{
+    background-color: wheat;
+    height: 5em;
+    overflow-y: scroll;
+}
+
+.flashes{
+    color: red;
+    font-weight: bold;
+}

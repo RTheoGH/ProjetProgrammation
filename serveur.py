@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
@@ -57,11 +57,10 @@ with app.app_context():
     #db.drop_all()
     db.create_all()
     
-
 with app.app_context():
     db.session.query(Etiquette).delete()
     db.session.commit()
-    etiquettes = [Etiquette(nom='Etiquette1'), Etiquette(nom='Etiquette2'), Etiquette(nom='Etiquette3')]
+    etiquettes = [Etiquette(nom='Calcul'), Etiquette(nom='Equation'), Etiquette(nom='Code')]
     db.session.bulk_save_objects(etiquettes)
     db.session.commit()
 
@@ -95,7 +94,12 @@ def listeUtilisateurs():                                #visualiser les utilisat
 @app.route("/connexion",methods=['POST','GET'])
 def connexion():
     if request.method == 'POST':
-        if request.form['nomU'] == request.form['passU']:
+        testLogin = db.session.query(Utilisateur).filter(Utilisateur.nomU == request.form['nomU']).first()
+        # if request.form['nomU'] == request.form['passU']:
+        if testLogin is None:
+            flash('Nom ou mot de passe invalide')
+            return redirect(url_for('connexion'))
+        if request.form['passU'] == testLogin.passU:
             session['nomU'] = request.form['nomU']
         return redirect(url_for("index"))
     else:                       
@@ -162,11 +166,11 @@ def creationEtiquettes():
             db.session.add(new_etiquette)
             db.session.commit()
             print(Etiquette.query.all(),new_etiquette.nom,new_etiquette.idE)
-            return redirect(url_for('creationEtiquettes'))
+            return redirect(url_for('index'))
         except:
             return 'Erreur : route /creationEtiquettes'
     else :
-        return render_template("creationEtiquettes.html")
+        return render_template("creationEtiquettes.html",page="CreationEtiquettes")
 
 @app.route("/creerQuestion",methods=['GET','POST'])
 def creerQ():
