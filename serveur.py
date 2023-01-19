@@ -239,7 +239,8 @@ def generate():
     print(db.session.query(Reponse.reponse).all())
     print(db.session.query(Reponse.idQ).all())
     checked_checkboxes = [] 
-    reponse_checkboxes = []                            #Initialisation liste pour stocker les questions cochées
+    reponse_checkboxes = []                         #Initialisation liste pour stocker les questions cochées
+    nomQcm =request.form['nomQcm']
     #insert sur qcm avec un idqcm : 
     #db.session.add(QCM(Nom = ))
     for key, value in request.form.items():
@@ -252,7 +253,7 @@ def generate():
             # Ajout de l'enoncé à la liste des questions cochées
             ListeReponse = db.session.query(Reponse).filter(Reponse.idQ==key).all()
             reponse_checkboxes.append(ListeReponse)
-    return render_template("Affichage.html", listereponse = reponse_checkboxes, listequestion=checked_checkboxes,len = len(checked_checkboxes))
+    return render_template("Affichage.html", listereponse = reponse_checkboxes, listequestion=checked_checkboxes,len = len(checked_checkboxes), nomQcm = nomQcm)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
     
 
