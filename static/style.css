@@ -253,3 +253,8 @@ footer {
     background-color: whitesmoke;
     overflow-y:scroll;
 }
+
+
+.affReponse{
+    border-style: ridge;
+}

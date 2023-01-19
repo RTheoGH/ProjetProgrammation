@@ -12,17 +12,16 @@
 <body>
     {%include 'partials/_nav.html'%}
     <div class="menu">
-        <h1>Votre QCM</h1>
+        <h1>{{nomQcm}}</h1>
         <hr/>
         <div class="affQCM">
             {% for i in range(len) %}
-            <div id="{{listequestion[i].idQ}}">{{listequestion[i].enonce}}</div>
+            <div id="Q{{listequestion[i].idQ}}">{{listequestion[i].enonce}}</div>
             <script>
-                console.log(listequestion[i].enonce)
-                $('#{{listequestion[i].idQ}}').html(converter.makeHtml($('#{{listequestion[i].idQ}}').text()));
+                $('#Q{{listequestion[i].idQ}}').html(converter.makeHtml($('#Q{{listequestion[i].idQ}}').text()));
             </script>
             {% for reponse in listereponse[i] %}
-            <div id="{{reponse.idR}}">{{reponse.reponse}}</div>
+            <div class="affReponse" id="{{reponse.idR}}">{{reponse.reponse}}</div>
             <script>
                 $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
             </script>
