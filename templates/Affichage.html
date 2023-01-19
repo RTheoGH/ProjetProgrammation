@@ -18,6 +18,7 @@
             {% for i in range(len) %}
             <div id="{{listequestion[i].idQ}}">{{listequestion[i].enonce}}</div>
             <script>
+                console.log(listequestion[i].enonce)
                 $('#{{listequestion[i].idQ}}').html(converter.makeHtml($('#{{listequestion[i].idQ}}').text()));
             </script>
             {% for reponse in listereponse[i] %}
