@@ -75,7 +75,7 @@ def creationCompte():
         new_utilisateur = Utilisateur(nomU=nomUtilisateur,passU=mdpUtilisateur)
         print(nomUtilisateur)
         print(mdpUtilisateur)
-        print(testUtilisateurs)
+        print(new_utilisateur)
         try:
             db.session.add(new_utilisateur)
             db.session.commit()
