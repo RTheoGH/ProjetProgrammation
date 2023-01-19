@@ -36,7 +36,7 @@ class Associe(db.Model):
     RidE = db.Column(db.Integer, db.ForeignKey(Etiquette.idE),nullable=False,primary_key=True)
     RidQ = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
 
-class Reponse(db.Model):
+class Reponse(db.Model): 
     idR = db.Column(db.Integer,primary_key=True)
     reponse = db.Column(db.String(200), nullable=False)
     correction = db.Column(db.Integer, nullable=False)
@@ -59,10 +59,20 @@ with app.app_context():
     
 
 with app.app_context():
+    db.session.query(Associe).delete()
+    db.session.commit()
     db.session.query(Etiquette).delete()
+    db.session.commit()
+    db.session.query(Question).delete()
     db.session.commit()
     etiquettes = [Etiquette(nom='Etiquette1'), Etiquette(nom='Etiquette2'), Etiquette(nom='Etiquette3')]
     db.session.bulk_save_objects(etiquettes)
+    db.session.commit()
+    questions = [Question(enonce='2+2'),Question(enonce='2*2'),Question(enonce='2/2')]
+    db.session.bulk_save_objects(questions)
+    db.session.commit()
+    assos = [Associe(RidE=1,RidQ=1),Associe(RidE=1,RidQ=2),Associe(RidE=2,RidQ=3),Associe(RidE=3,RidQ=1)] 
+    db.session.bulk_save_objects(assos)
     db.session.commit()
 
 @app.route("/")
@@ -168,6 +178,31 @@ def creationEtiquettes():
     else :
         return render_template("creationEtiquettes.html")
 
+@app.route("/suppEtiquettes",methods=['GET','POST'])
+def suppEtiquettes():
+    print('avant suppression : ',Etiquette.query.all())
+    if request.method == 'POST':
+        nom = request.form['nom']
+        print(nom)
+        try :
+            test = db.session.query(Associe).join(Etiquette,Associe.RidE == Etiquette.idE).filter(Etiquette.nom == nom).all()
+            etiq = db.session.query(Etiquette).filter(Etiquette.nom==nom).first()
+            print('assos : ',assos,' tout :', db.session.query(Associe).all(), 'test join : ', test) 
+            for associe in test:
+                print('associe : ',associe)
+                db.session.delete(associe)
+                db.session.commit()
+            else:
+                print("Etiquette not found")
+            print('après suppression : ',Etiquette.query.all(),' association : ',Associe.query.all())
+            db.session.delete(etiq)
+            db.session.commit()
+            return redirect(url_for('creationEtiquettes'))
+        except:
+            return 'Erreur : route /suppEtiquettes'
+    else :
+        return render_template("creationEtiquettes.html")
+
 @app.route("/creerQuestion",methods=['GET','POST'])
 def creerQ():
     etiquettes = Etiquette.query.all()
@@ -220,7 +255,6 @@ def supprimer(id):
     questionSupp = Question.query.get_or_404(id)        #Récupération question correspondant id, sinon erreur
     toutAssocie = db.session.query(Associe).all()    
     reponseSupp = db.session.query(Reponse.idR).filter(Reponse.idQ==id).all()
-    
     try:
         for key in reponseSupp:
             Asupp = Reponse.query.get_or_404(key)
