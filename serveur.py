@@ -87,7 +87,7 @@ def ajout():
             listeOn = []
             for key,value in request.form.items():
                 if value == 'on':
-                    listeOn.append(key)
+                    listeOn.append(int(key))
             print(listeOn)
             idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
             print("id question = ",idQuestion[0])
