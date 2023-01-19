@@ -36,7 +36,7 @@ class Associe(db.Model):
 class Reponse(db.Model):
     idR = db.Column(db.Integer,primary_key=True)
     reponse = db.Column(db.String(200), nullable=False)
-    correction = db.Column(db.Boolean, nullable=False)
+    correction = db.Column(db.Integer, nullable=False)
     idQ = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False)
 
     def __constructeur__(u):
@@ -86,37 +86,52 @@ def ajout():
         question = request.form['question']             #Recup question du formulaire
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
         recupForm = request.form.getlist("reponse")
-        try:
-            db.session.add(new_question)                #Ajout question -> base de donnée
-            db.session.commit()                         #Envoie des changements
-            # listeOn = []                              #Marche pas votre truc donc je le mets en commentaire pour l'instant
-            # for key,value in request.form.items():
-            #     if value == 'on':
-            #         listeOn.append(key)
-            # print(listeOn)
-            # idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
-            # print("id question = ",idQuestion[0])
-            # for rep in recupForm:
-            #     if recupForm.index(rep)-1 in listeOn:
-            #         db.session.add(Reponse(reponse= rep,correction = True,idQ =idQuestion[0]))
-            #     # else:
-            #     #     db.session.add(Reponse(reponse= rep,correction = False,idQ =idQuestion[0]))
-            # print("test final = ",db.session.query(Reponse).all())
+        
+        # try:
+        print("newquestion avant add = ",new_question)
+        db.session.add(new_question)                #Ajout question -> base de donnée
+        print("newquestion apres add = ",new_question)
+        db.session.commit()                         #Envoie des changements
+        print("newquestion apres commit = ",new_question)
+        listeOn = []                              
+        for key,value in request.form.items():
+            if value == 'on':
+                listeOn.append(int(key))
+        print("listeOn = ",listeOn)
+        idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
+        print("id question = ",idQuestion[0])
+        for rep in recupForm:
+            print("rep = ",rep)
+            print("index dans la boucle = ",recupForm.index(rep)+1)
+            reponseAjouter = 0
+            if (recupForm.index(rep)+1) in listeOn:
+                print("1 : index dans la boucle = ",recupForm.index(rep))
+                reponseAjouter = Reponse(reponse= rep,correction = 1,idQ =idQuestion[0])
+                db.session.add(reponseAjouter)
+                print(type(reponseAjouter))
+            else:
+                reponseAjouter = Reponse(reponse= rep,correction = 0,idQ =idQuestion[0])
+                db.session.add(reponseAjouter)
+            
+        print("2 : reponse ajouter = ",reponseAjouter)
+                
+        db.session.commit()
+        print("test final = ",db.session.query(Reponse).all())
 
-            selected_tags = request.form.getlist('tag')
-            for tag_id in selected_tags:
-                tag = db.session.query(Etiquette).filter(Etiquette.idE == tag_id).first()
-                print(tag_id,new_question.idQ)
-                new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ)
-                print(new_assos.RidE,new_assos.RidQ)
-                # db.session.add(new_assos)
-                # print(new_assos,"add ?")
-                # db.session.commit()
-                # print("encore vivant")
-            # db.session.commit()                         #Envoie des changements
-            return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
-        except:
-            return 'Erreur création de la question'
+        # selected_tags = request.form.getlist('tag')
+        # for tag_id in selected_tags:
+        #     tag = db.session.query(Etiquette).filter(Etiquette.idE == tag_id).first()
+        #     print(tag_id,new_question.idQ)
+        #     new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ)
+        #     print(new_assos.RidE,new_assos.RidQ)
+            # db.session.add(new_assos)
+            # print(new_assos,"add ?")
+            # db.session.commit()
+            # print("encore vivant")
+        # db.session.commit()                         #Envoie des changements
+        return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
+        # except:
+        #     return 'Erreur création de la question'
     else:                                            
         return render_template("ajoutQuestion.html",page="Créer")
     #Rendu template ajoutQuestion.html et parametre nav 
