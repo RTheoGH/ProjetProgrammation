@@ -98,10 +98,13 @@ def creationCompte():
     else: 
         return render_template("creationCompte.html")
 
-@app.route("/listeUtilisateurs",methods = ['GET'])      #Cette route est uniquement technique pour pouvoir
-def listeUtilisateurs():                                #visualiser les utilisateurs en aucun cas elle doit
-    utilisateurs = db.session.query(Utilisateur).all()  #etre accessible via une redirection ou autre
-    return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs)
+@app.route("/listeUtilisateurs",methods = ['GET'])        #Cette route est uniquement technique pour pouvoir
+def listeUtilisateurs():                                  #visualiser les utilisateurs en aucun cas elle doit
+    if 'nomU' not in session or session['nomU']!='ADMIN': #etre accessible via une redirection ou autre
+        flash("Vous n'avez pas les droits pour accéder à cette page")
+        return redirect(url_for('index'))
+    utilisateurs = db.session.query(Utilisateur).all()  
+    return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs,page='listeUtilisateurs')
 
 @app.route("/connexion",methods=['POST','GET'])
 def connexion():
@@ -124,6 +127,9 @@ def deconnexion():
 
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     if request.method == 'POST':
         question = request.form['question']             #Recup question du formulaire
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
@@ -171,6 +177,9 @@ def ajout():
 
 @app.route("/creationEtiquettes",methods=['GET','POST'])
 def creationEtiquettes():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     if request.method == 'POST':
         nom = request.form['nom']
         new_etiquette = Etiquette(nom=nom)
@@ -186,6 +195,9 @@ def creationEtiquettes():
 
 @app.route("/suppEtiquettes",methods=['GET','POST'])
 def suppEtiquettes():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     print('avant suppression : ',Etiquette.query.all())
     if request.method == 'POST':
         nom = request.form['nom']
@@ -211,6 +223,9 @@ def suppEtiquettes():
 
 @app.route("/creerQuestion",methods=['GET','POST'])
 def creerQ():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     etiquettes = Etiquette.query.all()
     return render_template('ajoutQuestion.html', etiquettes=etiquettes, page="Créer")
 
@@ -235,6 +250,9 @@ def supprimer_bouton():
 
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     questions = db.session.query(Question).all()
     # tag = db.session.query(Etiquette, Associe).join(Associe, Etiquette.idE == Associe.RidE).join(Question, Question.idQ == Associe.RidQ).all()
     # print(tag)
@@ -243,6 +261,9 @@ def lquestion():
 
 @app.route("/modifier/<int:id>",methods=['POST','GET'])
 def modifier(id):
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     questionModif = Question.query.get_or_404(id)       #Recup question avec id correspondant, erreur sinon
     if request.method == 'POST':
         questionModif.enonce = request.form['question'] #Modification de l'enoncé de la question
@@ -257,6 +278,9 @@ def modifier(id):
 
 @app.route("/supprimer/<int:id>")
 def supprimer(id):
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     questionSupp = Question.query.get_or_404(id)        #Récupération question correspondant id, sinon erreur
     toutAssocie = db.session.query(Associe).all()    
     reponseSupp = db.session.query(Reponse.idR).filter(Reponse.idQ==id).all()
@@ -277,6 +301,9 @@ def supprimer(id):
 
 @app.route("/QCM")
 def qcm():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     LQ = db.session.query(Question).all()               #Récupération questions de la base de données
     print(LQ)
     return render_template("QCM.html",ListesQuestions=LQ,page="CréerQcm")
@@ -284,10 +311,16 @@ def qcm():
 
 @app.route("/MesQCM")
 def Mesqcm():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     return render_template("/MesQCM.html",page="ConsulterQcm") #Rendu template MesQCM.html, parametre nav
 
 @app.route("/generate",methods = ['POST'])
 def generate():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     print(request.form.items)
     print(db.session.query(Reponse.idR).all())
     print(db.session.query(Reponse.reponse).all())
