@@ -19,6 +19,10 @@
             <p>Nom de l'étiquette : <input type="text" name="nom"></p>
             <p><input class = "button" type="submit" value="Crée l'étiquette"></p>
         </form>
+        <form action="/suppEtiquettes" method="POST">
+            <input type="text" name="nom" placeholder="Nom de l'étiquette"><br>
+            <input class = "button" type="submit" value="suppression de l'étiquette"><br>
+        </form>
     </div>
     {%include 'partials/footer.html'%}
 </body>
