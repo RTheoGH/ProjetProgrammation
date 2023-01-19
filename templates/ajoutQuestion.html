@@ -14,38 +14,35 @@
 <body>
     {%include 'partials/_nav.html'%}
     <div class="mid double">
-        <div class="code">
+        <div class="code">              <!-- Partie écriture -->
             <form action="/ajout" method="POST">
                 <h1>Ecrivez une question</h1>
-                <p>Question : <br/><textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiserQ()"></textarea></p>
+                <p>Question : <br/>           <!-- Zone de texte pour la question, methode onkeyup -->
+                <textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiserQ()"></textarea>
+                </p>
                 <hr/>
-                
                 <div class="nouveauBouton">
-                    <script>
-                        function demandePlusReponse() { // Fonction JavaScript pour envoyer une requête GET à la route /plusDeReponse
-                            // Utilisation de l'API Fetch pour envoyer une requête GET à /plusDeReponse
-                            fetch('/plusDeReponse')
-                                .then(response => response.text())
+                    <script>                     /* Fonction JS pour envoyer une requête GET à /plusDeReponse */
+                        function demandePlusReponse() {
+                            fetch('/plusDeReponse')                /* Utilisation de l'API Fetch pour */
+                                .then(response => response.text()) /*envoyer une requête GET à /plusDeReponse */
                                 .then(data => {
-                                    // Ajout du texte de la réponse à un élément ayant la classe 'nouveauBouton'
-                                    $(".nouveauBouton").append(data);
-                                });
-                        }
+                                    $(".nouveauBouton").append(data); /* Ajout texte de la réponse */
+                                });                                   /* à un élément ayant la classe */
+                        }                                             /* 'nouveauBouton' */
 
                         function supprimerBouton(id) {
                             for (let i = 0; i < 3; i++) {
-                                // Envoi d'une requête DELETE à la route '/supprimer_bouton' avec un objet JSON contenant l'id en paramètre
-                                fetch('/supprimer_bouton', {
-                                    method: 'DELETE',
-                                    body: JSON.stringify({
+                                fetch('/supprimer_bouton', {   /* Envoi d'une requête DELETE à la route  */
+                                    method: 'DELETE',          /* '/supprimer_bouton' avec un objet JSON */
+                                    body: JSON.stringify({     /* contenant l'id en paramètre */
                                         'id': id
                                     }),
                                     headers: {
                                         'Content-Type': 'application/json'
                                     }
-                                });
-                                // Suppression de l'élément HTML ayant pour id l'id passé en paramètre
-                                $("#" + id).remove();
+                                });                            /* Suppression de l'élément HTML */
+                                $("#" + id).remove();          /* ayant pour id l'id passé en paramètre */
                             }
                         }
 
@@ -53,22 +50,20 @@
                             // Déclaration de la variable textQuestion qui contient le résultat 
                             // de la conversion de la valeur de l'élément avec l'id 'question' en HTML
                             let textQuestion = converter.makeHtml($("#question").val());
-                            // Utilisation de jQuery pour remplacer le contenu HTML de l'élément ayant 
-                            // la classe 'visu' avec la valeur de textQuestion
-                            $(".visu").html(textQuestion);
-                            MathJax.typeset();
+                            $(".visu").html(textQuestion);  /* Remplacement du contenu HTML (jQuery) de l'élément ayant */
+                            MathJax.typeset();              /* la classe 'visu' avec la valeur de textQuestion */
                             hljs.highlightAll();
                         }
                     </script>
-                    {% for etiquette in etiquettes %}
+                    {% for etiquette in etiquettes %}       <!-- Pour chaque etiquette parmi les etiquettes -->
                         <input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}<br>
                     {% endfor %}
-                </div>
+                </div>             <!-- Appel de la fonction demandePlusReponse avec la methode onclick -->
                 <p><button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button></p>
                 <p><input class="button" type="submit" value="Ajouter la question" /></p>
             </form>
         </div>
-        <div class="visu">
+        <div class="visu">           <!-- Partie visualisation -->
             <h1 class="middle">Visualisation</h1>
         </div>
     </div>

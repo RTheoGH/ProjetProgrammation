@@ -75,17 +75,13 @@ def creationCompte():
         new_utilisateur = Utilisateur(nomU=nomUtilisateur,passU=mdpUtilisateur)
         print(nomUtilisateur)
         print(mdpUtilisateur)
-        print(new_utilisateur)
-        # try:
-        print("t la ? 1")
-        db.session.add(new_utilisateur)
-        print("t la ? 2")
-        db.session.commit()
-        print("t la ? 3")
-        return redirect(url_for("index"))
-        # except:
-        #     db.session.rollback()
-        #     return 'Erreur lors de la création du compte'
+        print(testUtilisateurs)
+        try:
+            db.session.add(new_utilisateur)
+            db.session.commit()
+            return redirect(url_for("index"))
+        except:
+            return 'Erreur lors de la création du compte'
     else: 
         return render_template("creationCompte.html")
 
