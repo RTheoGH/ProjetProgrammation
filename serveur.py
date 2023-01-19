@@ -14,8 +14,11 @@ nombreIdCheck=0
 # Voir README pour le schèma de la base de données
 class Utilisateur(db.Model):
     idU = db.Column(db.Integer, primary_key=True)
-    nomU = db.Column(db.String(20), nullable=False)
-    passU = db.Column(db.String(20), nullable=False)
+    nomU = db.Column(db.String(50))
+    passU = db.Column(db.String(50))
+
+    def __constructeur__(u):
+        return 'Utilisateur %r'% u.idU
 
 class Question(db.Model):
     idQ = db.Column(db.Integer, primary_key=True)
@@ -60,10 +63,36 @@ with app.app_context():
     db.session.bulk_save_objects(etiquettes)
     db.session.commit()
 
-
 @app.route("/")
 def index():
     return render_template("index.html",page="Menu")    #Rendu template index.html et parametre nav 
+
+@app.route("/creationCompte",methods = ['POST', 'GET'])
+def creationCompte():
+    if request.method == 'POST':
+        nomUtilisateur = request.form['creationNom']
+        mdpUtilisateur = request.form['creationMdp']
+        new_utilisateur = Utilisateur(nomU=nomUtilisateur,passU=mdpUtilisateur)
+        print(nomUtilisateur)
+        print(mdpUtilisateur)
+        print(new_utilisateur)
+        # try:
+        print("t la ? 1")
+        db.session.add(new_utilisateur)
+        print("t la ? 2")
+        db.session.commit()
+        print("t la ? 3")
+        return redirect(url_for("index"))
+        # except:
+        #     db.session.rollback()
+        #     return 'Erreur lors de la création du compte'
+    else: 
+        return render_template("creationCompte.html")
+
+@app.route("/listeUtilisateurs",methods = ['GET'])      #Cette route est uniquement technique pour pouvoir
+def listeUtilisateurs():                                #visualiser les utilisateurs en aucun cas elle doit
+    utilisateurs = db.session.query(Utilisateur).all()  #etre accessible via une redirection ou autre
+    return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs)
 
 @app.route("/connexion",methods=['POST','GET'])
 def connexion():
