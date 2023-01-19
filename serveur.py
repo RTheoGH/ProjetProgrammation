@@ -54,7 +54,9 @@ class Contient(db.Model):
     RidQ = db.Column(db.Integer,db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
 
 with app.app_context():
+    #db.drop_all()
     db.create_all()
+    
 
 with app.app_context():
     db.session.query(Etiquette).delete()
@@ -106,7 +108,6 @@ def deconnexion():
 
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():
-    print(request.form.items)
     if request.method == 'POST':
         question = request.form['question']             #Recup question du formulaire
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
@@ -125,15 +126,11 @@ def ajout():
                 
                 reponseAjouter = 0
                 if (recupForm.index(rep)+1) in listeOn:
-                    print("1 : index dans la boucle = ",recupForm.index(rep))
                     reponseAjouter = Reponse(reponse= rep,correction = 1,idQ =idQuestion[0])
                     db.session.add(reponseAjouter)
                 else:
                     reponseAjouter = Reponse(reponse= rep,correction = 0,idQ =idQuestion[0])
-                    db.session.add(reponseAjouter)
-                
-        
-                    
+                    db.session.add(reponseAjouter)       
             db.session.commit()
             
             selected_tags = request.form.getlist('tag')
@@ -206,8 +203,13 @@ def modifier(id):
 @app.route("/supprimer/<int:id>")
 def supprimer(id):
     questionSupp = Question.query.get_or_404(id)        #Récupération question correspondant id, sinon erreur
-    toutAssocie = db.session.query(Associe).all()
+    toutAssocie = db.session.query(Associe).all()    
+    reponseSupp = db.session.query(Reponse.idR).filter(Reponse.idQ==id).all()
+    
     try:
+        for key in reponseSupp:
+            Asupp = Reponse.query.get_or_404(key)
+            db.session.delete(Asupp)
         for assoc in toutAssocie :
             if(assoc.RidQ==id):
                 db.session.delete(assoc)
@@ -233,18 +235,24 @@ def Mesqcm():
 @app.route("/generate",methods = ['POST'])
 def generate():
     print(request.form.items)
+    print(db.session.query(Reponse.idR).all())
+    print(db.session.query(Reponse.reponse).all())
+    print(db.session.query(Reponse.idQ).all())
     checked_checkboxes = [] 
     reponse_checkboxes = []                            #Initialisation liste pour stocker les questions cochées
+    #insert sur qcm avec un idqcm : 
+    #db.session.add(QCM(Nom = ))
     for key, value in request.form.items():
         if value == 'on':
             # checked_checkboxes.append(key)
             # Récupération de l'enoncé de la question correspondant à l'id reçu
             EL = db.session.query(Question).filter(Question.idQ == key).first()
-            # Ajout de l'enoncé à la liste des questions cochées
             checked_checkboxes.append(EL)
-            ListeReponse = db.session.query(Reponse.reponse).filter(Reponse.idQ==key).all()
+            #insert to dans contient idqcm(global a cette fun) et EL.idQ 
+            # Ajout de l'enoncé à la liste des questions cochées
+            ListeReponse = db.session.query(Reponse).filter(Reponse.idQ==key).all()
             reponse_checkboxes.append(ListeReponse)
-    return render_template("Affichage.html", listereponse = ListeReponse, listequestion=checked_checkboxes)
+    return render_template("Affichage.html", listereponse = reponse_checkboxes, listequestion=checked_checkboxes,len = len(checked_checkboxes))
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
     
 
