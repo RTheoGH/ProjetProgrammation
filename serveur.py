@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
 
 db = SQLAlchemy()
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  #Pour la session sinon ça marche pas
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db'
 db.init_app(app)
 nombreIdQuestion=0
@@ -13,12 +14,16 @@ nombreIdCheck=0
 # Voir README pour le schèma de la base de données
 class Utilisateur(db.Model):
     idU = db.Column(db.Integer, primary_key=True)
-    nomU = db.Column(db.String(20), nullable=False)
-    passU = db.Column(db.String(20), nullable=False)
+    nomU = db.Column(db.String(50))
+    passU = db.Column(db.String(50))
+
+    def __constructeur__(u):
+        return 'Utilisateur %r'% u.idU
 
 class Question(db.Model):
     idQ = db.Column(db.Integer, primary_key=True)
     enonce = db.Column(db.String(300), nullable=False)
+    # idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)
 
     def __constructeur__(u):
         return 'Question %r'% u.idQ
@@ -52,21 +57,56 @@ with app.app_context():
     db.create_all()
 
 with app.app_context():
+    db.session.query(Etiquette).delete()
+    db.session.commit()
     etiquettes = [Etiquette(nom='Etiquette1'), Etiquette(nom='Etiquette2'), Etiquette(nom='Etiquette3')]
     db.session.bulk_save_objects(etiquettes)
     db.session.commit()
-
 
 @app.route("/")
 def index():
     return render_template("index.html",page="Menu")    #Rendu template index.html et parametre nav 
 
+@app.route("/creationCompte",methods = ['POST', 'GET'])
+def creationCompte():
+    if request.method == 'POST':
+        nomUtilisateur = request.form['creationNom']
+        mdpUtilisateur = request.form['creationMdp']
+        new_utilisateur = Utilisateur(nomU=nomUtilisateur,passU=mdpUtilisateur)
+        print(nomUtilisateur)
+        print(mdpUtilisateur)
+        print(new_utilisateur)
+        # try:
+        print("t la ? 1")
+        db.session.add(new_utilisateur)
+        print("t la ? 2")
+        db.session.commit()
+        print("t la ? 3")
+        return redirect(url_for("index"))
+        # except:
+        #     db.session.rollback()
+        #     return 'Erreur lors de la création du compte'
+    else: 
+        return render_template("creationCompte.html")
+
+@app.route("/listeUtilisateurs",methods = ['GET'])      #Cette route est uniquement technique pour pouvoir
+def listeUtilisateurs():                                #visualiser les utilisateurs en aucun cas elle doit
+    utilisateurs = db.session.query(Utilisateur).all()  #etre accessible via une redirection ou autre
+    return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs)
+
 @app.route("/connexion",methods=['POST','GET'])
 def connexion():
     if request.method == 'POST':
-        return render_template("index.html",page="Menu")
+        if request.form['nomU'] == request.form['passU']:
+            session['nomU'] = request.form['nomU']
+        return redirect(url_for("index"))
     else:                       
         return render_template("connexion.html")
+
+@app.route("/deconnexion")
+def deconnexion():
+    session.pop('nomU',None)
+    return redirect(url_for("index"))
 
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():
@@ -74,31 +114,35 @@ def ajout():
     if request.method == 'POST':
         question = request.form['question']             #Recup question du formulaire
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
-        etiquette = request.form['etiquette']           
-        new_assos = Associe(RidE=etiquette,RidQ=new_question.idQ)
-        
         recupForm = request.form.getlist("reponse")
-
-        
-    
         try:
             db.session.add(new_question)                #Ajout question -> base de donnée
             db.session.commit()                         #Envoie des changements
-            listeOn = []
-            for key,value in request.form.items():
-                if value == 'on':
-                    listeOn.append(int(key))
-            print(listeOn)
-            idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
-            print("id question = ",idQuestion[0])
-            for rep in recupForm:
-                if recupForm.index(rep)-1 in listeOn:
-                    db.session.add(Reponse(reponse= rep,correction = True,idQ =idQuestion[0]))
-                # else:
-                #     db.session.add(Reponse(reponse= rep,correction = False,idQ =idQuestion[0]))
-            print("test final = ",db.session.query(Reponse).all())
+            # listeOn = []                              #Marche pas votre truc donc je le mets en commentaire pour l'instant
+            # for key,value in request.form.items():
+            #     if value == 'on':
+            #         listeOn.append(key)
+            # print(listeOn)
+            # idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
+            # print("id question = ",idQuestion[0])
+            # for rep in recupForm:
+            #     if recupForm.index(rep)-1 in listeOn:
+            #         db.session.add(Reponse(reponse= rep,correction = True,idQ =idQuestion[0]))
+            #     # else:
+            #     #     db.session.add(Reponse(reponse= rep,correction = False,idQ =idQuestion[0]))
+            # print("test final = ",db.session.query(Reponse).all())
 
-            db.session.commit()                         #Envoie des changements
+            selected_tags = request.form.getlist('tag')
+            for tag_id in selected_tags:
+                tag = db.session.query(Etiquette).filter(Etiquette.idE == tag_id).first()
+                print(tag_id,new_question.idQ)
+                new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ)
+                print(new_assos.RidE,new_assos.RidQ)
+                # db.session.add(new_assos)
+                # print(new_assos,"add ?")
+                # db.session.commit()
+                # print("encore vivant")
+            # db.session.commit()                         #Envoie des changements
             return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
         except:
             return 'Erreur création de la question'
@@ -133,7 +177,9 @@ def supprimer_bouton():
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
     questions = db.session.query(Question).all()        #Récupération questions de la base de données
-    return render_template("lquestion.html",lquestion=questions,page="Consulter")
+    tag = db.session.query(Etiquette).filter(Etiquette.idE == Associe.RidE).all()
+    # print(db.session.query(Associe).all())
+    return render_template("lquestion.html",lquestion=questions,page="Consulter",tag=tag)
     #Rendu template lquestion.html, questions récupérées, parametre nav
 
 @app.route("/modifier/<int:id>",methods=['POST','GET'])

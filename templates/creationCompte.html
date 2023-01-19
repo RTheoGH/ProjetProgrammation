@@ -8,18 +8,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/style.css" rel="stylesheet">
     {%include 'partials/Biblio.html'%}
-    <title>Connexion</title>
+    <title>Creation</title>
 </head>
 
 <body>
     <div class="menu">
-        <h1>Connexion</h1>
+        <h1>Créer votre compte</h1>
         <p>Pour faire plus simple, il est préférable de mettre <br/> son nom en tant que mot de passe</p>
         <hr/>
-        <form action="/connexion" method="POST">
-            <p> Nom d'utilisateur : </p><input type="text" name="nomU" id="nomU"/>
-            <p> Mot de passe : </p><input type="password" name="passU" id="passU"/>
-            <p><input class="button" type="submit" value="Connexion" /></p>
+        <form action="/creationCompte" method="POST">
+            <p> Nom d'utilisateur : </p><input type="text" name="creationNom"/>
+            <p> Mot de passe : </p><input type="password" name="creationMdp"/>
+            <p><input class="button" type="submit" value="Créer" /></p>
         </form>
     </div>
     {%include 'partials/footer.html'%}

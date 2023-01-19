@@ -61,7 +61,7 @@
                         }
                     </script>
                     {% for etiquette in etiquettes %}
-                        <input type="checkbox" name="{{ etiquette.nom }}" value="{{ etiquette.idE }}"> {{ etiquette.nom }}<br>
+                        <input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}<br>
                     {% endfor %}
                 </div>
                 <p><button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button></p>
