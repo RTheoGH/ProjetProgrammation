@@ -54,7 +54,7 @@ class Contient(db.Model):
     RidQ = db.Column(db.Integer,db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
 
 with app.app_context():
-    db.drop_all()
+    #db.drop_all()
     db.create_all()
     
 
@@ -208,9 +208,8 @@ def supprimer(id):
     
     try:
         for key in reponseSupp:
-            print("key = ",key[0])
-            Asupp2 = Reponse.query.get_or_404(key)
-            db.session.delete(Asupp2)
+            Asupp = Reponse.query.get_or_404(key)
+            db.session.delete(Asupp)
         for assoc in toutAssocie :
             if(assoc.RidQ==id):
                 db.session.delete(assoc)
@@ -242,7 +241,7 @@ def generate():
     checked_checkboxes = [] 
     reponse_checkboxes = []                            #Initialisation liste pour stocker les questions cochées
     #insert sur qcm avec un idqcm : 
-    # db.session.add(QCM(Nom = ))
+    #db.session.add(QCM(Nom = ))
     for key, value in request.form.items():
         if value == 'on':
             # checked_checkboxes.append(key)
