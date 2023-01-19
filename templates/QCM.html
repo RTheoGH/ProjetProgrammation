@@ -6,8 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet">
-    {%include 'partials/Biblio.html'%}
+    <link href="/static/style.css" rel="stylesheet"> {%include 'partials/Biblio.html'%}
     <title>QCM</title>
 </head>
 
@@ -17,12 +16,19 @@
         <form action="/generate" method="POST">
             <!--ce form permet d'afficher la liste des question -->
             <h1>Créer ton examen</h1>
+            <div>
+                <input type="text" name="Nomqcm" placeholder="Nommez votre qcm" />
+            </div>
             <div class="liste">
                 <table>
-                    <tr class="top"><td>Sélectionner</td><td>Questions</td></tr>
+                    <tr class="top">
+                        <td>Sélectionner</td>
+                        <td>Questions</td>
+                    </tr>
                     {%for element in ListesQuestions%}
                     <tr>
-                        <td><input type="checkbox" name="{{element.idQ}}"></td><td id="{{element.idQ}}">{{element.enonce}}</td>
+                        <td><input type="checkbox" name="{{element.idQ}}"></td>
+                        <td id="{{element.idQ}}">{{element.enonce}}</td>
                         <script>
                             $('#{{element.idQ}}').html(converter.makeHtml($('#{{element.idQ}}').text()));
                         </script>
@@ -30,7 +36,7 @@
                     {%endfor%}
                 </table>
             </div>
-            <p><input class="button" type="submit" value="Confirmer"/></p>
+            <p><input class="button" type="submit" value="Confirmer" /></p>
         </form>
     </div>
     {%include 'partials/footer.html'%}
