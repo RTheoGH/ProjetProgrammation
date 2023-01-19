@@ -10,7 +10,6 @@
     {%include 'partials/Biblio.html'%}
     <title>Bibliothèque</title>
 </head>
-
 <body>
     {%include 'partials/_nav.html'%}
     <div class="menu">
@@ -19,7 +18,7 @@
             <table>
                 <tr class="top">
                     <td>Question</td>
-                    <td>Tag</td>
+                    <!-- <td>Tag</td> -->
                     <td>Modifier/Supprimer</td>
                 </tr>
                 {% for questions in lquestion %}
@@ -29,11 +28,6 @@
                         $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
                         hljs.highlightAll();
                     </script>
-                    <td>                    
-                        {% for t in tag %}
-                            {{t}}
-                        {% endfor %}
-                    </td>
                     <td>
                         <a href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
                         <br>

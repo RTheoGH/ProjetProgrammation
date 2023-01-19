@@ -135,15 +135,17 @@ def ajout():
             
             selected_tags = request.form.getlist('tag')
             for tag_id in selected_tags:
-                tag = db.session.query(Etiquette).filter(Etiquette.idE == tag_id).first()
-                print(tag_id,new_question.idQ)
+                # tag = db.session.query(Etiquette).filter(Etiquette.idE == tag_id).first()
+                # print(tag_id,new_question.idQ)
                 new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ)
-                print(new_assos.RidE,new_assos.RidQ)
+                # print(new_assos.RidE,new_assos.RidQ)
                 db.session.add(new_assos)
-                print(new_assos,"add ?")
+                # print(new_assos,"add ?")
                 db.session.commit()
-                print("encore vivant")
-            db.session.commit()                         #Envoie des changements
+                # print("encore vivant")
+            # test=Associe.query.all()
+            # print(test)
+        # db.session.commit()                         #Envoie des changements
             return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
         except:
             return 'Erreur création de la question'
@@ -177,10 +179,10 @@ def supprimer_bouton():
 
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
-    questions = db.session.query(Question).all()        #Récupération questions de la base de données
-    tag = db.session.query(Etiquette).filter(Etiquette.idE == Associe.RidE).all()
-    # print(db.session.query(Associe).all())
-    return render_template("lquestion.html",lquestion=questions,page="Consulter",tag=tag)
+    questions = db.session.query(Question).all()
+    # tag = db.session.query(Etiquette, Associe).join(Associe, Etiquette.idE == Associe.RidE).join(Question, Question.idQ == Associe.RidQ).all()
+    # print(tag)
+    return render_template("lquestion.html",lquestion=questions,page="Consulter")
     #Rendu template lquestion.html, questions récupérées, parametre nav
 
 @app.route("/modifier/<int:id>",methods=['POST','GET'])
@@ -201,14 +203,18 @@ def modifier(id):
 @app.route("/supprimer/<int:id>")
 def supprimer(id):
     questionSupp = Question.query.get_or_404(id)        #Récupération question correspondant id, sinon erreur
-    print("questionSupp",questionSupp)
+    toutAssocie = db.session.query(Associe).all()    
     reponseSupp = db.session.query(Reponse.idR).filter(Reponse.idQ==id).all()
-    print("reponseSupp = ",reponseSupp)
+    
     try:
         for key in reponseSupp:
             print("key = ",key[0])
             Asupp2 = Reponse.query.get_or_404(key)
             db.session.delete(Asupp2)
+        for assoc in toutAssocie :
+            if(assoc.RidQ==id):
+                db.session.delete(assoc)
+                db.session.commit()
         db.session.delete(questionSupp)                 #Suppression question de la base de données
         db.session.commit()                             #Envoi des modifications à la base de données
         return redirect(url_for('lquestion'))           #Redirection vers la page de liste des questions
