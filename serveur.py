@@ -54,7 +54,7 @@ class Contient(db.Model):
     RidQ = db.Column(db.Integer,db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
 
 with app.app_context():
-    #db.drop_all()
+    db.drop_all()
     db.create_all()
     
 
