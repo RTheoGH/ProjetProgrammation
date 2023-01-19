@@ -153,6 +153,21 @@ def ajout():
         return render_template("ajoutQuestion.html",page="Créer")
     #Rendu template ajoutQuestion.html et parametre nav 
 
+@app.route("/creationEtiquettes",methods=['GET','POST'])
+def creationEtiquettes():
+    if request.method == 'POST':
+        nom = request.form['nom']
+        new_etiquette = Etiquette(nom=nom)
+        try :
+            db.session.add(new_etiquette)
+            db.session.commit()
+            print(Etiquette.query.all(),new_etiquette.nom,new_etiquette.idE)
+            return redirect(url_for('creationEtiquettes'))
+        except:
+            return 'Erreur : route /creationEtiquettes'
+    else :
+        return render_template("creationEtiquettes.html")
+
 @app.route("/creerQuestion",methods=['GET','POST'])
 def creerQ():
     etiquettes = Etiquette.query.all()

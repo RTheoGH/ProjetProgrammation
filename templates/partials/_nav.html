@@ -5,5 +5,6 @@
         <li {% if page=="Consulter" %} class="active" {% endif %}><a href="/lquestion">Consulter Questions</a></li>
         {% if session['nomU'] %}<li {% if page=="CréerQcm" %} class="active" {% endif %}><a href="/QCM">Créer QCM</a></li>{% endif %}
         <li {% if page=="ConsulterQcm" %} class="active" {% endif %}><a href="/MesQCM">Consulter QCM</a></li>
+        <li {% if page=="CreationEtiquettes" %} class="active" {% endif %}><a href="/creationEtiquettes">Création étiquettes</a></li>
     </ul>
 </nav>
