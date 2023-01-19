@@ -250,9 +250,9 @@ def generate():
             checked_checkboxes.append(EL)
             #insert to dans contient idqcm(global a cette fun) et EL.idQ 
             # Ajout de l'enoncé à la liste des questions cochées
-            ListeReponse = db.session.query(Reponse.reponse).filter(Reponse.idQ==key).all()
+            ListeReponse = db.session.query(Reponse).filter(Reponse.idQ==key).all()
             reponse_checkboxes.append(ListeReponse)
-    return render_template("Affichage.html", listereponse = ListeReponse, listequestion=checked_checkboxes)
+    return render_template("Affichage.html", listereponse = reponse_checkboxes, listequestion=checked_checkboxes,len = len(checked_checkboxes))
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
     
 

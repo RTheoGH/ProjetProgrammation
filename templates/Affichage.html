@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/style.css" rel="stylesheet"> {%include 'partials/Biblio.html'%}
-    <title>Votre QCM</title>
+    <title>Votre Examen</title>
 </head>
 
 <body>
@@ -15,20 +15,21 @@
         <h1>Votre QCM</h1>
         <hr/>
         <div class="affQCM">
-            {% for question in listequestion %}     <!-- Pour chaque question dans la liste de questions -->
-            <div id="{{question.idQ}}">{{question.enonce}}</div>
-                <script>                                     /* Convertisseur markdown */
-                    $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
-                </script>
-                {% for reponse in listereponse %}  <!-- Chaque reponse dans la liste de reponses de la question -->
-                <div id="{{reponse.idR}}">{{reponse.reponse}}</div>
-                <script>                                     /* Convertisseur markdown */
-                    $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
-                </script>
-                {% endfor %}
-                <hr/>
-                <!-- <script> document.write(converter.makeHtml('---'))</script> -->
-            {% endfor %} 
+            {% for i in range(len) %}
+            <div id="{{listequestion[i].idQ}}">{{listequestion[i].enonce}}</div>
+            <script>
+                $('#{{listequestion[i].idQ}}').html(converter.makeHtml($('#{{listequestion[i].idQ}}').text()));
+            </script>
+            {% for reponse in listereponse[i] %}
+            <div id="{{reponse.idR}}">{{reponse.reponse}}</div>
+            <script>
+                $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
+            </script>
+            {% endfor %}
+            <hr/>
+            <!-- on a découvert plus tard qu'on pouvait faire une ligne avec la balise <hr/> -->
+            <!-- <script> document.write(converter.makeHtml('---'))</script> -->
+            {% endfor %}
         </div>
     </div>
     {%include 'partials/footer.html'%}
