@@ -30,16 +30,14 @@
                         hljs.highlightAll();
                     </script>
                     <td>
-                        <a href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
+                        <a class="button" href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
                         <br>
-                        <a href="{{ url_for('supprimer', id=questions.idQ)}}">Supprimer</a>
+                        <a class="button" href="{{ url_for('supprimer', id=questions.idQ)}}">Supprimer</a>
                     </td>
                 </tr>
                 {% endfor %}
             </table>
         </div>
-        <!-- <a class="button" name="ajout" href="/ajout">Ajout d'une autre question</a>
-        <a class="button" name="menu" href="/">Retour au menu</a> -->
     </div>
     {%include 'partials/footer.html'%}
 </body>
