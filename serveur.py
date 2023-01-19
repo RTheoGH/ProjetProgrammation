@@ -209,31 +209,6 @@ def suppEtiquettes():
     else :
         return render_template("creationEtiquettes.html")
 
-@app.route("/suppEtiquettes",methods=['GET','POST'])
-def suppEtiquettes():
-    print('avant suppression : ',Etiquette.query.all())
-    if request.method == 'POST':
-        nom = request.form['nom']
-        print(nom)
-        try :
-            test = db.session.query(Associe).join(Etiquette,Associe.RidE == Etiquette.idE).filter(Etiquette.nom == nom).all()
-            etiq = db.session.query(Etiquette).filter(Etiquette.nom==nom).first()
-            print('assos : ',assos,' tout :', db.session.query(Associe).all(), 'test join : ', test) 
-            for associe in test:
-                print('associe : ',associe)
-                db.session.delete(associe)
-                db.session.commit()
-            else:
-                print("Etiquette not found")
-            print('après suppression : ',Etiquette.query.all(),' association : ',Associe.query.all())
-            db.session.delete(etiq)
-            db.session.commit()
-            return redirect(url_for('creationEtiquettes'))
-        except:
-            return 'Erreur : route /suppEtiquettes'
-    else :
-        return render_template("creationEtiquettes.html")
-
 @app.route("/creerQuestion",methods=['GET','POST'])
 def creerQ():
     etiquettes = Etiquette.query.all()
