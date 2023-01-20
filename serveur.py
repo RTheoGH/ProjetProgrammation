@@ -1,54 +1,33 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
+app = Flask(__name__)                                         #Création de app, instance de Flask
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'                      #Clé de session (utilisateurs)
 
-app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  #Pour la session sinon ça marche pas
-nombreIdQuestion=0
-nombreIdCheck=0
-
-from bdd import *             #Importation de la base de donnée depuis bdd.py
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db'
+from bdd import *                                             #Importation de la base de donnée depuis bdd.py
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fichier de la base de donnée
 db.init_app(app)
 
 with app.app_context():
     db.drop_all()
     db.create_all()
 
-with app.app_context():
-    db.session.query(Associe).delete()
-    db.session.commit()
-    db.session.query(Etiquette).delete()
-    db.session.commit()
-    db.session.query(Question).delete()
-    db.session.commit()
-    db.session.query(Question).delete()
-    db.session.commit()
-    # etiquettes = [Etiquette(nom='Calcul'), Etiquette(nom='Equation'), Etiquette(nom='Code')]
-    # db.session.bulk_save_objects(etiquettes)
-    # db.session.commit()
-    # questions = [Question(enonce='2+2'),Question(enonce='2*2'),Question(enonce='2/2')]
-    # db.session.bulk_save_objects(questions)
-    # db.session.commit()
-    # assos = [Associe(RidE=1,RidQ=1),Associe(RidE=1,RidQ=2),Associe(RidE=2,RidQ=3),Associe(RidE=3,RidQ=1)] 
-    # db.session.bulk_save_objects(assos)
-    # db.session.commit()
+nombreIdQuestion=0               #Variables utilisés pour 
+nombreIdCheck=0                  #la génération de réponses
 
-@app.route("/")
-def index():
-    return render_template("index.html",page="Menu")    #Rendu template index.html et parametre nav 
+@app.route("/")                  #Route principale
+def index():                                         #'page' est la référence de chaque page web actuelle
+    return render_template("index.html",page="Menu") #coloré en rouge dans la barre de navigation   
 
-@app.route("/creationCompte",methods = ['POST', 'GET'])
+@app.route("/creationCompte",methods = ['POST', 'GET'])   #Route pour créer un compte utilisateur
 def creationCompte():
     if request.method == 'POST':
         nomUtilisateur = request.form['creationNom']
         mdpUtilisateur = request.form['creationMdp']
         new_utilisateur = Utilisateur(nomU=nomUtilisateur,passU=mdpUtilisateur)
-        print(nomUtilisateur)
-        print(mdpUtilisateur)
-        print(new_utilisateur)
+
         try:
-            db.session.add(new_utilisateur)
+            db.session.add(new_utilisateur)               #Création du nouveau compte
             db.session.commit()
             return redirect(url_for("index"))
         except:
@@ -58,90 +37,81 @@ def creationCompte():
 
 @app.route("/listeUtilisateurs",methods = ['GET'])        #Cette route est uniquement technique pour pouvoir
 def listeUtilisateurs():                                  #visualiser les utilisateurs en aucun cas elle doit
-    if 'nomU' not in session or session['nomU']!='ADMIN': #etre accessible via une redirection ou autre
-        flash("Vous n'avez pas les droits pour accéder à cette page")
-        return redirect(url_for('index'))
-    utilisateurs = db.session.query(Utilisateur).all()  
+    if 'nomU' not in session or session['nomU']!='ADMIN': #etre accessible via une redirection ou autre.
+        flash("Vous n'avez pas les droits pour accéder à cette page")  #Si vous souhaitez néanmoins accéder à la
+        return redirect(url_for('index'))                              #page, créez un compte 'ADMIN' puis
+    utilisateurs = db.session.query(Utilisateur).all()                 #connectez vous avec.
     return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs,page='listeUtilisateurs')
 
-@app.route("/connexion",methods=['POST','GET'])
+@app.route("/connexion",methods=['POST','GET'])           #Route pour se connecter
 def connexion():
     if request.method == 'POST':
         testLogin = db.session.query(Utilisateur).filter(Utilisateur.nomU == request.form['nomU']).first()
-        # if request.form['nomU'] == request.form['passU']:
+        # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
         if testLogin is None:
-            flash('Nom ou mot de passe invalide')
-            return redirect(url_for('connexion'))
-        if request.form['passU'] == testLogin.passU:
-            session['nomU'] = request.form['nomU']
+            flash('Nom ou mot de passe invalide')             #Il faut d'abord crée un compte
+            return redirect(url_for('connexion'))             
+        if request.form['passU'] == testLogin.passU:          #Vérifie que le mdp de l'utilisateur correspond
+            session['nomU'] = request.form['nomU']            
             session['idU'] = testLogin.idU
-            # etiquettes = [Etiquette(nom='Calcul',idU=session['idU']), Etiquette(nom='Equation',idU=session['idU']), Etiquette(nom='Code',idU=session['idU'])]
-            # db.session.bulk_save_objects(etiquettes)
-            # db.session.commit()
-            # questions = [Question(enonce='2+2',idU=session['idU']),Question(enonce='2*2',idU=session['idU']),Question(enonce='2/2',idU=session['idU'])]
-            # db.session.bulk_save_objects(questions)
-            # db.session.commit()
-            # assos = [Associe(RidE=etiquettes[0].idE,RidQ=questions[0].idQ),Associe(RidE=etiquettes[0].idE,RidQ=questions[1].idQ),Associe(RidE=etiquettes[1].idE,RidQ=questions[2].idQ),Associe(RidE=etiquettes[2].idE,RidQ=questions[0].idQ)] 
-            # db.session.bulk_save_objects(assos)
-            # db.session.commit()
         return redirect(url_for("index"))              
     else:                       
         return render_template("connexion.html")
 
-@app.route("/deconnexion")
-def deconnexion():
+@app.route("/deconnexion")                        #Route de deconnexion
+def deconnexion():                                #Retire l'utilisateur de la session
     session.pop('nomU',None)
     return redirect(url_for("index"))
 
-@app.route("/ajout",methods = ['POST', 'GET'])
+@app.route("/ajout",methods = ['POST', 'GET'])    #Route pour ajouter une question
 def ajout():
-    if 'nomU' not in session:
-        flash("Connectez vous ou créer un compte pour accéder à cette page")
+    if 'nomU' not in session:                                           #Sécurité pour éviter d'aller sur une page
+        flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
     if request.method == 'POST':                  #Recup question du formulaire
         question = request.form['question']       #Création nouvelle question avec enoncé correspondant     
         new_question = Question(enonce=question,idU=session['idU'])
-        recupForm = request.form.getlist("reponse")
+        recupForm = request.form.getlist("reponse")     #On récupère la liste des questions
+
         try:
             db.session.add(new_question)                #Ajout question -> base de donnée
             db.session.commit()                         #Envoie des changements
             listeOn = []                              
-            for key,value in request.form.items():
+            for key,value in request.form.items():      #Pour chaque item du formulaire
                 if value == 'on':
-                    listeOn.append(int(key))
+                    listeOn.append(int(key))            #Attribut d'id pour la question
             idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
             for rep in recupForm:
                 
                 reponseAjouter = 0
-                if (recupForm.index(rep)+1) in listeOn:
+                if (recupForm.index(rep)+1) in listeOn: #On ajoute réponse juste
                     reponseAjouter = Reponse(reponse= rep,correction = 1,idQ =idQuestion[0])
                     db.session.add(reponseAjouter)
-                else:
+                else:                                   #On ajoute réponse fausse
                     reponseAjouter = Reponse(reponse= rep,correction = 0,idQ =idQuestion[0])
                     db.session.add(reponseAjouter)       
             db.session.commit()
-            selected_tags = request.form.getlist('tag')
+            selected_tags = request.form.getlist('tag') #On récupère la liste des étiquettes
             for tag_id in selected_tags:
-                new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ)
-                db.session.add(new_assos)
-                db.session.commit()                       #Envoie des changements
-            return redirect(url_for('lquestion'))         #Redirection vers la liste des questions
+                new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ) #On crée l'association entre question
+                db.session.add(new_assos)                              #et étiquette
+                db.session.commit()                     #Envoie des changements
+            return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
         except:
             return 'Erreur création de la question'
-    else:                                            
+    else:
         return render_template("ajoutQuestion.html",page="Créer")
-    #Rendu template ajoutQuestion.html et parametre nav 
 
-@app.route("/creationEtiquettes",methods=['GET','POST'])
+@app.route("/creationEtiquettes",methods=['GET','POST']) #Route pour créer une étiquette
 def creationEtiquettes():
-    if 'nomU' not in session:
+    if 'nomU' not in session:                            #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     if request.method == 'POST':
         nom = request.form['nom']
         new_etiquette = Etiquette(nom=nom,idU=session['idU'])
         try :
-            db.session.add(new_etiquette)
+            db.session.add(new_etiquette)                #Ajout de l'étiquette
             db.session.commit()
             print(Etiquette.query.all(),new_etiquette.nom,new_etiquette.idE)
             return redirect(url_for('creationEtiquettes'))
@@ -275,13 +245,6 @@ def qcm():
     print(LQ)
     return render_template("QCM.html",ListesQuestions=LQ,page="CréerQcm")
     #Rendu template QCM.html, variables ListesQuestions,parametre nav
-
-@app.route("/MesQCM")
-def Mesqcm():
-    if 'nomU' not in session:
-        flash("Connectez vous ou créer un compte pour accéder à cette page")
-        return redirect(url_for('index'))
-    return render_template("/MesQCM.html",page="ConsulterQcm") #Rendu template MesQCM.html, parametre nav
 
 @app.route("/generate",methods = ['POST'])
 def generate():

@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/style.css" rel="stylesheet"> {%include 'partials/Biblio.html'%}
-    <title>QCM</title>
+    <title>Création QCM</title>
 </head>
 
 <body>
@@ -16,10 +16,7 @@
         <form action="/generate" method="POST">
             <!--ce form permet d'afficher la liste des question -->
             <h1>Créer votre examen</h1>
-            <div>
-                <p>Donnez un titre à votre QCM :
-                <input type="text" name="nomQcm" placeholder="Titre" /></p>
-            </div>
+            <p>Donnez un titre à votre QCM : <input type="text" name="nomQcm" placeholder="Titre" /></p>
             <div class="liste">
                 <table>
                     <tr class="top">
