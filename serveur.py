@@ -122,9 +122,7 @@ def ajout():
         question = request.form['question']             #Recup question du formulaire
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
         recupForm = request.form.getlist("reponse")
-        
         try:
-        
             db.session.add(new_question)                #Ajout question -> base de donnée
             db.session.commit()                         #Envoie des changements
             listeOn = []                              
@@ -142,21 +140,12 @@ def ajout():
                     reponseAjouter = Reponse(reponse= rep,correction = 0,idQ =idQuestion[0])
                     db.session.add(reponseAjouter)       
             db.session.commit()
-            
             selected_tags = request.form.getlist('tag')
             for tag_id in selected_tags:
-                # tag = db.session.query(Etiquette).filter(Etiquette.idE == tag_id).first()
-                # print(tag_id,new_question.idQ)
                 new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ)
-                # print(new_assos.RidE,new_assos.RidQ)
                 db.session.add(new_assos)
-                # print(new_assos,"add ?")
-                db.session.commit()
-                # print("encore vivant")
-            # test=Associe.query.all()
-            # print(test)
-        # db.session.commit()                         #Envoie des changements
-            return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
+                db.session.commit()                       #Envoie des changements
+            return redirect(url_for('lquestion'))         #Redirection vers la liste des questions
         except:
             return 'Erreur création de la question'
     else:                                            
@@ -183,20 +172,20 @@ def suppEtiquettes():
     print('avant suppression : ',Etiquette.query.all())
     if request.method == 'POST':
         nom = request.form['nom']
-        print(nom)
+        # print(nom)
         try :
             test = db.session.query(Associe).join(Etiquette,Associe.RidE == Etiquette.idE).filter(Etiquette.nom == nom).all()
             etiq = db.session.query(Etiquette).filter(Etiquette.nom==nom).first()
-            print('assos : ',assos,' tout :', db.session.query(Associe).all(), 'test join : ', test) 
+            # print('assos : ',assos,' tout :', db.session.query(Associe).all(), 'test join : ', test) 
             for associe in test:
-                print('associe : ',associe)
+                # print('associe : ',associe)
                 db.session.delete(associe)
                 db.session.commit()
             else:
                 print("Etiquette not found")
-            print('après suppression : ',Etiquette.query.all(),' association : ',Associe.query.all())
             db.session.delete(etiq)
             db.session.commit()
+            # print('après suppression : ',Etiquette.query.all(),' association : ',Associe.query.all())
             return redirect(url_for('creationEtiquettes'))
         except:
             return 'Erreur : route /suppEtiquettes'
@@ -229,11 +218,21 @@ def supprimer_bouton():
 
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
+    etiquettes = Etiquette.query.all()
     questions = db.session.query(Question).all()
     # tag = db.session.query(Etiquette, Associe).join(Associe, Etiquette.idE == Associe.RidE).join(Question, Question.idQ == Associe.RidQ).all()
     # print(tag)
-    return render_template("lquestion.html",lquestion=questions,page="Consulter")
+    return render_template("lquestion.html",etiquettes=etiquettes,lquestion=questions,page="Consulter")
     #Rendu template lquestion.html, questions récupérées, parametre nav
+
+@app.route("/filtre",methods = ['>GET','POST'])
+def filtre():
+    etiquettes = Etiquette.query.all()
+    tags = request.form['tag']
+    if request.method == 'POST':
+        questionAffiche = db.session.query(Question).join(Associe, Associe.RidQ == Question.idQ).join(Etiquette, Etiquette.idE == Associe.RidE).filter(Etiquette.idE == tags).all()
+        print(questionAffiche)
+        return render_template("lquestion.html",etiquettes=etiquettes, lquestion=questionAffiche, page="Consulter")
 
 @app.route("/modifier/<int:id>",methods=['POST','GET'])
 def modifier(id):
