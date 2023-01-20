@@ -250,11 +250,45 @@ footer {
 /* Affichage du qcm crée */
 .affQCM{
     height:60vh;
-    background-color: whitesmoke;
+    width: 40vw;
+    background-color: wheat;
     overflow-y:scroll;
 }
-
+.affQuestion{
+    text-align: left;
+    margin: 1em;
+}
 
 .affReponse{
-    border-style: ridge;
+    text-align: left;
+    margin: 1em;
+}
+
+.bigCheckbox{
+    height:1.5em;
+    width: 1.5em;
+}
+
+.affichageEtiquette{
+    margin: 0;
+}
+
+.affichageEtiquette ul {
+    list-style-type: none;
+}
+
+.affichageEtiquette li{
+    float:left;
+    width: 33%;
+}
+
+fieldset{
+    background-color: wheat;
+    height: 5em;
+    overflow-y: scroll;
+}
+
+.flashes{
+    color: red;
+    font-weight: bold;
 }

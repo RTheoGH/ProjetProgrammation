@@ -29,7 +29,7 @@
                     {%for element in ListesQuestions%}
                     <tr>
                         <td><input type="checkbox" name="{{element.idQ}}"></td>
-                        <td id="{{element.idQ}}">{{element.enonce}}</td>
+                        <td class="left" id="{{element.idQ}}">{{element.enonce}}</td>
                         <script>
                             $('#{{element.idQ}}').html(converter.makeHtml($('#{{element.idQ}}').text()));
                         </script>

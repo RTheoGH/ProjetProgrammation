@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
@@ -54,10 +54,9 @@ class Contient(db.Model):
     RidQ = db.Column(db.Integer,db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
 
 with app.app_context():
-    #db.drop_all()
+    db.drop_all()
     db.create_all()
     
-
 with app.app_context():
     db.session.query(Associe).delete()
     db.session.commit()
@@ -65,7 +64,9 @@ with app.app_context():
     db.session.commit()
     db.session.query(Question).delete()
     db.session.commit()
-    etiquettes = [Etiquette(nom='Etiquette1'), Etiquette(nom='Etiquette2'), Etiquette(nom='Etiquette3')]
+    db.session.query(Question).delete()
+    db.session.commit()
+    etiquettes = [Etiquette(nom='Calcul'), Etiquette(nom='Equation'), Etiquette(nom='Code')]
     db.session.bulk_save_objects(etiquettes)
     db.session.commit()
     questions = [Question(enonce='2+2'),Question(enonce='2*2'),Question(enonce='2/2')]
@@ -97,15 +98,23 @@ def creationCompte():
     else: 
         return render_template("creationCompte.html")
 
-@app.route("/listeUtilisateurs",methods = ['GET'])      #Cette route est uniquement technique pour pouvoir
-def listeUtilisateurs():                                #visualiser les utilisateurs en aucun cas elle doit
-    utilisateurs = db.session.query(Utilisateur).all()  #etre accessible via une redirection ou autre
-    return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs)
+@app.route("/listeUtilisateurs",methods = ['GET'])        #Cette route est uniquement technique pour pouvoir
+def listeUtilisateurs():                                  #visualiser les utilisateurs en aucun cas elle doit
+    if 'nomU' not in session or session['nomU']!='ADMIN': #etre accessible via une redirection ou autre
+        flash("Vous n'avez pas les droits pour accéder à cette page")
+        return redirect(url_for('index'))
+    utilisateurs = db.session.query(Utilisateur).all()  
+    return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs,page='listeUtilisateurs')
 
 @app.route("/connexion",methods=['POST','GET'])
 def connexion():
     if request.method == 'POST':
-        if request.form['nomU'] == request.form['passU']:
+        testLogin = db.session.query(Utilisateur).filter(Utilisateur.nomU == request.form['nomU']).first()
+        # if request.form['nomU'] == request.form['passU']:
+        if testLogin is None:
+            flash('Nom ou mot de passe invalide')
+            return redirect(url_for('connexion'))
+        if request.form['passU'] == testLogin.passU:
             session['nomU'] = request.form['nomU']
         return redirect(url_for("index"))
     else:                       
@@ -118,6 +127,9 @@ def deconnexion():
 
 @app.route("/ajout",methods = ['POST', 'GET'])
 def ajout():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     if request.method == 'POST':
         question = request.form['question']             #Recup question du formulaire
         new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
@@ -154,6 +166,9 @@ def ajout():
 
 @app.route("/creationEtiquettes",methods=['GET','POST'])
 def creationEtiquettes():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     if request.method == 'POST':
         nom = request.form['nom']
         new_etiquette = Etiquette(nom=nom)
@@ -161,14 +176,17 @@ def creationEtiquettes():
             db.session.add(new_etiquette)
             db.session.commit()
             print(Etiquette.query.all(),new_etiquette.nom,new_etiquette.idE)
-            return redirect(url_for('creationEtiquettes'))
+            return redirect(url_for('index'))
         except:
             return 'Erreur : route /creationEtiquettes'
     else :
-        return render_template("creationEtiquettes.html")
+        return render_template("creationEtiquettes.html",page="CreationEtiquettes")
 
 @app.route("/suppEtiquettes",methods=['GET','POST'])
 def suppEtiquettes():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     print('avant suppression : ',Etiquette.query.all())
     if request.method == 'POST':
         nom = request.form['nom']
@@ -194,6 +212,9 @@ def suppEtiquettes():
 
 @app.route("/creerQuestion",methods=['GET','POST'])
 def creerQ():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     etiquettes = Etiquette.query.all()
     return render_template('ajoutQuestion.html', etiquettes=etiquettes, page="Créer")
 
@@ -219,6 +240,9 @@ def supprimer_bouton():
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
     etiquettes = Etiquette.query.all()
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     questions = db.session.query(Question).all()
     # tag = db.session.query(Etiquette, Associe).join(Associe, Etiquette.idE == Associe.RidE).join(Question, Question.idQ == Associe.RidQ).all()
     # print(tag)
@@ -236,6 +260,9 @@ def filtre():
 
 @app.route("/modifier/<int:id>",methods=['POST','GET'])
 def modifier(id):
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     questionModif = Question.query.get_or_404(id)       #Recup question avec id correspondant, erreur sinon
     if request.method == 'POST':
         questionModif.enonce = request.form['question'] #Modification de l'enoncé de la question
@@ -248,9 +275,11 @@ def modifier(id):
         return render_template("modifQuestion.html",enonce=questionModif.enonce,idQ=questionModif.idQ)
         #Rendu template modifQuestion.html avec les variables enonce et idQ
 
-
 @app.route("/supprimer/<int:id>")
 def supprimer(id):
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     questionSupp = Question.query.get_or_404(id)        #Récupération question correspondant id, sinon erreur
     toutAssocie = db.session.query(Associe).all()    
     reponseSupp = db.session.query(Reponse.idR).filter(Reponse.idQ==id).all()
@@ -271,6 +300,9 @@ def supprimer(id):
 
 @app.route("/QCM")
 def qcm():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     LQ = db.session.query(Question).all()               #Récupération questions de la base de données
     print(LQ)
     return render_template("QCM.html",ListesQuestions=LQ,page="CréerQcm")
@@ -278,10 +310,16 @@ def qcm():
 
 @app.route("/MesQCM")
 def Mesqcm():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     return render_template("/MesQCM.html",page="ConsulterQcm") #Rendu template MesQCM.html, parametre nav
 
 @app.route("/generate",methods = ['POST'])
 def generate():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     print(request.form.items)
     print(db.session.query(Reponse.idR).all())
     print(db.session.query(Reponse.reponse).all())
@@ -304,6 +342,5 @@ def generate():
     return render_template("Affichage.html", listereponse = reponse_checkboxes, listequestion=checked_checkboxes,len = len(checked_checkboxes), nomQcm = nomQcm)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
     
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
