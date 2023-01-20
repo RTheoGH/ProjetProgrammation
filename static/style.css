@@ -294,7 +294,7 @@ fieldset{
     font-weight: bold;
 }
 
-.cEtiquette{
+.gaucheEtiquette{
     border: 0.5em solid black;
     border-radius: 10px;
     padding: 2em;
@@ -304,7 +304,18 @@ fieldset{
     margin-right: 5em;
 }
 
-.dEtiquette{
+.centreEtiquette{
+    border: 0.5em solid black;
+    border-radius: 10px;
+    padding: 2em;
+    width: 25em;
+    background-color: whitesmoke;
+    text-align: center;
+    margin-left: 5em;
+    margin-right: 5em;
+}
+
+.droiteEtiquette{
     border: 0.5em solid black;
     border-radius: 10px;
     padding: 2em;

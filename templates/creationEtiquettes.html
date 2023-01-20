@@ -13,7 +13,7 @@
 <body>
     {%include 'partials/_nav.html'%}
     <div class="mid double">
-        <div class="cEtiquette">
+        <div class="gaucheEtiquette">
             <h1>Création d'une <br/> étiquette</h1>
             <hr/>
             <form action="/creationEtiquettes" method="POST">
@@ -21,7 +21,22 @@
                 <p><input class = "button" type="submit" value="Créer l'étiquette"></p>
             </form>
         </div>
-        <div class="dEtiquette">
+        <div class="centreEtiquette">
+            <h1>Modification d'une <br/> étiquette</h1>
+            <hr/>
+            <form action="/modifEtiquettes" method="POST">
+                <p> Sélectionnez l'étiquette à modifier : 
+                <select name="etiqAmodif">
+                    {% for etiq in etiqs%}
+                        <option value='{{etiq.idE}}'>{{etiq.nom}}</option>
+                    {% endfor %}
+                </select>
+                </p>
+                <p>Nouveau nom de l'étiquette : <input type="text" name="nom"></p>
+                <p><input class="button" type="submit" value="Modifier l'étiquette"></p>
+            </form>
+        </div>
+        <div class="droiteEtiquette">
             <h1>Suppression d'une <br/> étiquette</h1>
             <hr/>
             <form action="/suppEtiquettes" method="POST">
@@ -29,19 +44,7 @@
                 <p><input class = "button" type="submit" value="Supprimer l'étiquette"></p>
             </form>
         </div>
-        <div>
-            <h1>Modification d'une <br/> étiquette</h1>
-            <hr/>
-            <form action="/modifEtiquettes" method="POST">
-                <p>Nom de l'étiquette : <input type="text" name="nom"></p>
-                <select name="etiqAmodif">
-                    {% for etiq in etiqs%}
-                        <option value='{{etiq.idE}}'>{{etiq.nom}}</option>
-                    {% endfor %}
-                </select>
-                <p><input class="button" type="submit" value="Modifier l'étiquette"></p>
-            </form>
-        </div>
+        
     </div>
     {%include 'partials/footer.html'%}
 </body>

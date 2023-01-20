@@ -82,7 +82,6 @@ def ajout():
                     listeOn.append(int(key))            #Attribut d'id pour la question
             idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
             for rep in recupForm:
-                
                 reponseAjouter = 0
                 if (recupForm.index(rep)+1) in listeOn: #On ajoute réponse juste
                     reponseAjouter = Reponse(reponse= rep,correction = 1,idQ =idQuestion[0])
@@ -110,6 +109,7 @@ def creationEtiquettes():
     if request.method == 'POST':
         nom = request.form['nom']
         new_etiquette = Etiquette(nom=nom,idU=session['idU'])
+
         try :
             db.session.add(new_etiquette)                #Ajout de l'étiquette
             db.session.commit()
@@ -121,21 +121,20 @@ def creationEtiquettes():
         ToutEtiq = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
         return render_template("creationEtiquettes.html",page="Etiquettes",etiqs=ToutEtiq)
 
-@app.route("/suppEtiquettes",methods=['GET','POST'])
+@app.route("/suppEtiquettes",methods=['GET','POST'])     #Route pour supprimer une étiquette
 def suppEtiquettes():
-    if 'nomU' not in session:
+    if 'nomU' not in session:                            #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    print('avant suppression : ',Etiquette.query.all())
+    # print('avant suppression : ',Etiquette.query.all())
     if request.method == 'POST':
         nom = request.form['nom']
-        # print(nom)
-        try :
+        
+        try :                                            #On associe avec l'étiquette puis on sélectionne l'étiquette en question
             test = db.session.query(Associe).join(Etiquette,Associe.RidE == Etiquette.idE).filter(Etiquette.nom == nom,Etiquette.idU==session['idU']).all()
             etiq = db.session.query(Etiquette).filter(Etiquette.nom==nom,Etiquette.idU==session['idU']).first()
             # print('assos : ',assos,' tout :', db.session.query(Associe).all(), 'test join : ', test) 
             for associe in test:
-                # print('associe : ',associe)
                 db.session.delete(associe)
                 db.session.commit()
             else:
@@ -149,17 +148,18 @@ def suppEtiquettes():
     else :
         return render_template("creationEtiquettes.html",etiqs=ToutEtiq)
 
-@app.route("/modifEtiquettes",methods=['GET','POST'])
+@app.route("/modifEtiquettes",methods=['GET','POST'])     #Route pour modifier une étiquette
 def modifEtiquettes():
-    if 'nomU' not in session:
+    if 'nomU' not in session:                             #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     if request.method == 'POST':
         nom = request.form['nom']
-        etiqIde = request.form['etiqAmodif']
-        try :
+        etiqIde = request.form['etiqAmodif']              #Recupere l'étiquette à modifier
+
+        try :                                             #Sélectionne l'étiquette en question
             etiqAmodif = db.session.query(Etiquette).filter(Etiquette.idE==etiqIde)
-            etiqAmodif.update({"nom" : nom })
+            etiqAmodif.update({"nom" : nom })             #Change le nom
             db.session.commit()
             return redirect(url_for('creationEtiquettes'))
         except:
@@ -167,15 +167,15 @@ def modifEtiquettes():
     else :
         return render_template("creationEtiquettes.html",etiqs=ToutEtiq)
 
-@app.route("/creerQuestion",methods=['GET','POST'])
+@app.route("/creerQuestion",methods=['GET','POST'])       #Route pour afficher les étiquettes sur ajoutQuestion
 def creerQ():
-    if 'nomU' not in session:
+    if 'nomU' not in session:                             #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
     return render_template('ajoutQuestion.html', etiquettes=etiquettes, page="Créer")
 
-@app.route("/plusDeReponse",methods = ['GET'])
+@app.route("/plusDeReponse",methods = ['GET'])          #Route qui ajoute une réponse sur ajoutQuestion
 def plusDeReponse():
     global nombreIdQuestion,nombreIdCheck               #Déclaration variables globales nombreIdQuestion, nombreIdCheck
     nombreIdQuestion+=1                                 #Incrémentation de nombreIdQuestion et nombreIdCheck
@@ -183,7 +183,7 @@ def plusDeReponse():
     return render_template('partials/nouvelleReponse.html',IdBouton=nombreIdQuestion,IdCheck=nombreIdCheck)
     # Rendu template 'partials/nouvelleReponse.html' et passage des paramètres IdBouton et IdCheck
 
-@app.route("/supprimer_bouton", methods=['DELETE'])
+@app.route("/supprimer_bouton", methods=['DELETE'])     #Route qui supprime une réponse sur ajoutQuestion
 def supprimer_bouton():
     id = request.json['id']
     #les questions ne sont pas encore stocké dans une variables donc ne peuvent pas être delete 
@@ -194,30 +194,30 @@ def supprimer_bouton():
     #qqc comme ça en bdd
     return 'SUCCES'
 
-@app.route("/lquestion",methods = ['GET'])
+@app.route("/lquestion",methods = ['GET'])              #Route vers la liste de questions de l'utilisateur
 def lquestion():
-    etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
-    if 'nomU' not in session:
+    if 'nomU' not in session:                           #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
-        return redirect(url_for('index'))
+        return redirect(url_for('index'))               #Sélection des questions et étiquettes
+    etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
     questions = db.session.query(Question).filter(Question.idU==session['idU']).all()
     # tag = db.session.query(Etiquette, Associe).join(Associe, Etiquette.idE == Associe.RidE).join(Question, Question.idQ == Associe.RidQ).all()
     # print(tag)
     return render_template("lquestion.html",etiquettes=etiquettes,lquestion=questions,page="Consulter")
-    #Rendu template lquestion.html, questions récupérées, parametre nav
 
-@app.route("/filtre",methods = ['>GET','POST'])
+@app.route("/filtre",methods = ['GET','POST'])          #Route de filtrage des questions de l'utilisateur
 def filtre():
     etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
     tags = request.form['tag']
-    if request.method == 'POST':
-        questionAffiche = db.session.query(Question).join(Associe, Associe.RidQ == Question.idQ).join(Etiquette, Etiquette.idE == Associe.RidE).filter(Etiquette.idE == tags,Etiquette.idU==session['idU']).all()
-        print(questionAffiche)
+    if request.method == 'POST':                        #Affiche les questions avec les tags sélectionnés
+        questionAffiche = db.session.query(Question).join(Associe, Associe.RidQ == Question.idQ)\
+            .join(Etiquette, Etiquette.idE == Associe.RidE).filter(Etiquette.idE == tags,Etiquette.idU==session['idU']).all()
+        # print(questionAffiche)
         return render_template("lquestion.html",etiquettes=etiquettes, lquestion=questionAffiche, page="Consulter")
 
-@app.route("/modifier/<int:id>",methods=['POST','GET'])
+@app.route("/modifier/<int:id>",methods=['POST','GET']) #Route pour modifier une question de l'utilisateur
 def modifier(id):
-    if 'nomU' not in session:
+    if 'nomU' not in session:                           #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     selected_tags = request.form.getlist('tag')
@@ -225,6 +225,7 @@ def modifier(id):
     ToutAssoc = db.session.query(Associe).filter(Associe.RidQ==questionModif.idQ).all()
     if request.method == 'POST':
         questionModif.enonce = request.form['question'] #Modification de l'enoncé de la question
+        
         try:
             db.session.query(Associe).filter(Associe.RidQ == id).delete()
             db.session.commit()                         #Envoi des modifications à la base de données
@@ -238,21 +239,21 @@ def modifier(id):
     else:
         etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
         return render_template("modifQuestion.html",enonce=questionModif.enonce,idQ=questionModif.idQ,etiquettes=etiquettes)
-        #Rendu template modifQuestion.html avec les variables enonce et idQ
 
-@app.route("/supprimer/<int:id>")
+@app.route("/supprimer/<int:id>")                       #Route pour supprimer une question de l'utilisateur
 def supprimer(id):
-    if 'nomU' not in session:
+    if 'nomU' not in session:                           #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     questionSupp = Question.query.get_or_404(id)        #Récupération question correspondant id, sinon erreur
     toutAssocie = db.session.query(Associe).all()    
     reponseSupp = db.session.query(Reponse.idR).filter(Reponse.idQ==id).all()
+
     try:
-        for key in reponseSupp:
+        for key in reponseSupp:                         #Supprime toutes les réponses
             Asupp = Reponse.query.get_or_404(key)
             db.session.delete(Asupp)
-        for assoc in toutAssocie :
+        for assoc in toutAssocie :                      #Supprime toutes les associations
             if(assoc.RidQ==id):
                 db.session.delete(assoc)
                 db.session.commit()
@@ -263,28 +264,23 @@ def supprimer(id):
         return 'Erreur lors de la suppression de la question'
         #Renvoi message d'erreur si échec de la suppression de la question
 
-@app.route("/QCM")
+@app.route("/QCM")                  #Route pour créer un qcm à partir des questions crée par l'utilisateur
 def qcm():
-    if 'nomU' not in session:
+    if 'nomU' not in session:       #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()  #Récupération questions de la base de données
     print(LQ)
     return render_template("QCM.html",ListesQuestions=LQ,page="CréerQcm")
-    #Rendu template QCM.html, variables ListesQuestions,parametre nav
 
-@app.route("/generate",methods = ['POST'])
+@app.route("/generate",methods = ['POST'])      #Route qui genere le qcm
 def generate():
-    if 'nomU' not in session:
+    if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    # print(request.form.items)
-    # print(db.session.query(Reponse.idR).all())
-    # print(db.session.query(Reponse.reponse).all())
-    # print(db.session.query(Reponse.idQ).all())
     checked_checkboxes = [] 
     reponse_checkboxes = []                         #Initialisation liste pour stocker les questions cochées
-    nomQcm =request.form['nomQcm']
+    nomQcm = request.form['nomQcm']
     #insert sur qcm avec un idqcm : 
     #db.session.add(QCM(Nom = ))
     for key, value in request.form.items():
@@ -292,13 +288,11 @@ def generate():
             # checked_checkboxes.append(key)
             # Récupération de l'enoncé de la question correspondant à l'id reçu
             EL = db.session.query(Question).filter(Question.idQ == key,Question.idU==session['idU']).first()
-            checked_checkboxes.append(EL)
-            #insert to dans contient idqcm(global a cette fun) et EL.idQ 
-            # Ajout de l'enoncé à la liste des questions cochées
-            ListeReponse = db.session.query(Reponse).filter(Reponse.idQ==key).all()
+            checked_checkboxes.append(EL)                                   #insert to dans contient idqcm(global a cette fun) et EL.idQ 
+            ListeReponse = db.session.query(Reponse).filter(Reponse.idQ==key).all() #Ajout de l'enoncé à la liste des questions cochées
             reponse_checkboxes.append(ListeReponse)
     return render_template("Affichage.html", listereponse = reponse_checkboxes, listequestion=checked_checkboxes,len = len(checked_checkboxes), nomQcm = nomQcm)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
-    
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
