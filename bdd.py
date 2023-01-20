@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
-# Voir README pour le schèma de la base de données
+# Voir README pour le schéma de la base de données
 class Utilisateur(db.Model):
     idU = db.Column(db.Integer, primary_key=True)
     nomU = db.Column(db.String(50))
@@ -13,7 +13,7 @@ class Utilisateur(db.Model):
 class Question(db.Model):
     idQ = db.Column(db.Integer, primary_key=True)
     enonce = db.Column(db.String(300), nullable=False)
-    # idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)
+    idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)
 
     def __constructeur__(u):
         return 'Question %r'% u.idQ
@@ -21,6 +21,7 @@ class Question(db.Model):
 class Etiquette(db.Model):
     idE = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(100))
+    idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)
 
 class Associe(db.Model):
     RidE = db.Column(db.Integer, db.ForeignKey(Etiquette.idE),nullable=False,primary_key=True)
@@ -38,6 +39,7 @@ class Reponse(db.Model):
 class QCM(db.Model):
     idQCM = db.Column(db.Integer,primary_key=True)
     Nom = db.Column(db.String(200), nullable = False)
+    idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)
 
 class Contient(db.Model):
     RidQCM = db.Column(db.Integer, db.ForeignKey(QCM.idQCM),nullable=False,primary_key=True)

@@ -14,7 +14,7 @@ db.init_app(app)
 with app.app_context():
     db.drop_all()
     db.create_all()
-    
+
 with app.app_context():
     db.session.query(Associe).delete()
     db.session.commit()
@@ -24,15 +24,15 @@ with app.app_context():
     db.session.commit()
     db.session.query(Question).delete()
     db.session.commit()
-    etiquettes = [Etiquette(nom='Calcul'), Etiquette(nom='Equation'), Etiquette(nom='Code')]
-    db.session.bulk_save_objects(etiquettes)
-    db.session.commit()
-    questions = [Question(enonce='2+2'),Question(enonce='2*2'),Question(enonce='2/2')]
-    db.session.bulk_save_objects(questions)
-    db.session.commit()
-    assos = [Associe(RidE=1,RidQ=1),Associe(RidE=1,RidQ=2),Associe(RidE=2,RidQ=3),Associe(RidE=3,RidQ=1)] 
-    db.session.bulk_save_objects(assos)
-    db.session.commit()
+    # etiquettes = [Etiquette(nom='Calcul'), Etiquette(nom='Equation'), Etiquette(nom='Code')]
+    # db.session.bulk_save_objects(etiquettes)
+    # db.session.commit()
+    # questions = [Question(enonce='2+2'),Question(enonce='2*2'),Question(enonce='2/2')]
+    # db.session.bulk_save_objects(questions)
+    # db.session.commit()
+    # assos = [Associe(RidE=1,RidQ=1),Associe(RidE=1,RidQ=2),Associe(RidE=2,RidQ=3),Associe(RidE=3,RidQ=1)] 
+    # db.session.bulk_save_objects(assos)
+    # db.session.commit()
 
 @app.route("/")
 def index():
@@ -74,7 +74,17 @@ def connexion():
             return redirect(url_for('connexion'))
         if request.form['passU'] == testLogin.passU:
             session['nomU'] = request.form['nomU']
-        return redirect(url_for("index"))
+            session['idU'] = testLogin.idU
+            # etiquettes = [Etiquette(nom='Calcul',idU=session['idU']), Etiquette(nom='Equation',idU=session['idU']), Etiquette(nom='Code',idU=session['idU'])]
+            # db.session.bulk_save_objects(etiquettes)
+            # db.session.commit()
+            # questions = [Question(enonce='2+2',idU=session['idU']),Question(enonce='2*2',idU=session['idU']),Question(enonce='2/2',idU=session['idU'])]
+            # db.session.bulk_save_objects(questions)
+            # db.session.commit()
+            # assos = [Associe(RidE=etiquettes[0].idE,RidQ=questions[0].idQ),Associe(RidE=etiquettes[0].idE,RidQ=questions[1].idQ),Associe(RidE=etiquettes[1].idE,RidQ=questions[2].idQ),Associe(RidE=etiquettes[2].idE,RidQ=questions[0].idQ)] 
+            # db.session.bulk_save_objects(assos)
+            # db.session.commit()
+        return redirect(url_for("index"))              
     else:                       
         return render_template("connexion.html")
 
@@ -88,9 +98,9 @@ def ajout():
     if 'nomU' not in session:
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    if request.method == 'POST':
-        question = request.form['question']             #Recup question du formulaire
-        new_question = Question(enonce=question)        #Création nouvelle question avec enoncé correspondant
+    if request.method == 'POST':                  #Recup question du formulaire
+        question = request.form['question']       #Création nouvelle question avec enoncé correspondant     
+        new_question = Question(enonce=question,idU=session['idU'])
         recupForm = request.form.getlist("reponse")
         try:
             db.session.add(new_question)                #Ajout question -> base de donnée
@@ -129,7 +139,7 @@ def creationEtiquettes():
         return redirect(url_for('index'))
     if request.method == 'POST':
         nom = request.form['nom']
-        new_etiquette = Etiquette(nom=nom)
+        new_etiquette = Etiquette(nom=nom,idU=session['idU'])
         try :
             db.session.add(new_etiquette)
             db.session.commit()
@@ -150,8 +160,8 @@ def suppEtiquettes():
         nom = request.form['nom']
         # print(nom)
         try :
-            test = db.session.query(Associe).join(Etiquette,Associe.RidE == Etiquette.idE).filter(Etiquette.nom == nom).all()
-            etiq = db.session.query(Etiquette).filter(Etiquette.nom==nom).first()
+            test = db.session.query(Associe).join(Etiquette,Associe.RidE == Etiquette.idE).filter(Etiquette.nom == nom,Etiquette.idU==session['idU']).all()
+            etiq = db.session.query(Etiquette).filter(Etiquette.nom==nom,Etiquette.idU==session['idU']).first()
             # print('assos : ',assos,' tout :', db.session.query(Associe).all(), 'test join : ', test) 
             for associe in test:
                 # print('associe : ',associe)
@@ -173,7 +183,7 @@ def creerQ():
     if 'nomU' not in session:
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    etiquettes = Etiquette.query.all()
+    etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
     return render_template('ajoutQuestion.html', etiquettes=etiquettes, page="Créer")
 
 @app.route("/plusDeReponse",methods = ['GET'])
@@ -197,11 +207,11 @@ def supprimer_bouton():
 
 @app.route("/lquestion",methods = ['GET'])
 def lquestion():
-    etiquettes = Etiquette.query.all()
+    etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
     if 'nomU' not in session:
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    questions = db.session.query(Question).all()
+    questions = db.session.query(Question).filter(Question.idU==session['idU']).all()
     # tag = db.session.query(Etiquette, Associe).join(Associe, Etiquette.idE == Associe.RidE).join(Question, Question.idQ == Associe.RidQ).all()
     # print(tag)
     return render_template("lquestion.html",etiquettes=etiquettes,lquestion=questions,page="Consulter")
@@ -209,10 +219,10 @@ def lquestion():
 
 @app.route("/filtre",methods = ['>GET','POST'])
 def filtre():
-    etiquettes = Etiquette.query.all()
+    etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
     tags = request.form['tag']
     if request.method == 'POST':
-        questionAffiche = db.session.query(Question).join(Associe, Associe.RidQ == Question.idQ).join(Etiquette, Etiquette.idE == Associe.RidE).filter(Etiquette.idE == tags).all()
+        questionAffiche = db.session.query(Question).join(Associe, Associe.RidQ == Question.idQ).join(Etiquette, Etiquette.idE == Associe.RidE).filter(Etiquette.idE == tags,Etiquette.idU==session['idU']).all()
         print(questionAffiche)
         return render_template("lquestion.html",etiquettes=etiquettes, lquestion=questionAffiche, page="Consulter")
 
@@ -261,7 +271,7 @@ def qcm():
     if 'nomU' not in session:
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    LQ = db.session.query(Question).all()               #Récupération questions de la base de données
+    LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()  #Récupération questions de la base de données
     print(LQ)
     return render_template("QCM.html",ListesQuestions=LQ,page="CréerQcm")
     #Rendu template QCM.html, variables ListesQuestions,parametre nav
@@ -278,10 +288,10 @@ def generate():
     if 'nomU' not in session:
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    print(request.form.items)
-    print(db.session.query(Reponse.idR).all())
-    print(db.session.query(Reponse.reponse).all())
-    print(db.session.query(Reponse.idQ).all())
+    # print(request.form.items)
+    # print(db.session.query(Reponse.idR).all())
+    # print(db.session.query(Reponse.reponse).all())
+    # print(db.session.query(Reponse.idQ).all())
     checked_checkboxes = [] 
     reponse_checkboxes = []                         #Initialisation liste pour stocker les questions cochées
     nomQcm =request.form['nomQcm']
@@ -291,7 +301,7 @@ def generate():
         if value == 'on':
             # checked_checkboxes.append(key)
             # Récupération de l'enoncé de la question correspondant à l'id reçu
-            EL = db.session.query(Question).filter(Question.idQ == key).first()
+            EL = db.session.query(Question).filter(Question.idQ == key,Question.idU==session['idU']).first()
             checked_checkboxes.append(EL)
             #insert to dans contient idqcm(global a cette fun) et EL.idQ 
             # Ajout de l'enoncé à la liste des questions cochées
