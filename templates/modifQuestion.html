@@ -18,6 +18,15 @@
         <form action="{{ url_for('modifier', id=idQ)}}" method="POST">
             <h1>Modifier votre enoncé</h1>
             <p><textarea name="question" rows="4" cols="40">{{enonce}}</textarea></p>
+            <div class="affichageEtiquette">
+                <fieldset><legend>Étiquettes</legend>
+                <ul>
+                    {% for etiquette in etiquettes %}       <!-- Pour chaque etiquette parmi les etiquettes -->
+                        <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
+                    {% endfor %}
+                </ul>
+                </fieldset>
+            </div>
             <p><input class="button" type="submit" value="Modifier" /></p>
         </form>
         <!-- <a class="button" name="menu" href="/">Retour au menu</a><br/> -->

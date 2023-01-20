@@ -118,7 +118,8 @@ def creationEtiquettes():
         except:
             return 'Erreur : route /creationEtiquettes'
     else :
-        return render_template("creationEtiquettes.html",page="Etiquettes")
+        ToutEtiq = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
+        return render_template("creationEtiquettes.html",page="Etiquettes",etiqs=ToutEtiq)
 
 @app.route("/suppEtiquettes",methods=['GET','POST'])
 def suppEtiquettes():
@@ -146,7 +147,25 @@ def suppEtiquettes():
         except:
             return 'Erreur : route /suppEtiquettes'
     else :
-        return render_template("creationEtiquettes.html")
+        return render_template("creationEtiquettes.html",etiqs=ToutEtiq)
+
+@app.route("/modifEtiquettes",methods=['GET','POST'])
+def modifEtiquettes():
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        nom = request.form['nom']
+        etiqIde = request.form['etiqAmodif']
+        try :
+            etiqAmodif = db.session.query(Etiquette).filter(Etiquette.idE==etiqIde)
+            etiqAmodif.update({"nom" : nom })
+            db.session.commit()
+            return redirect(url_for('creationEtiquettes'))
+        except:
+            return 'Erreur : route /modifEtiquettes'
+    else :
+        return render_template("creationEtiquettes.html",etiqs=ToutEtiq)
 
 @app.route("/creerQuestion",methods=['GET','POST'])
 def creerQ():
@@ -201,16 +220,24 @@ def modifier(id):
     if 'nomU' not in session:
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
+    selected_tags = request.form.getlist('tag')
     questionModif = Question.query.get_or_404(id)       #Recup question avec id correspondant, erreur sinon
+    ToutAssoc = db.session.query(Associe).filter(Associe.RidQ==questionModif.idQ).all()
     if request.method == 'POST':
         questionModif.enonce = request.form['question'] #Modification de l'enoncé de la question
         try:
+            db.session.query(Associe).filter(Associe.RidQ == id).delete()
             db.session.commit()                         #Envoi des modifications à la base de données
+            for tag_id in selected_tags:
+                new_assos = Associe(RidE=tag_id,RidQ=questionModif.idQ)
+                db.session.add(new_assos)
+                db.session.commit()  
             return redirect(url_for('lquestion'))       #Redirection vers la page de liste des questions
         except:
             return 'Erreur de modification'             #Renvoi message erreur en cas d'échec de la modification
     else:
-        return render_template("modifQuestion.html",enonce=questionModif.enonce,idQ=questionModif.idQ)
+        etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
+        return render_template("modifQuestion.html",enonce=questionModif.enonce,idQ=questionModif.idQ,etiquettes=etiquettes)
         #Rendu template modifQuestion.html avec les variables enonce et idQ
 
 @app.route("/supprimer/<int:id>")

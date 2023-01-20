@@ -29,6 +29,19 @@
                 <p><input class = "button" type="submit" value="Supprimer l'étiquette"></p>
             </form>
         </div>
+        <div>
+            <h1>Modification d'une <br/> étiquette</h1>
+            <hr/>
+            <form action="/modifEtiquettes" method="POST">
+                <p>Nom de l'étiquette : <input type="text" name="nom"></p>
+                <select name="etiqAmodif">
+                    {% for etiq in etiqs%}
+                        <option value='{{etiq.idE}}'>{{etiq.nom}}</option>
+                    {% endfor %}
+                </select>
+                <p><input class="button" type="submit" value="Modifier l'étiquette"></p>
+            </form>
+        </div>
     </div>
     {%include 'partials/footer.html'%}
 </body>
