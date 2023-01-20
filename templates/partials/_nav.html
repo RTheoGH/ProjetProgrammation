@@ -2,7 +2,7 @@
     <ul class="nav-list">
         <li {% if page=="Menu" %} class="active" {% endif %}><a href="/">Accueil</a></li>
         {% if session['nomU'] %}<li {% if page=="Créer" %} class="active" {% endif %}><a href="/creerQuestion">Créer Question</a></li>{% endif %}
-        {% if session['nomU'] %}<li {% if page=="CreationEtiquettes" %} class="active" {% endif %}><a href="/creationEtiquettes">Créer Étiquette</a></li>{% endif %}
+        {% if session['nomU'] %}<li {% if page=="Etiquettes" %} class="active" {% endif %}><a href="/creationEtiquettes">Gérer Étiquette</a></li>{% endif %}
         {% if session['nomU'] %}<li {% if page=="Consulter" %} class="active" {% endif %}><a href="/lquestion">Consulter Questions</a></li>{% endif %}
         {% if session['nomU'] %}<li {% if page=="CréerQcm" %} class="active" {% endif %}><a href="/QCM">Créer QCM</a></li>{% endif %}
         {% if session['nomU'] %}<li {% if page=="ConsulterQcm" %} class="active" {% endif %}><a href="/MesQCM">Consulter QCM</a></li>{% endif %}

@@ -286,9 +286,30 @@ fieldset{
     background-color: wheat;
     height: 5em;
     overflow-y: scroll;
+    font-weight: bold;
 }
 
 .flashes{
     color: red;
     font-weight: bold;
+}
+
+.cEtiquette{
+    border: 0.5em solid black;
+    border-radius: 10px;
+    padding: 2em;
+    width: 25em;
+    background-color: whitesmoke;
+    text-align: center;
+    margin-right: 5em;
+}
+
+.dEtiquette{
+    border: 0.5em solid black;
+    border-radius: 10px;
+    padding: 2em;
+    width: 25em;
+    background-color: whitesmoke;
+    text-align: center;
+    margin-left: 5em;
 }

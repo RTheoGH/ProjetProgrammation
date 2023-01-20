@@ -1,57 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
 
-db = SQLAlchemy()
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  #Pour la session sinon ça marche pas
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db'
-db.init_app(app)
 nombreIdQuestion=0
 nombreIdCheck=0
 
-# Voir README pour le schèma de la base de données
-class Utilisateur(db.Model):
-    idU = db.Column(db.Integer, primary_key=True)
-    nomU = db.Column(db.String(50))
-    passU = db.Column(db.String(50))
-
-    def __constructeur__(u):
-        return 'Utilisateur %r'% u.idU
-
-class Question(db.Model):
-    idQ = db.Column(db.Integer, primary_key=True)
-    enonce = db.Column(db.String(300), nullable=False)
-    # idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)
-
-    def __constructeur__(u):
-        return 'Question %r'% u.idQ
-
-class Etiquette(db.Model):
-    idE = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(100))
-
-class Associe(db.Model):
-    RidE = db.Column(db.Integer, db.ForeignKey(Etiquette.idE),nullable=False,primary_key=True)
-    RidQ = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
-
-class Reponse(db.Model): 
-    idR = db.Column(db.Integer,primary_key=True)
-    reponse = db.Column(db.String(200), nullable=False)
-    correction = db.Column(db.Integer, nullable=False)
-    idQ = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False)
-
-    def __constructeur__(u):
-        return 'Reponse %r'% u.idR
-
-class QCM(db.Model):
-    idQCM = db.Column(db.Integer,primary_key=True)
-    Nom = db.Column(db.String(200), nullable = False)
-
-class Contient(db.Model):
-    RidQCM = db.Column(db.Integer, db.ForeignKey(QCM.idQCM),nullable=False,primary_key=True)
-    RidQ = db.Column(db.Integer,db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
+from bdd import *             #Importation de la base de donnée depuis bdd.py
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db'
+db.init_app(app)
 
 with app.app_context():
     db.drop_all()
@@ -176,11 +134,11 @@ def creationEtiquettes():
             db.session.add(new_etiquette)
             db.session.commit()
             print(Etiquette.query.all(),new_etiquette.nom,new_etiquette.idE)
-            return redirect(url_for('index'))
+            return redirect(url_for('creationEtiquettes'))
         except:
             return 'Erreur : route /creationEtiquettes'
     else :
-        return render_template("creationEtiquettes.html",page="CreationEtiquettes")
+        return render_template("creationEtiquettes.html",page="Etiquettes")
 
 @app.route("/suppEtiquettes",methods=['GET','POST'])
 def suppEtiquettes():

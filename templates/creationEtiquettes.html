@@ -12,17 +12,23 @@
 </head>
 <body>
     {%include 'partials/_nav.html'%}
-    <div class="menu">
-        <h1>Création d'une <br/> nouvelle étiquette</h1>
-        <hr/>
-        <form action="/creationEtiquettes" method="POST">
-            <p>Nom de l'étiquette : <input type="text" name="nom"></p>
-            <p><input class = "button" type="submit" value="Crée l'étiquette"></p>
-        </form>
-        <form action="/suppEtiquettes" method="POST">
-            <input type="text" name="nom" placeholder="Nom de l'étiquette"><br>
-            <input class = "button" type="submit" value="suppression de l'étiquette"><br>
-        </form>
+    <div class="mid double">
+        <div class="cEtiquette">
+            <h1>Création d'une <br/> étiquette</h1>
+            <hr/>
+            <form action="/creationEtiquettes" method="POST">
+                <p>Nom de l'étiquette : <input type="text" name="nom"></p>
+                <p><input class = "button" type="submit" value="Créer l'étiquette"></p>
+            </form>
+        </div>
+        <div class="dEtiquette">
+            <h1>Suppression d'une <br/> étiquette</h1>
+            <hr/>
+            <form action="/suppEtiquettes" method="POST">
+                <p>Nom de l'étiquette : <input type="text" name="nom"></p>
+                <p><input class = "button" type="submit" value="Supprimer l'étiquette"></p>
+            </form>
+        </div>
     </div>
     {%include 'partials/footer.html'%}
 </body>
