@@ -14,7 +14,7 @@
 <body>
     {%include 'partials/_nav.html'%}
     <div class="mid double">
-        <div class="gaucheEtiquette">                                                    
+        <div class="gereEtiquette gaucheEtiquette">                                                    
             <h1>Création d'une <br/> étiquette</h1>
             <hr/>
             <form action="/creationEtiquettes" method="POST">                            <!-- Crée une nouvelle étiquette -->
@@ -22,7 +22,7 @@
                 <p><input class = "button" type="submit" value="Créer l'étiquette"></p>
             </form>
         </div>
-        <div class="centreEtiquette">
+        <div class="gereEtiquette centreEtiquette">
             <h1>Modification d'une <br/> étiquette</h1>
             <hr/>
             <form action="/modifEtiquettes" method="POST">                               <!-- Modifie une étiquette existante -->
@@ -37,7 +37,7 @@
                 <p><input class="button" type="submit" value="Modifier l'étiquette"></p>
             </form>
         </div>
-        <div class="droiteEtiquette">
+        <div class="gereEtiquette droiteEtiquette">
             <h1>Suppression d'une <br/> étiquette</h1>
             <hr/>
             <form action="/suppEtiquettes" method="POST">                                <!-- Supprime une étiquette -->
