@@ -138,7 +138,7 @@ def suppEtiquettes():
                 db.session.delete(associe)
                 db.session.commit()
             else:
-                print("Etiquette not found")
+                print("Etiquette not found")             #Si on ne trouve pas l'étiquette
             db.session.delete(etiq)
             db.session.commit()
             # print('après suppression : ',Etiquette.query.all(),' association : ',Associe.query.all())
