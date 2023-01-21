@@ -19,20 +19,17 @@
         <div class="affQCM">
             {% for i in range(len) %}
             <div class="affQuestion" id="Q{{listequestion[i].idQ}}">{{listequestion[i].enonce}}</div>
-            <script>
+            <script>                                            /* Conversion de l'énoncé avec showdown */
                 $('#Q{{listequestion[i].idQ}}').html(converter.makeHtml($('#Q{{listequestion[i].idQ}}').text()));
             </script>
             <hr/>
             {% for reponse in listereponse[i] %}
-            
             <div class="affReponse"><input class="bigCheckbox" id="{{reponse.idR}}" type="checkbox"/> <label for="{{reponse.idR}}">{{reponse.reponse}}</label></div>
             <script>
                 $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
             </script>
             {% endfor %}
             <hr/>
-            <!-- on a découvert plus tard qu'on pouvait faire une ligne avec la balise <hr/> -->
-            <!-- <script> document.write(converter.makeHtml('---'))</script> -->
             {% endfor %}
         </div>
     </div>

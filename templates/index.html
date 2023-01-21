@@ -7,32 +7,32 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/style.css" rel="stylesheet">
-    {%include 'partials/Biblio.html'%}
+    {%include 'partials/Biblio.html'%}           <!-- Inclusion de biblio.html -->
     <title>Bienvenue !</title>
 </head>
 
 <body>
-    {%include 'partials/_nav.html'%}
+    {%include 'partials/_nav.html'%}             <!-- Inclusion de la barre de navigation _nav.html -->
     <div class="menu">
         <h1>Bienvenue<br/>sur<br/>Infomaker !</h1>
-        {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages() %}  <!-- Récupère les messages de flash() du serveur -->
             {% if messages %}
                 <div class="flashes">
-                    {% for message in messages %}
+                    {% for message in messages %}     <!-- Puis les affiches -->
                         <p>{{ message }}</p>
                     {% endfor %}
                 </div>
             {% endif %}
         {% endwith %}
-        {% if session['nomU'] %}
+        {% if session['nomU'] %}                 <!-- Si un utilisateur est déjà connecté -->
         <p>Bonjour, {{session['nomU']}}</p>
         <a class="button" name="deconnexion" href="/deconnexion">Deconnexion</a>
-        {% else %}
+        {% else %}                               <!-- sinon -->
         <a class="button" name="creationCompte" href="/creationCompte">Créer un compte</a>
         <a class="button" name="connexion" href="/connexion">Connexion</a>
         {% endif %}
     </div>
-    {%include 'partials/footer.html'%}
+    {%include 'partials/footer.html'%}           <!-- Inclusion du bas de page footer.html -->
 </body>
 
 </html>

@@ -8,3 +8,12 @@
         {% if session['nomU']=='ADMIN' %}<li {% if page=="listeUtilisateurs" %} class="active" {% endif %}><a href="/listeUtilisateurs">Consulter Utilisateurs</a></li>{% endif %}
     </ul>
 </nav>
+
+<!-- 
+    S'inclue à chaque page via {%include 'partials/_nav.html'%}
+    Description de la barre de navigation :
+        Premier if : vérifie que l'utilisateur est connecté pour s'afficher (Par défaut on peut quand même acceder à l'accueil)
+        Deuxieme if : vérifie si on est sur la page actuelle, si c'est le cas, colore l'onglet en rouge
+
+        Pour l'onglet /listeUtilisateurs il faut que l'utilisateur soit 'ADMIN'
+-->
