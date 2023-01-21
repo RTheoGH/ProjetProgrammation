@@ -254,29 +254,36 @@ footer {
     background-color: wheat;
     overflow-y:scroll;
 }
+
+/* Affichage des énoncés dans le qcm */
 .affQuestion{
     text-align: left;
     margin: 1em;
 }
 
+/* Affichage des réponses dans le qcm */
 .affReponse{
     text-align: left;
     margin: 1em;
 }
 
+/* Affichage de checkbox pour répondre dans le qcm */
 .bigCheckbox{
     height:1.5em;
     width: 1.5em;
 }
 
+/* Div etiquette */
 .affichageEtiquette{
     margin: 0;
 }
 
+/* Style de la liste */
 .affichageEtiquette ul {
     list-style-type: none;
 }
 
+/* Style pour chaque etiquette */
 .affichageEtiquette li{
     float:left;
     width: 33%;
@@ -289,11 +296,13 @@ fieldset{
     font-weight: bold;
 }
 
+/* Style de flash() (Flask) */
 .flashes{
     color: red;
     font-weight: bold;
 }
 
+/* Style pour créer une étiquette */
 .gaucheEtiquette{
     border: 0.5em solid black;
     border-radius: 10px;
@@ -304,6 +313,7 @@ fieldset{
     margin-right: 5em;
 }
 
+/* Style pour modifier une étiquette */
 .centreEtiquette{
     border: 0.5em solid black;
     border-radius: 10px;
@@ -315,6 +325,7 @@ fieldset{
     margin-right: 5em;
 }
 
+/* Style pour supprimer une étiquette */
 .droiteEtiquette{
     border: 0.5em solid black;
     border-radius: 10px;
