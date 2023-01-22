@@ -222,9 +222,12 @@ def modifier(id):
         return redirect(url_for('index'))
     selected_tags = request.form.getlist('tag')
     questionModif = Question.query.get_or_404(id)       #Recup question avec id correspondant, erreur sinon
+    reponseModif = Reponse.query.filter(Reponse.idQ==questionModif.idQ).all() #Recup les reponses de la question
     ToutAssoc = db.session.query(Associe).filter(Associe.RidQ==questionModif.idQ).all()
     if request.method == 'POST':
         questionModif.enonce = request.form['question'] #Modification de l'enoncé de la question
+        for r in reponseModif:                          #Pour chaque reponse, modifie tout
+            r.reponse = request.form['R'+str(r.idR)]
         
         try:
             db.session.query(Associe).filter(Associe.RidQ == id).delete()
@@ -238,7 +241,7 @@ def modifier(id):
             return 'Erreur de modification'             #Renvoi message erreur en cas d'échec de la modification
     else:
         etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
-        return render_template("modifQuestion.html",enonce=questionModif.enonce,idQ=questionModif.idQ,etiquettes=etiquettes)
+        return render_template("modifQuestion.html",enonce=questionModif.enonce,idQ=questionModif.idQ,reponses=reponseModif,etiquettes=etiquettes)
 
 @app.route("/supprimer/<int:id>")                       #Route pour supprimer une question de l'utilisateur
 def supprimer(id):

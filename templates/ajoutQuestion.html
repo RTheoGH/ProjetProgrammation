@@ -17,8 +17,8 @@
         <div class="code">              <!-- Partie écriture -->
             <form action="/ajout" method="POST">
                 <h1>Ecrivez une question</h1>
-                <p>Question : <br/>           <!-- Zone de texte pour la question, methode onkeyup -->
-                <textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiserQ()"></textarea>
+                <p>Énoncé : <br/>           <!-- Zone de texte pour la question, methode onkeyup -->
+                <textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiser()"></textarea>
                 </p>
                 <hr/>
                 <div class="nouveauBouton">
@@ -44,14 +44,29 @@
                                 });                            /* Suppression de l'élément HTML */
                                 $("#" + id).remove();          /* ayant pour id l'id passé en paramètre */
                             }
+                            visualiser()
                         }
 
-                        function visualiserQ() {
-                            // Déclaration de la variable textQuestion qui contient le résultat 
-                            // de la conversion de la valeur de l'élément avec l'id 'question' en HTML
-                            let textQuestion = converter.makeHtml($("#question").val());
-                            $(".visu").html(textQuestion);  /* Remplacement du contenu HTML (jQuery) de l'élément ayant */
-                            MathJax.typeset();              /* la classe 'visu' avec la valeur de textQuestion */
+                        function visualiser() {
+                            // 
+                            let textAll = $("textarea");   /*Variable textAll qui recupere le contenu dee toutes les textarea*/
+                            // console.log(textAll);
+                            let texte="<h2>Enoncé :</h2>";
+                            textAll.each( function (index) {            /* Pour chaque zone de texte */
+                                // console.log(this);
+                                if(index==0){                           /* Si c'est la premiere zone de texte (énoncé)*/
+                                    texte += converter.makeHtml($(this).val());
+                                    texte += "<hr/><h2>Réponses :</h2>";
+                                }else{                                  /* Pour les réponses */
+                                    texte += "<div class='repLi'>\
+                                        <div class='repCo'><input type='checkbox'/></div>\
+                                        <div class='repCo'> "+converter.makeHtml($(this).val())+"</div>\
+                                        </div>";
+                                }
+                                // console.log(texte);
+                            })
+                            $(".visuel").html(texte);      /* Remplacement du contenu HTML (jQuery) de l'élément ayant */
+                            MathJax.typeset();             /* la classe 'visuel' avec la valeur de texte */
                             hljs.highlightAll();
                         }
                     </script>
@@ -64,7 +79,7 @@
                         </ul>
                         </fieldset>
                     </div>
-                    <br/>
+                    <hr/>
                 </div>             <!-- Appel de la fonction demandePlusReponse avec la methode onclick -->
                 <p><button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button></p>
                 <p><input class="button" type="submit" value="Ajouter la question" /></p>
@@ -72,6 +87,7 @@
         </div>
         <div class="visu">           <!-- Partie visualisation -->
             <h1 class="middle">Visualisation</h1>
+            <div class="visuel"></div>
         </div>
     </div>
     {%include 'partials/footer.html'%}
