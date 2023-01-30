@@ -8,8 +8,18 @@ class Utilisateur(db.Model):                           # Classe Utilisateur
     nomU = db.Column(db.String(50))                    #   nom de l'utilisateur
     passU = db.Column(db.String(50))                   #   Mot de passe de l'utilisateur
 
-    def __repr__(u):                         # représentation de l'objet 
-        return 'Utilisateur %r'% u.idU       # pour un print par exemple
+    def __repr__(u):                                   # représentation de l'objet 
+        return 'Utilisateur %r'% u.idU                 # pour un print par exemple
+
+class Etudiant(db.Model):
+    idEtu = db.Column(db.Integer, primary_key=True)
+    nomEtu = db.Column(db.String(50))
+    prenomEtu = db.Column(db.String(50))
+    numeroEtu = db.Column(db.String(15))
+    idU = db.Column(db.Integer, primary_key=True)
+
+    def __repr__(u):
+        return 'Etudiant : %r' % u.idEtu
 
 class Question(db.Model):                                                        # Classe Question
     idQ = db.Column(db.Integer, primary_key=True)                                #   identifiant question
