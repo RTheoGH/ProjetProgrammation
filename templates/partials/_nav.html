@@ -5,6 +5,7 @@
         {% if session['nomU'] %}<li {% if page=="Etiquettes" %} class="active" {% endif %}><a href="/creationEtiquettes">Gérer Étiquette</a></li>{% endif %}
         {% if session['nomU'] %}<li {% if page=="Consulter" %} class="active" {% endif %}><a href="/lquestion">Consulter Questions</a></li>{% endif %}
         {% if session['nomU'] %}<li {% if page=="CréerQcm" %} class="active" {% endif %}><a href="/QCM">Créer QCM</a></li>{% endif %}
+        {% if session['nomU'] %}<li {% if page=="listeEtudiants" %} class="active" {% endif %}><a href="/listeEtudiants">Consulter Etudiants</a></li>{% endif %}
         {% if session['nomU']=='ADMIN' %}<li {% if page=="listeUtilisateurs" %} class="active" {% endif %}><a href="/listeUtilisateurs">Consulter Utilisateurs</a></li>{% endif %}
     </ul>
 </nav>

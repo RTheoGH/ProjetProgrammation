@@ -52,13 +52,26 @@ def listeUtilisateurs():                                  #visualiser les utilis
     utilisateurs = db.session.query(Utilisateur).all()                 #connectez vous avec.
     return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs,page='listeUtilisateurs')
 
-@app.route("/listeEtudiants",methods=['GET'])
+@app.route("/listeEtudiants",methods=['POST','GET'])
 def listeEtudiants():
     if 'nomU' not in session:                                           #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
-    etudiants = db.session.query(Etudiant).all()
-    return render_templates("lEtudiants.html",lEtudiants=etudiants,page='listeEtudiants')
+    if request.method == 'POST':
+        nomEtudiant=request.form['nomEtu']
+        prenomEtudiant=request.form['prenomEt0u']
+        numeroEtudiant=request.form['numeroEtu']
+        new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant)
+
+        try:
+            db.session.add(new_utilisateur)               #Création d'un nouvel eleve'
+            db.session.commit()
+            return redirect(url_for("lEtudiants"))
+        except:
+            return "Erreur lors de l'ajout d'un étudiant"
+    else:
+        etudiants = db.session.query(Etudiant).all()
+        return render_template("lEtudiants.html",lEtudiants=etudiants,page='listeEtudiants')
 
 @app.route("/connexionEnseignant",methods=['POST','GET'])           #Route pour se connecter
 def connexionEnseignant():
