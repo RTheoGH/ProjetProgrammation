@@ -320,14 +320,17 @@ def generate():
             checked_checkboxes.append(EL)                                   #insert to dans contient idqcm(global a cette fun) et EL.idQ 
             ListeReponse = db.session.query(Reponse).filter(Reponse.idQ==key).all() #Ajout de l'enoncé à la liste des questions cochées
             reponse_checkboxes.append(ListeReponse)
+            new_QCM = QCM(idQCM=nombreIdQCM,Nom=nomQcm,idU=session['idU'])
             new_contient = Contient(RidQCM=nombreIdQCM,RidQ=key)
             try :
+                db.session.add(new_QCM)
+                db.session.commit()
                 db.session.add(new_contient)
                 db.session.commit()
             except :
                 return "Erreur de création du lien 'contient' entre Qcm et Question"
-
-    return render_template("Affichage.html", listereponse = reponse_checkboxes, listequestion=checked_checkboxes,len = len(checked_checkboxes), nomQcm = nomQcm)
+    listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
+    return render_template("lQCM.html",listeQCM=listeQCM)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
 
 if __name__ == '__main__':
