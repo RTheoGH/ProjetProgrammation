@@ -100,11 +100,12 @@ def ajout():
     if 'nomU' not in session:                                           #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
+    print(request.form.getlist("rep_num"))
     if request.method == 'POST':                  #Recup question du formulaire
         question = request.form['question']       #Création nouvelle question avec enoncé correspondant     
         new_question = Question(enonce=question,idU=session['idU'])
         recupForm = request.form.getlist("reponse")     #On récupère la liste des questions
-
+    
         try:
             db.session.add(new_question)                #Ajout question -> base de donnée
             db.session.commit()                         #Envoie des changements
