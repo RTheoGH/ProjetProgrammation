@@ -14,6 +14,7 @@ with app.app_context():
 
 nombreIdQuestion=0               #Variables utilisés pour 
 nombreIdCheck=0                  #la génération de réponses
+nombreIdQCM=0
 
 @app.route("/")                  #Route principale
 def index():                                         #'page' est la référence de chaque page web actuelle
@@ -290,10 +291,19 @@ def generate():
         if value == 'on':
             # checked_checkboxes.append(key)
             # Récupération de l'enoncé de la question correspondant à l'id reçu
+            global nombreIdQCM
+            nombreIdQCM+=1
             EL = db.session.query(Question).filter(Question.idQ == key,Question.idU==session['idU']).first()
             checked_checkboxes.append(EL)                                   #insert to dans contient idqcm(global a cette fun) et EL.idQ 
             ListeReponse = db.session.query(Reponse).filter(Reponse.idQ==key).all() #Ajout de l'enoncé à la liste des questions cochées
             reponse_checkboxes.append(ListeReponse)
+            new_contient = Contient(RidQCM=nombreIdQCM,RidQ=key)
+            try :
+                db.session.add(new_contient)
+                db.session.commit()
+            except :
+                return "Erreur de création du lien 'contient' entre Qcm et Question"
+
     return render_template("Affichage.html", listereponse = reponse_checkboxes, listequestion=checked_checkboxes,len = len(checked_checkboxes), nomQcm = nomQcm)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
 
