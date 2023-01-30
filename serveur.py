@@ -52,7 +52,7 @@ def listeUtilisateurs():                                  #visualiser les utilis
     utilisateurs = db.session.query(Utilisateur).all()                 #connectez vous avec.
     return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs,page='listeUtilisateurs')
 
-@app.route("/listeEtudiants",methos=['GET'])
+@app.route("/listeEtudiants",methods=['GET'])
 def listeEtudiants():
     if 'nomU' not in session:                                           #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
