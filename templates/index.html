@@ -28,8 +28,8 @@
         <p>Bonjour, {{session['nomU']}}</p>
         <a class="button" name="deconnexion" href="/deconnexion">Deconnexion</a>
         {% else %}                               <!-- sinon -->
-        <a class="button" name="creationCompte" href="/creationCompte">Créer un compte</a>
-        <a class="button" name="connexion" href="/connexion">Connexion</a>
+        <a class="button" name="espEnseignant" href="/espEnseignant">Espace Enseignant</a>
+        <a class="button" name="espEtudiant" href="/espEtudiant">Espace Etudiant</a>
         {% endif %}
     </div>
     {%include 'partials/footer.html'%}           <!-- Inclusion du bas de page footer.html -->
