@@ -38,7 +38,7 @@ def creationCompteEnseignant():
         try:
             db.session.add(new_utilisateur)               #Création du nouveau compte
             db.session.commit()
-            return redirect(url_for("index"))
+            return redirect(url_for("espEnseignant"))
         except:
             return 'Erreur lors de la création du compte'
     else: 
@@ -51,6 +51,14 @@ def listeUtilisateurs():                                  #visualiser les utilis
         return redirect(url_for('index'))                              #page, créez un compte 'ADMIN' puis
     utilisateurs = db.session.query(Utilisateur).all()                 #connectez vous avec.
     return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs,page='listeUtilisateurs')
+
+@app.route("/listeEtudiants",methos=['GET'])
+def listeEtudiants():
+    if 'nomU' not in session:                                           #Sécurité pour éviter d'aller sur une page
+        flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
+        return redirect(url_for('index'))
+    etudiants = db.session.query(Etudiant).all()
+    return render_templates("lEtudiants.html",lEtudiants=etudiants,page='listeEtudiants')
 
 @app.route("/connexionEnseignant",methods=['POST','GET'])           #Route pour se connecter
 def connexionEnseignant():
