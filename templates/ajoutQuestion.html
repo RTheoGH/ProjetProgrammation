@@ -6,85 +6,122 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet">
-    {%include 'partials/Biblio.html'%}
+    <link href="/static/style.css" rel="stylesheet"> {%include 'partials/Biblio.html'%}
     <title>Ajout</title>
 </head>
 
 <body>
     {%include 'partials/_nav.html'%}
     <div class="mid double">
-        <div class="code">              <!-- Partie écriture -->
+        <div class="code">
+            <!-- Partie écriture -->
             <form action="/ajout" method="POST">
                 <h1>Ecrivez une question</h1>
-                <p>Énoncé : <br/>           <!-- Zone de texte pour la question, methode onkeyup -->
-                <textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiser()"></textarea>
+                <p>Énoncé : <br/>
+                    <!-- Zone de texte pour la question, methode onkeyup -->
+                    <textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiser()"></textarea>
                 </p>
                 <hr/>
                 <div class="nouveauBouton">
-                    <script>                     /* Fonction JS pour envoyer une requête GET à /plusDeReponse */
+                    <script>
+                        /* Fonction JS pour envoyer une requête GET à /plusDeReponse */
+
+                        window.addEventListener('load', () => {
+                            document.querySelector('#demandereponse').disabled = true;
+                            document.querySelector('#demandereponse').hidden = true;
+                            document.querySelector('#rep_num').disabled = true;
+                            document.querySelector('#rep_num').hidden = true;
+                        });
+
                         function demandePlusReponse() {
-                            fetch('/plusDeReponse')                /* Utilisation de l'API Fetch pour */
+                            fetch('/plusDeReponse') /* Utilisation de l'API Fetch pour */
                                 .then(response => response.text()) /*envoyer une requête GET à /plusDeReponse */
                                 .then(data => {
                                     $(".nouveauBouton").append(data); /* Ajout texte de la réponse */
-                                });                                   /* à un élément ayant la classe */
-                        }                                             /* 'nouveauBouton' */
+                                }); /* à un élément ayant la classe */
+                        } /* 'nouveauBouton' */
 
                         function supprimerBouton(id) {
                             for (let i = 0; i < 3; i++) {
-                                fetch('/supprimer_bouton', {   /* Envoi d'une requête DELETE à la route  */
-                                    method: 'DELETE',          /* '/supprimer_bouton' avec un objet JSON */
-                                    body: JSON.stringify({     /* contenant l'id en paramètre */
+                                fetch('/supprimer_bouton', { /* Envoi d'une requête DELETE à la route  */
+                                    method: 'DELETE',
+                                    /* '/supprimer_bouton' avec un objet JSON */
+                                    body: JSON.stringify({ /* contenant l'id en paramètre */
                                         'id': id
                                     }),
                                     headers: {
                                         'Content-Type': 'application/json'
                                     }
-                                });                            /* Suppression de l'élément HTML */
-                                $("#" + id).remove();          /* ayant pour id l'id passé en paramètre */
+                                }); /* Suppression de l'élément HTML */
+                                $("#" + id).remove(); /* ayant pour id l'id passé en paramètre */
                             }
                             visualiser()
                         }
 
                         function visualiser() {
-                            let textAll = $("textarea");   /*Variable textAll qui recupere le contenu dee toutes les textarea*/
+                            // 
+                            let textAll = $("textarea"); /*Variable textAll qui recupere le contenu dee toutes les textarea*/
                             // console.log(textAll);
-                            let texte="<h2>Enoncé :</h2>";
-                            textAll.each( function (index) {            /* Pour chaque zone de texte */
+                            let texte = "<h2>Enoncé :</h2>";
+                            textAll.each(function(index) { /* Pour chaque zone de texte */
                                 // console.log(this);
-                                if(index==0){                           /* Si c'est la premiere zone de texte (énoncé)*/
+                                if (index == 0) { /* Si c'est la premiere zone de texte (énoncé)*/
                                     texte += converter.makeHtml($(this).val());
                                     texte += "<hr/><h2>Réponses :</h2>";
-                                }else{                                  /* Pour les réponses */
+                                } else { /* Pour les réponses */
                                     texte += "<div class='repLi'>\
                                         <div class='repCo'><input type='checkbox'/></div>\
-                                        <div class='repCo'> "+converter.makeHtml($(this).val())+"</div>\
+                                        <div class='repCo'> " + converter.makeHtml($(this).val()) + "</div>\
                                         </div>";
                                 }
                                 // console.log(texte);
                             })
-                            $(".visuel").html(texte);      /* Remplacement du contenu HTML (jQuery) de l'élément ayant */
-                            MathJax.typeset();             /* la classe 'visuel' avec la valeur de texte */
+                            $(".visuel").html(texte); /* Remplacement du contenu HTML (jQuery) de l'élément ayant */
+                            MathJax.typeset(); /* la classe 'visuel' avec la valeur de texte */
                             hljs.highlightAll();
+                        }
+
+                        function Question_Numerique() {
+                            document.querySelector('#Quest_QCM').disabled = true;
+                            document.querySelector('#Quest_QCM').hidden = true;
+                            document.querySelector('#rep_num').disabled = false;
+                            document.querySelector('#rep_num').hidden = false;
+                            document.querySelector('#Quest_Num').disabled = true;
+                            document.querySelector('#Quest_Num').hidden = true;
+                        }
+
+                        function Question_QCM() {
+                            document.querySelector('#demandereponse').disabled = false;
+                            document.querySelector('#demandereponse').hidden = false;
+                            document.querySelector('#Quest_Num').disabled = true;
+                            document.querySelector('#Quest_Num').hidden = true;
+                            document.querySelector('#Quest_QCM').disabled = true;
+                            document.querySelector('#Quest_QCM').hidden = true;
                         }
                     </script>
                     <div class="affichageEtiquette">
-                        <fieldset><legend>Étiquettes</legend>
-                        <ul>
-                            {% for etiquette in etiquettes %}       <!-- Pour chaque etiquette parmi les etiquettes -->
+                        <fieldset>
+                            <legend>Étiquettes</legend>
+                            <ul>
+                                {% for etiquette in etiquettes %}
+                                <!-- Pour chaque etiquette parmi les etiquettes -->
                                 <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
-                            {% endfor %}
-                        </ul>
+                                {% endfor %}
+                            </ul>
                         </fieldset>
                     </div>
                     <hr/>
-                </div>             <!-- Appel de la fonction demandePlusReponse avec la methode onclick -->
-                <p><button type="button" onclick="demandePlusReponse()">Ajouter une réponse</button></p>
+                </div>
+                <!-- Appel de la fonction demandePlusReponse avec la methode onclick -->
+                <p><button type="button" id="Quest_Num" onclick="Question_Numerique()">Passer en question numérique</button></p>
+                <p><button type="button" id="Quest_QCM" onclick="Question_QCM()">Passer en question à choix multiple</button></p>
+                <p><button type="button" id="demandereponse" onclick="demandePlusReponse()">Ajouter une réponse</button></p>
+                <p><textarea name="rep_num" id="rep_num" cols="30" rows="10"></textarea></p>
                 <p><input class="button" type="submit" value="Ajouter la question" /></p>
             </form>
         </div>
-        <div class="visu">           <!-- Partie visualisation -->
+        <div class="visu">
+            <!-- Partie visualisation -->
             <h1 class="middle">Visualisation</h1>
             <div class="visuel"></div>
         </div>

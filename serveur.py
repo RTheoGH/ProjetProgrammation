@@ -52,13 +52,26 @@ def listeUtilisateurs():                                  #visualiser les utilis
     utilisateurs = db.session.query(Utilisateur).all()                 #connectez vous avec.
     return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs,page='listeUtilisateurs')
 
-@app.route("/listeEtudiants",methods=['GET'])
+@app.route("/listeEtudiants",methods=['POST','GET'])
 def listeEtudiants():
     if 'nomU' not in session:                                           #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
-    etudiants = db.session.query(Etudiant).all()
-    return render_templates("lEtudiants.html",lEtudiants=etudiants,page='listeEtudiants')
+    if request.method == 'POST':
+        nomEtudiant=request.form['nomEtu']
+        prenomEtudiant=request.form['prenomEt0u']
+        numeroEtudiant=request.form['numeroEtu']
+        new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant)
+
+        try:
+            db.session.add(new_utilisateur)               #Création d'un nouvel eleve'
+            db.session.commit()
+            return redirect(url_for("lEtudiants"))
+        except:
+            return "Erreur lors de l'ajout d'un étudiant"
+    else:
+        etudiants = db.session.query(Etudiant).all()
+        return render_template("lEtudiants.html",lEtudiants=etudiants,page='listeEtudiants')
 
 @app.route("/connexionEnseignant",methods=['POST','GET'])           #Route pour se connecter
 def connexionEnseignant():
@@ -100,19 +113,27 @@ def ajout():
     if 'nomU' not in session:                                           #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
+
     if request.method == 'POST':                  #Recup question du formulaire
         question = request.form['question']       #Création nouvelle question avec enoncé correspondant     
         new_question = Question(enonce=question,idU=session['idU'])
         recupForm = request.form.getlist("reponse")     #On récupère la liste des questions
-
+        rep_num = request.form.getlist("rep_num")
+        print(rep_num)
+       
         try:
             db.session.add(new_question)                #Ajout question -> base de donnée
             db.session.commit()                         #Envoie des changements
+            idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
+            for key in rep_num:
+                
+                db.session.add(Reponse(reponse=rep_num[0],correction = 1,idQ=idQuestion[0]))
+            
             listeOn = []                              
             for key,value in request.form.items():      #Pour chaque item du formulaire
                 if value == 'on':
                     listeOn.append(int(key))            #Attribut d'id pour la question
-            idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
+            
             for rep in recupForm:
                 reponseAjouter = 0
                 if (recupForm.index(rep)+1) in listeOn: #On ajoute réponse juste
@@ -127,6 +148,7 @@ def ajout():
                 new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ) #On crée l'association entre question
                 db.session.add(new_assos)                              #et étiquette
                 db.session.commit()                     #Envoie des changements
+            print("soso.exe = ",db.session.query(Reponse.reponse).filter(Reponse.idQ==idQuestion[0]).all())
             return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
         except:
             return 'Erreur création de la question'

@@ -53,7 +53,7 @@ h1 {
 
 /* Classe pour définir la taille d'une liste et la possibilité de scroll si dépassement */
 .liste{
-    height:40vh;
+    height:30vh;
     border:2px solid black;
     overflow-y: scroll;
 }
@@ -62,6 +62,11 @@ h1 {
     .menu{
         font-size: 1em;
     }
+}
+
+.newEtudiant{
+    border:2px solid black;
+    text-align: center;
 }
 
 /* Centrage d'un élément sur l'écran */
