@@ -313,26 +313,30 @@ def generate():
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
+    global nombreIdQCM
+    nombreIdQCM+=1
     checked_checkboxes = [] 
     reponse_checkboxes = []                         #Initialisation liste pour stocker les questions cochées
     nomQcm = request.form['nomQcm']
     #insert sur qcm avec un idqcm : 
     #db.session.add(QCM(Nom = ))
+    
+    new_QCM = QCM(idQCM=nombreIdQCM,Nom=nomQcm,idU=session['idU'])
+    try : 
+        db.session.add(new_QCM)
+        db.session.commit()
+    except : 
+        return 'erreur dans la création du QCM'
     for key, value in request.form.items():
         if value == 'on':
             # checked_checkboxes.append(key)
             # Récupération de l'enoncé de la question correspondant à l'id reçu
-            global nombreIdQCM
-            nombreIdQCM+=1
             EL = db.session.query(Question).filter(Question.idQ == key,Question.idU==session['idU']).first()
             checked_checkboxes.append(EL)                                   #insert to dans contient idqcm(global a cette fun) et EL.idQ 
             ListeReponse = db.session.query(Reponse).filter(Reponse.idQ==key).all() #Ajout de l'enoncé à la liste des questions cochées
             reponse_checkboxes.append(ListeReponse)
-            new_QCM = QCM(idQCM=nombreIdQCM,Nom=nomQcm,idU=session['idU'])
             new_contient = Contient(RidQCM=nombreIdQCM,RidQ=key)
             try :
-                db.session.add(new_QCM)
-                db.session.commit()
                 db.session.add(new_contient)
                 db.session.commit()
             except :

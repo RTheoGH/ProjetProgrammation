@@ -11,8 +11,22 @@
     <title>Votre QCM</title>
 </head>
 <body>
-    {# for QCM in listeQCM #}
-        {{QCM.Nom}}
-    {{# endfor #}}
+    {%include 'partials/_nav.html'%}
+    <div class="menu">
+        <h1>Liste des QCM</h1>
+        <div class="liste">
+            <table>
+                <tr class="top">
+                    <td>QCM</td>
+                </tr>
+                {% for QCM in listeQCM %}
+                <tr>
+                    <td class="left" id="{{QCM.idQCM}}">{{QCM.Nom}}</td>    
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    {%include 'partials/footer.html'%}
 </body>
 </html>
