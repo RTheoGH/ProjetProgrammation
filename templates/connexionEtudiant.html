@@ -27,6 +27,13 @@
             {% endif %}
         {% endwith %}
         <form action="/connexionEtudiant" method="POST">                                     <!-- Connexion d'un utilisateur -->
+            <p> Votre enseignant : 
+                <select name="selectEnseignant">
+                    {% for enseignant in enseignants%}                                               <!-- Récupère les étiquettes présentes -->
+                        <option value='{{enseignant.idU}}'>{{enseignant.nom}}</option>
+                    {% endfor %}
+                </select>
+                </p>
             <p> Nom d'utilisateur : </p><input type="text" name="nomU" id="nomU"/>   <!-- Nom correspondant -->
             <p> Mot de passe : </p><input type="password" name="passU" id="passU"/>  <!-- Mot de passe correspondant-->
             <p><input class="button" type="submit" value="Connexion" /></p>

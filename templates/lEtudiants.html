@@ -22,7 +22,7 @@
                     <td>Prenom</td>
                     <td>Numéro d'étudiant</td>
                 </tr>
-                {% for etudiants in letudiants %}         <!-- Affiche chaque utilisateur avec son mot de passe -->
+                {% for etudiants in lEtudiants %}         <!-- Affiche chaque utilisateur avec son mot de passe -->
                 <tr>                                            <!-- Rappel : cette page est uniquement accessible si -->
                     <td>{{etudiants.nomEtu}}</td>              <!-- l'utilisateur est 'ADMIN' -->
                     <td>{{etudiants.prenomEtu}}</td>
@@ -33,7 +33,8 @@
         </div>
         <br/>
         <div class="newEtudiant">
-            <form action="/lEtudiants" method="POST">  <!-- Création d'un etudiant' -->
+            <h1>Ajouter un étudiant</h1>
+            <form action="/listeEtudiants" method="POST">  <!-- Création d'un etudiant' -->
                 <p> Nom : <input type="text" name="nomEtu" id="nomEtu"/></p>           <!-- Avec un nom -->
                 <p> Prenom : <input type="text" name="prenomEtu" id="prenomEtu"/></p>  <!-- Avec un prenom -->
                 <p> Numéro d'étudiant : <input type="password" name="numeroEtu" id="numeroEtu"/></p> <!-- Avec son numéro d'étudiant -->
