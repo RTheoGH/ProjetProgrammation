@@ -143,6 +143,7 @@ def ajout():
                     reponseAjouter = Reponse(reponse= rep,correction = 0,idQ =idQuestion[0])
                     db.session.add(reponseAjouter)       
             db.session.commit()
+            print(db.session.query(Reponse.reponse).filter(Reponse.idQ == idQuestion[0]))#test
             selected_tags = request.form.getlist('tag') #On récupère la liste des étiquettes
             for tag_id in selected_tags:
                 new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ) #On crée l'association entre question
