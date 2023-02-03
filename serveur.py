@@ -59,18 +59,18 @@ def listeEtudiants():
         return redirect(url_for('index'))
     if request.method == 'POST':
         nomEtudiant=request.form['nomEtu']
-        prenomEtudiant=request.form['prenomEt0u']
+        prenomEtudiant=request.form['prenomEtu']
         numeroEtudiant=request.form['numeroEtu']
-        new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant)
+        new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant,idU=session['idU'])
 
         try:
-            db.session.add(new_utilisateur)               #Création d'un nouvel eleve'
+            db.session.add(new_etudiant)               #Création d'un nouvel eleve
             db.session.commit()
-            return redirect(url_for("lEtudiants"))
+            return redirect(url_for("listeEtudiants"))
         except:
             return "Erreur lors de l'ajout d'un étudiant"
     else:
-        etudiants = db.session.query(Etudiant).all()
+        etudiants = db.session.query(Etudiant).filter(Etudiant.idU==session['idU']).all()
         return render_template("lEtudiants.html",lEtudiants=etudiants,page='listeEtudiants')
 
 @app.route("/connexionEnseignant",methods=['POST','GET'])           #Route pour se connecter
@@ -80,10 +80,11 @@ def connexionEnseignant():
         # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
         if testLogin is None:
             flash('Nom ou mot de passe invalide')             #Il faut d'abord crée un compte
-            return redirect(url_for('connexion'))             
+            return redirect(url_for('connexionEnseignant'))             
         if request.form['passU'] == testLogin.passU:          #Vérifie que le mdp de l'utilisateur correspond
             session['nomU'] = request.form['nomU']            
             session['idU'] = testLogin.idU
+            session['role'] = "enseignant"
         return redirect(url_for("index"))              
     else:                       
         return render_template("connexionEnseignant.html",page="Menu")
@@ -91,6 +92,8 @@ def connexionEnseignant():
 @app.route("/connexionEtudiant",methods=['POST','GET'])           #Route pour se connecter
 def connexionEtudiant():
     if request.method == 'POST':
+        testEnseignant = db.session.query(Utilisateur).filter(Utilisateur.nomU==request.form['selectEnseignant']).first()
+
         testLogin = db.session.query(Etudiant).filter(Etudiant.nomEtu == request.form['nomU']).first()
         # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
         if testLogin is None:
@@ -99,6 +102,7 @@ def connexionEtudiant():
         if request.form['passU'] == testLogin.numeroEtu:          #Vérifie que le mdp de l'utilisateur correspond
             session['nomU'] = request.form['nomU']            
             session['idU'] = testLogin.idEtu
+            session['role'] = "etudiant"
         return redirect(url_for("index"))              
     else:                       
         return render_template("connexionEtudiant.html",page="Menu")
