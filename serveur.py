@@ -122,8 +122,10 @@ def ajout():
         question = request.form['question']       #Création nouvelle question avec enoncé correspondant     
         new_question = Question(enonce=question,idU=session['idU'])
         recupForm = request.form.getlist("reponse")     #On récupère la liste des questions
-        rep_num = request.form.getlist("rep_num")
-        print(rep_num)
+        rep_num1 = request.form.getlist("rep_num1")
+        rep_num2 = request.form.getlist("rep_num2")
+        rep_num = [float(rep_num1[0]) + float(float(rep_num2[0])*0.01)]
+        print("recup numerique : ",rep_num)
        
         try:
             db.session.add(new_question)                #Ajout question -> base de donnée
@@ -147,16 +149,17 @@ def ajout():
                     reponseAjouter = Reponse(reponse= rep,correction = 0,idQ =idQuestion[0])
                     db.session.add(reponseAjouter)       
             db.session.commit()
-            print(db.session.query(Reponse.reponse).filter(Reponse.idQ == idQuestion[0]))#test
+            print("idquestion de 0 = ",idQuestion[0]," id question en tout = ",idQuestion)
+            print(db.session.query(Reponse.reponse).filter(Reponse.idQ == idQuestion[0]).all())#test
             selected_tags = request.form.getlist('tag') #On récupère la liste des étiquettes
             for tag_id in selected_tags:
                 new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ) #On crée l'association entre question
                 db.session.add(new_assos)                              #et étiquette
                 db.session.commit()                     #Envoie des changements
-            print("soso.exe = ",db.session.query(Reponse.reponse).filter(Reponse.idQ==idQuestion[0]).all())
+            print("reponse.exe = ",db.session.query(Reponse.reponse).filter(Reponse.idQ==idQuestion[0]).all())
             return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
         except:
-            return 'Erreur création de la question'
+           return 'Erreur création de la question'
     else:
         return render_template("ajoutQuestion.html",page="Créer")
 
@@ -347,7 +350,6 @@ def generate():
     nomQcm = request.form['nomQcm']
     #insert sur qcm avec un idqcm : 
     #db.session.add(QCM(Nom = ))
-print("j'ai commit")
     new_QCM = QCM(idQCM=nombreIdQCM,Nom=nomQcm,idU=session['idU'])
     try : 
         db.session.add(new_QCM)
