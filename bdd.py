@@ -45,7 +45,9 @@ class Reponse(db.Model):                                                    # Cl
     idR = db.Column(db.Integer,primary_key=True)                            #   identifiant reponse
     reponse = db.Column(db.String(200), nullable=False)                     #   corps de la reponse
     correction = db.Column(db.Integer, nullable=False)                      #   boolean vrai/faux
+    estNumerique = db.Column(db.Boolean,default = False, nullable = False)
     idQ = db.Column(db.String(50), db.ForeignKey(Question.idQ),nullable=False) #   id référence de id question
+
 
     def __repr__(u):
         return 'Reponse %r'% u.idR

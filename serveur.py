@@ -148,7 +148,7 @@ def ajout():
         db.session.commit()                         #Envoie des changements
         idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
         if recupForm == None:
-            db.session.add(Reponse(reponse=rep_num,correction = 1,idQ=idQuestion[0]))
+            db.session.add(Reponse(reponse=rep_num,correction = 1,estNumerique = True,idQ=idQuestion[0]))
         
         listeOn = []                              
         for key,value in request.form.items():      #Pour chaque item du formulaire
