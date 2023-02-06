@@ -137,16 +137,17 @@ def ajout():
         new_question = Question(idQ=idQuest,enonce=question,idU=session['idU'])
         
         recupForm = request.form.getlist("reponse")     #On récupère la liste des questions
-        rep_num1 = request.form["rep_num1"]
-        rep_num2 = request.form["rep_num2"]
-        rep_num = float(rep_num1) + float(float(rep_num2)*0.01)
-        print("recup numerique : ",rep_num)
+        if recupForm == None:
+            rep_num1 = request.form["rep_num1"]
+            rep_num2 = request.form["rep_num2"]
+            rep_num = float(rep_num1) + float(float(rep_num2)*0.01)
+            print("recup numerique : ",rep_num)
        
         #try:
         db.session.add(new_question)                #Ajout question -> base de donnée            
         db.session.commit()                         #Envoie des changements
         idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
-        if rep_num != None:
+        if recupForm == None:
             db.session.add(Reponse(reponse=rep_num,correction = 1,idQ=idQuestion[0]))
         
         listeOn = []                              
