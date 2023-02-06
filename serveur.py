@@ -146,8 +146,8 @@ def ajout():
             db.session.add(new_question)                #Ajout question -> base de donnée            
             db.session.commit()                         #Envoie des changements
             idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
+            
             for key in rep_num:
-                
                 db.session.add(Reponse(reponse=rep_num[0],correction = 1,idQ=idQuestion[0]))
             
             listeOn = []                              
