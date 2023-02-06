@@ -347,7 +347,7 @@ def generate():
     nomQcm = request.form['nomQcm']
     #insert sur qcm avec un idqcm : 
     #db.session.add(QCM(Nom = ))
-    
+print("j'ai commit")
     new_QCM = QCM(idQCM=nombreIdQCM,Nom=nomQcm,idU=session['idU'])
     try : 
         db.session.add(new_QCM)
