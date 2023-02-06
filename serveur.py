@@ -16,6 +16,7 @@ with app.app_context():
 
 nombreIdQuestion=0               #Variables utilisés pour 
 nombreIdCheck=0                  #la génération de réponses
+nombreIdQCM=0
 
 
 def createId():                  #Fonction appelée à chaque fois qu'on a besoin de générer un nouvel id
@@ -28,8 +29,16 @@ def createId():                  #Fonction appelée à chaque fois qu'on a besoi
 def index():                                         #'page' est la référence de chaque page web actuelle
     return render_template("index.html",page="Menu") #coloré en rouge dans la barre de navigation   
 
-@app.route("/creationCompte",methods = ['POST', 'GET'])   #Route pour créer un compte utilisateur
-def creationCompte():
+@app.route("/espEnseignant")
+def espEnseignant():
+    return render_template("espEnseignant.html",page="Menu")
+
+@app.route("/espEtudiant")
+def espEtudiant():
+    return render_template("espEtudiant.html",page="Menu")
+
+@app.route("/creationCompteEnseignant",methods = ['POST', 'GET'])   #Route pour créer un compte utilisateur
+def creationCompteEnseignant():
     if request.method == 'POST':
         nomUtilisateur = request.form['creationNom']
         mdpUtilisateur = request.form['creationMdp']
@@ -38,11 +47,11 @@ def creationCompte():
         try:
             db.session.add(new_utilisateur)               #Création du nouveau compte
             db.session.commit()
-            return redirect(url_for("index"))
+            return redirect(url_for("espEnseignant"))
         except:
             return 'Erreur lors de la création du compte'
     else: 
-        return render_template("creationCompte.html")
+        return render_template("creationCompteEnseignant.html",page="Menu")
 
 @app.route("/listeUtilisateurs",methods = ['GET'])        #Cette route est uniquement technique pour pouvoir
 def listeUtilisateurs():                                  #visualiser les utilisateurs en aucun cas elle doit
@@ -52,20 +61,60 @@ def listeUtilisateurs():                                  #visualiser les utilis
     utilisateurs = db.session.query(Utilisateur).all()                 #connectez vous avec.
     return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs,page='listeUtilisateurs')
 
-@app.route("/connexion",methods=['POST','GET'])           #Route pour se connecter
-def connexion():
+@app.route("/listeEtudiants",methods=['POST','GET'])
+def listeEtudiants():
+    if 'nomU' not in session:                                           #Sécurité pour éviter d'aller sur une page
+        flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        nomEtudiant=request.form['nomEtu']
+        prenomEtudiant=request.form['prenomEtu']
+        numeroEtudiant=request.form['numeroEtu']
+        new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant,idU=session['idU'])
+
+        try:
+            db.session.add(new_etudiant)               #Création d'un nouvel eleve
+            db.session.commit()
+            return redirect(url_for("listeEtudiants"))
+        except:
+            return "Erreur lors de l'ajout d'un étudiant"
+    else:
+        etudiants = db.session.query(Etudiant).filter(Etudiant.idU==session['idU']).all()
+        return render_template("lEtudiants.html",lEtudiants=etudiants,page='listeEtudiants')
+
+@app.route("/connexionEnseignant",methods=['POST','GET'])           #Route pour se connecter
+def connexionEnseignant():
     if request.method == 'POST':
         testLogin = db.session.query(Utilisateur).filter(Utilisateur.nomU == request.form['nomU']).first()
         # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
         if testLogin is None:
             flash('Nom ou mot de passe invalide')             #Il faut d'abord crée un compte
-            return redirect(url_for('connexion'))             
+            return redirect(url_for('connexionEnseignant'))             
         if request.form['passU'] == testLogin.passU:          #Vérifie que le mdp de l'utilisateur correspond
             session['nomU'] = request.form['nomU']            
             session['idU'] = testLogin.idU
+            session['role'] = "enseignant"
         return redirect(url_for("index"))              
     else:                       
-        return render_template("connexion.html")
+        return render_template("connexionEnseignant.html",page="Menu")
+
+@app.route("/connexionEtudiant",methods=['POST','GET'])           #Route pour se connecter
+def connexionEtudiant():
+    if request.method == 'POST':
+        testEnseignant = db.session.query(Utilisateur).filter(Utilisateur.nomU==request.form['selectEnseignant']).first()
+
+        testLogin = db.session.query(Etudiant).filter(Etudiant.nomEtu == request.form['nomU']).first()
+        # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
+        if testLogin is None:
+            flash('Nom ou mot de passe invalide')             #Il faut d'abord crée un compte
+            return redirect(url_for('connexion'))             
+        if request.form['passU'] == testLogin.numeroEtu:          #Vérifie que le mdp de l'utilisateur correspond
+            session['nomU'] = request.form['nomU']            
+            session['idU'] = testLogin.idEtu
+            session['role'] = "etudiant"
+        return redirect(url_for("index"))              
+    else:                       
+        return render_template("connexionEtudiant.html",page="Menu")
 
 @app.route("/deconnexion")                        #Route de deconnexion
 def deconnexion():                                #Retire l'utilisateur de la session
@@ -77,6 +126,7 @@ def ajout():
     if 'nomU' not in session:                                           #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
+
     if request.method == 'POST':                  #Recup question du formulaire
         question = request.form['question']       #Création nouvelle question avec enoncé correspondant  
         
@@ -87,16 +137,22 @@ def ajout():
         new_question = Question(idQ=idQuest,enonce=question,idU=session['idU'])
         
         recupForm = request.form.getlist("reponse")     #On récupère la liste des questions
-
+        rep_num = request.form.getlist("rep_num")
+        print(rep_num)
+       
         try:
             db.session.add(new_question)                #Ajout question -> base de donnée            
             db.session.commit()                         #Envoie des changements
+            idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
+            for key in rep_num:
+                
+                db.session.add(Reponse(reponse=rep_num[0],correction = 1,idQ=idQuestion[0]))
             
             listeOn = []                              
             for key,value in request.form.items():      #Pour chaque item du formulaire
                 if value == 'on':
-                    listeOn.append(int(key))            #Place de la réponse dans la liste
-            idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
+                    listeOn.append(int(key))            #Attribut d'id pour la question
+            
             for rep in recupForm:
                 reponseAjouter = 0
                 if (recupForm.index(rep)+1) in listeOn: #On ajoute réponse juste
@@ -106,12 +162,13 @@ def ajout():
                     reponseAjouter = Reponse(reponse= rep,correction = 0,idQ =idQuestion[0])
                     db.session.add(reponseAjouter)       
             db.session.commit()
-
+            print(db.session.query(Reponse.reponse).filter(Reponse.idQ == idQuestion[0]))#test
             selected_tags = request.form.getlist('tag') #On récupère la liste des étiquettes
             for tag_id in selected_tags:
                 new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ) #On crée l'association entre question
                 db.session.add(new_assos)                              #et étiquette
                 db.session.commit()                     #Envoie des changements
+            print("soso.exe = ",db.session.query(Reponse.reponse).filter(Reponse.idQ==idQuestion[0]).all())
             return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
         except:
             return 'Erreur création de la question'
@@ -292,10 +349,20 @@ def generate():
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
+    global nombreIdQCM
+    nombreIdQCM+=1
     checked_checkboxes = [] 
     reponse_checkboxes = []                         #Initialisation liste pour stocker les questions cochées
     nomQcm = request.form['nomQcm']
     #insert sur qcm avec un idqcm : 
+    #db.session.add(QCM(Nom = ))
+print("j'ai commit")
+    new_QCM = QCM(idQCM=nombreIdQCM,Nom=nomQcm,idU=session['idU'])
+    try : 
+        db.session.add(new_QCM)
+        db.session.commit()
+    except : 
+        return 'erreur dans la création du QCM'
     for key, value in request.form.items():
         if value == 'on':
             # Récupération de l'enoncé de la question correspondant à l'id reçu
@@ -303,7 +370,14 @@ def generate():
             checked_checkboxes.append(EL)                                   #insert to dans contient idqcm(global a cette fun) et EL.idQ 
             ListeReponse = db.session.query(Reponse).filter(Reponse.idQ==key).all() #Ajout de l'enoncé à la liste des questions cochées
             reponse_checkboxes.append(ListeReponse)
-    return render_template("Affichage.html", listereponse = reponse_checkboxes, listequestion=checked_checkboxes,len = len(checked_checkboxes), nomQcm = nomQcm)
+            new_contient = Contient(RidQCM=nombreIdQCM,RidQ=key)
+            try :
+                db.session.add(new_contient)
+                db.session.commit()
+            except :
+                return "Erreur de création du lien 'contient' entre Qcm et Question"
+    listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
+    return render_template("lQCM.html",listeQCM=listeQCM)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
 
 if __name__ == '__main__':
