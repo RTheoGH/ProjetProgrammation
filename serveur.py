@@ -137,44 +137,44 @@ def ajout():
         new_question = Question(idQ=idQuest,enonce=question,idU=session['idU'])
         
         recupForm = request.form.getlist("reponse")     #On récupère la liste des questions
-        rep_num1 = request.form.getlist("rep_num1")
-        rep_num2 = request.form.getlist("rep_num2")
-        rep_num = [float(rep_num1[0]) + float(float(rep_num2[0])*0.01)]
-        print("recup numerique : ",rep_num)
+        if recupForm == None:
+            rep_num1 = request.form["rep_num1"]
+            rep_num2 = request.form["rep_num2"]
+            rep_num = float(rep_num1) + float(float(rep_num2)*0.01)
+            print("recup numerique : ",rep_num)
        
-        try:
-            db.session.add(new_question)                #Ajout question -> base de donnée            
-            db.session.commit()                         #Envoie des changements
-            idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
-            for key in rep_num:
-                
-                db.session.add(Reponse(reponse=rep_num[0],correction = 1,idQ=idQuestion[0]))
-            
-            listeOn = []                              
-            for key,value in request.form.items():      #Pour chaque item du formulaire
-                if value == 'on':
-                    listeOn.append(int(key))            #Attribut d'id pour la question
-            
-            for rep in recupForm:
-                reponseAjouter = 0
-                if (recupForm.index(rep)+1) in listeOn: #On ajoute réponse juste
-                    reponseAjouter = Reponse(reponse= rep,correction = 1,idQ =idQuestion[0])
-                    db.session.add(reponseAjouter)
-                else:                                   #On ajoute réponse fausse
-                    reponseAjouter = Reponse(reponse= rep,correction = 0,idQ =idQuestion[0])
-                    db.session.add(reponseAjouter)       
-            db.session.commit()
-            print("idquestion de 0 = ",idQuestion[0]," id question en tout = ",idQuestion)
-            print(db.session.query(Reponse.reponse).filter(Reponse.idQ == idQuestion[0]).all())#test
-            selected_tags = request.form.getlist('tag') #On récupère la liste des étiquettes
-            for tag_id in selected_tags:
-                new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ) #On crée l'association entre question
-                db.session.add(new_assos)                              #et étiquette
-                db.session.commit()                     #Envoie des changements
-            print("reponse.exe = ",db.session.query(Reponse.reponse).filter(Reponse.idQ==idQuestion[0]).all())
-            return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
-        except:
-           return 'Erreur création de la question'
+        #try:
+        db.session.add(new_question)                #Ajout question -> base de donnée            
+        db.session.commit()                         #Envoie des changements
+        idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
+        if recupForm == None:
+            db.session.add(Reponse(reponse=rep_num,correction = 1,idQ=idQuestion[0]))
+        
+        listeOn = []                              
+        for key,value in request.form.items():      #Pour chaque item du formulaire
+            if value == 'on':
+                listeOn.append(int(key))            #Attribut d'id pour la question
+        
+        for rep in recupForm:
+            reponseAjouter = 0
+            if (recupForm.index(rep)+1) in listeOn: #On ajoute réponse juste
+                reponseAjouter = Reponse(reponse= rep,correction = 1,idQ =idQuestion[0])
+                db.session.add(reponseAjouter)
+            else:                                   #On ajoute réponse fausse
+                reponseAjouter = Reponse(reponse= rep,correction = 0,idQ =idQuestion[0])
+                db.session.add(reponseAjouter)       
+        db.session.commit()
+        print("idquestion de 0 = ",idQuestion[0]," id question en tout = ",idQuestion)
+        print(db.session.query(Reponse.reponse).filter(Reponse.idQ == idQuestion[0]).all())#test
+        selected_tags = request.form.getlist('tag') #On récupère la liste des étiquettes
+        for tag_id in selected_tags:
+            new_assos = Associe(RidE=tag_id,RidQ=new_question.idQ) #On crée l'association entre question
+            db.session.add(new_assos)                              #et étiquette
+            db.session.commit()                     #Envoie des changements
+        print("reponse.exe = ",db.session.query(Reponse.reponse).filter(Reponse.idQ==idQuestion[0]).all())
+        return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
+        # except:
+        #    return 'Erreur création de la question'
     else:
         return render_template("ajoutQuestion.html",page="Créer")
 
