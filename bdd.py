@@ -22,7 +22,7 @@ class Etudiant(db.Model):
         return 'Etudiant : %r' % u.idEtu
 
 class Question(db.Model):                                                        # Classe Question
-    idQ = db.Column(db.Integer, primary_key=True)                                #   identifiant question
+    idQ = db.Column(db.String(50), primary_key=True)                             #   identifiant question
     enonce = db.Column(db.String(300), nullable=False)                           #   énoncé question
     idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)  #   id référence de id utilisateur
 
@@ -39,19 +39,19 @@ class Etiquette(db.Model):                                                      
 
 class Associe(db.Model):                                                  # Classe association entre etiquette et question
     RidE = db.Column(db.Integer, db.ForeignKey(Etiquette.idE),nullable=False,primary_key=True) # id référence id etiquette
-    RidQ = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False,primary_key=True)  # id référence id question
+    RidQ = db.Column(db.String(50), db.ForeignKey(Question.idQ),nullable=False,primary_key=True)  # id référence id question
 
 class Reponse(db.Model):                                                    # Classe Reponse
     idR = db.Column(db.Integer,primary_key=True)                            #   identifiant reponse
     reponse = db.Column(db.String(200), nullable=False)                     #   corps de la reponse
     correction = db.Column(db.Integer, nullable=False)                      #   boolean vrai/faux
-    idQ = db.Column(db.Integer, db.ForeignKey(Question.idQ),nullable=False) #   id référence de id question
+    idQ = db.Column(db.String(50), db.ForeignKey(Question.idQ),nullable=False) #   id référence de id question
 
     def __repr__(u):
         return 'Reponse %r'% u.idR
 
 class QCM(db.Model):                                                             # Classe QCM
-    idQCM = db.Column(db.Integer,primary_key=True)                               #   id qcm
+    idQCM = db.Column(db.String(50),primary_key=True)                            #   id qcm
     Nom = db.Column(db.String(200), nullable = False)                            #   nom du qcm
     idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)  #   id référence de id utilisateur
     
@@ -59,5 +59,5 @@ class QCM(db.Model):                                                            
         return 'QCM %r'% u.idQCM
 
 class Contient(db.Model):                                                 # Classe association entre qcm et question
-    RidQCM = db.Column(db.Integer, db.ForeignKey(QCM.idQCM),nullable=False,primary_key=True) # id référence id qcm
-    RidQ = db.Column(db.Integer,db.ForeignKey(Question.idQ),nullable=False,primary_key=True) # id référence id question
+    RidQCM = db.Column(db.String(50), db.ForeignKey(QCM.idQCM),nullable=False,primary_key=True) # id référence id qcm
+    RidQ = db.Column(db.String(50),db.ForeignKey(Question.idQ),nullable=False,primary_key=True) # id référence id question
