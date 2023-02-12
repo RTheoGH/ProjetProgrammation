@@ -10,9 +10,9 @@ from bdd import *                                             #Importation de la
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fichier de la base de donnée
 db.init_app(app)
 
-with app.app_context():
-    db.drop_all()
-    db.create_all()
+# with app.app_context():
+    # db.drop_all()
+    # db.create_all()
 
 nombreIdQuestion=0               #Variables utilisés pour 
 nombreIdCheck=0                  #la génération de réponses
@@ -70,16 +70,25 @@ def listeEtudiants():
         nomEtudiant=request.form['nomEtu']
         prenomEtudiant=request.form['prenomEtu']
         numeroEtudiant=request.form['numeroEtu']
-        new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant,idU=session['idU'])
+        new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant)
 
         try:
             db.session.add(new_etudiant)               #Création d'un nouvel eleve
             db.session.commit()
+            print("allo1")
+            print(session['idU'])
+            print(type(session['idU']))
+            db.session.add(Classe(idCE=new_etudiant.idEtu,idCU=session['idU']))
+            print("allo2")
+            db.session.commit()
+            print("allo3")
             return redirect(url_for("listeEtudiants"))
-        except:
-            return "Erreur lors de l'ajout d'un étudiant"
+            print("allo4")
+        except Exception as e:
+            return str(e)
+            # return "Erreur lors de l'ajout d'un étudiant"
     else:
-        etudiants = db.session.query(Etudiant).filter(Etudiant.idU==session['idU']).all()
+        etudiants = db.session.query(Etudiant).filter(Etudiant.idEtu==Classe.idCE,Classe.idCU==session['idU']).all()
         return render_template("lEtudiants.html",lEtudiants=etudiants,page='listeEtudiants')
 
 @app.route("/connexionEnseignant",methods=['POST','GET'])           #Route pour se connecter
@@ -101,7 +110,7 @@ def connexionEnseignant():
 @app.route("/connexionEtudiant",methods=['POST','GET'])           #Route pour se connecter
 def connexionEtudiant():
     if request.method == 'POST':
-        testEnseignant = db.session.query(Utilisateur).filter(Utilisateur.nomU==request.form['selectEnseignant']).first()
+        # testEnseignant = db.session.query(Utilisateur).filter(Utilisateur.nomU==request.form['selectEnseignant']).first()
 
         testLogin = db.session.query(Etudiant).filter(Etudiant.nomEtu == request.form['nomU']).first()
         # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
@@ -111,6 +120,7 @@ def connexionEtudiant():
         if request.form['passU'] == testLogin.numeroEtu:          #Vérifie que le mdp de l'utilisateur correspond
             session['nomU'] = request.form['nomU']            
             session['idU'] = testLogin.idEtu
+            session['preU'] = testLogin.prenomEtu
             session['role'] = "etudiant"
         return redirect(url_for("index"))              
     else:                       
@@ -123,8 +133,11 @@ def deconnexion():                                #Retire l'utilisateur de la se
 
 @app.route("/ajout",methods = ['POST', 'GET'])    #Route pour ajouter une question
 def ajout():
-    if 'nomU' not in session:                                           #Sécurité pour éviter d'aller sur une page
+    if 'nomU' not in session :                                          #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
+        return redirect(url_for('index'))
+    if session['role'] != 'enseignant' :                                     #si vous n'êtes pas prof
+        flash("Vous n'avez pas les droits nécéssaires")           
         return redirect(url_for('index'))
 
     if request.method == 'POST':                  #Recup question du formulaire
@@ -141,7 +154,7 @@ def ajout():
             rep_num1 = request.form["rep_num1"]
             rep_num2 = request.form["rep_num2"]
             rep_num = float(rep_num1) + float(float(rep_num2)*0.01)
-       
+
         #try:
         db.session.add(new_question)                #Ajout question -> base de donnée            
         db.session.commit()                         #Envoie des changements

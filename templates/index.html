@@ -25,7 +25,11 @@
             {% endif %}
         {% endwith %}
         {% if session['nomU'] %}                 <!-- Si un utilisateur est déjà connecté -->
-        <p>Bonjour, {{session['nomU']}}</p>
+            {% if session['role']=='etudiant' %}
+                <p>Bonjour, {{session['nomU']}} {{session['preU']}}</p>
+            {% else %}
+                <p>Bonjour, {{session['nomU']}}</p>
+            {% endif %}
         <a class="button" name="deconnexion" href="/deconnexion">Deconnexion</a>
         {% else %}                               <!-- sinon -->
         <a class="button" name="espEnseignant" href="/espEnseignant">Espace Enseignant</a>

@@ -16,10 +16,14 @@ class Etudiant(db.Model):
     nomEtu = db.Column(db.String(50))
     prenomEtu = db.Column(db.String(50))
     numeroEtu = db.Column(db.String(15))
-    idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)
+    # idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)
 
     def __repr__(u):
         return 'Etudiant : %r' % u.idEtu
+
+class Classe(db.Model):
+    idCU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU),nullable=False,primary_key=True)
+    idCE = db.Column(db.Integer, db.ForeignKey(Etudiant.idEtu),nullable=False,primary_key=True)
 
 class Question(db.Model):                                                        # Classe Question
     idQ = db.Column(db.String(50), primary_key=True)                             #   identifiant question
