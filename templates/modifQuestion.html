@@ -6,8 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet">
-    {%include 'partials/Biblio.html'%}
+    <link href="/static/style.css" rel="stylesheet"> {%include 'partials/Biblio.html'%}
     <title>Ajout</title>
 </head>
 
@@ -18,32 +17,34 @@
         <form class="double" action="{{ url_for('modifier', id=idQ)}}" method="POST">
             <div>
                 <h1>Modifier votre énoncé</h1>
-                <p><textarea name="question" rows="4" cols="40">{{enonce}}</textarea></p> <!-- affichage de l'énoncé à modifier-->
+                <p><textarea name="question" rows="4" cols="40">{{enonce}}</textarea></p>
+                <!-- affichage de l'énoncé à modifier-->
                 <h1>Modifier vos étiquettes</h1>
                 <div class="affichageEtiquette">
-                    <fieldset><legend>Étiquettes</legend>
-                    <ul>
-                        {% for etiquette in etiquettes %}       <!-- Pour chaque etiquette parmi les etiquettes -->
+                    <fieldset>
+                        <legend>Étiquettes</legend>
+                        <ul>
+                            {% for etiquette in etiquettes %}
+                            <!-- Pour chaque etiquette parmi les etiquettes -->
                             <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
-                        {% endfor %}
-                    </ul>
+                            {% endfor %}
+                        </ul>
                     </fieldset>
                 </div>
             </div>
             <div class="liVer"></div>
             <div>
                 <h1>Modifier vos réponses</h1>
-                
-                {% for reponse in reponses %}                 <!-- Pour chaque réponse parmis les réponses -->
+
+                {% for reponse in reponses %}
+                <!-- Pour chaque réponse parmis les réponses -->
                 {%if reponse.estNumerique %}
-                <p id="rep_num"><input type="text" id="rep_num1" name="rep_num1" pattern="[0-9]*" value="{{reponse.reponse}}" ><b>.</b>
-                    <input type="text" id="rep_num2" name="rep_num2" pattern="\d{0,2}" value="00"></p>
-                <p><input class="button" type="submit" value="Ajouter la question" /></p>
-                
+                <p id="rep_num"><input type="text" id="Rep_num" name="R{{reponse.idR}}" pattern="[\d*([.]\d{0,2})?" value="{{reponse.reponse}}"></p>
+                <!-- <p><input class="button" type="submit" value="Ajouter la question" /></p> -->
+
                 {%else%}
                 <p><textarea name="R{{reponse.idR}}" rows="4" cols="40">{{reponse.reponse}}</textarea></p>
-                {%endif%}
-                {% endfor %}
+                {%endif%} {% endfor %}
                 <p><input class="button" type="submit" value="Modifier" /></p>
             </div>
         </form>
