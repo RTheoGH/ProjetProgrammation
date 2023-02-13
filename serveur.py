@@ -3,6 +3,8 @@ from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 from werkzeug.security import generate_password_hash,check_password_hash
 import random
 import string
+import csv
+import os
 
 
 app = Flask(__name__)                                         #Création de app, instance de Flask
@@ -12,9 +14,9 @@ from bdd import *                                             #Importation de la
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fichier de la base de donnée
 db.init_app(app)
 
-# with app.app_context():
-#     db.drop_all()
-#     db.create_all()
+with app.app_context():
+    db.drop_all()
+    db.create_all()
 
 nombreIdQuestion=0               #Variables utilisés pour 
 nombreIdCheck=0                  #la génération de réponses
@@ -69,27 +71,49 @@ def listeEtudiants():
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
     if request.method == 'POST':
-        nomEtudiant=request.form['nomEtu']
-        prenomEtudiant=request.form['prenomEtu']
-        numeroEtudiant=request.form['numeroEtu']
-        new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant,\
-            mdpEtu=generate_password_hash(numeroEtudiant, method='pbkdf2:sha256', salt_length=16))
+        fichierCsv = request.files['fichierEtu']                        #récupération du fichier depuis l'html
+        if fichierCsv.filename != '':                                   #etre sûr qu'on a nien récupéré le fichier
+            fichierCsv.save(fichierCsv.filename)                        #enregistre le fichier 
+            Flecture = csv.reader(open(fichierCsv.filename),delimiter=";") #début de la lecture du fichier
+            next(Flecture)                                              #élimination de la ligne de titre
+            contenuCsv = []                                             #Contenu du fichier sous forme de liste de listes
+            for ligne in Flecture:
+                contenuCsv.append(ligne)
+            fichierCsv.close
+            os.remove(str(fichierCsv.filename))                         #Supprimer du dossier courant le fichierCsv enregistré
+
+            for eleve in contenuCsv:                                    #Ajout des elèves dans la base de donnée
+                print(eleve)
+                new_etudiant=Etudiant(idEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],numeroEtu=eleve[2],mdpEtu=eleve[2])
+                print(new_etudiant)
+                try:
+                    db.session.add(new_etudiant)
+                    db.session.add(Classe(idCE=new_etudiant.idEtu,idCU=session['idU']))
+                    db.session.commit()
+                except Exception as e:
+                    return str(e)
+
+        else:
+            nomEtudiant=request.form['nomEtu']
+            prenomEtudiant=request.form['prenomEtu']
+            numeroEtudiant=request.form['numeroEtu']
+            new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant,\
+                mdpEtu=generate_password_hash(numeroEtudiant, method='pbkdf2:sha256', salt_length=16))
 
         try:
             db.session.add(new_etudiant)               #Création d'un nouvel eleve
             db.session.commit()
-            print("allo1")
-            print(session['idU'])
-            print(type(session['idU']))
+            # print("allo1")
+            # print(session['idU'])
+            # print(type(session['idU']))
             db.session.add(Classe(idCE=new_etudiant.idEtu,idCU=session['idU']))
-            print("allo2")
+            # print("allo2")
             db.session.commit()
-            print("allo3")
+            #print("allo3")
             return redirect(url_for("listeEtudiants"))
-            print("allo4")
+            # print("allo4")
         except Exception as e:
             return str(e)
-            # return "Erreur lors de l'ajout d'un étudiant"
     else:
         etudiants = db.session.query(Etudiant).filter(Etudiant.idEtu==Classe.idCE,Classe.idCU==session['idU']).all()
         return render_template("lEtudiants.html",lEtudiants=etudiants,page='listeEtudiants')

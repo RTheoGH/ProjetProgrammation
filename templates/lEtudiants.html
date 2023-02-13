@@ -33,11 +33,18 @@
         </div>
         <br/>
         <div class="newEtudiant">
-            <h1>Ajouter un étudiant</h1>
-            <form action="/listeEtudiants" method="POST">  <!-- Création d'un etudiant' -->
-                <p> Nom : <input type="text" name="nomEtu" id="nomEtu"/></p>           <!-- Avec un nom -->
-                <p> Prenom : <input type="text" name="prenomEtu" id="prenomEtu"/></p>  <!-- Avec un prenom -->
-                <p> Numéro d'étudiant : <input type="password" name="numeroEtu" id="numeroEtu"/></p> <!-- Avec son numéro d'étudiant -->
+            <h1>Ajout des étudiants</h1>
+            <form action="/listeEtudiants" method="POST" enctype="multipart/form-data">  <!-- Création d'un etudiant' -->
+                <p>Seuls les fichiers d'extension .csv sont acceptés!</p>
+                <p><input type="file" id="fichierEtu" name="fichierEtu" accept=".csv" ></p>
+                <p><input class="button" type="submit" value="Ajouter" /></p>
+
+            </form>
+            <form action="/listeEtudiants" method="POST">
+                <hr/>
+                <p> Nom : <input type="text" name="nomEtu" id="nomEtu"/></p>
+                <p> Prenom : <input type="text" name="prenomEtu" id="prenomEtu"/></p>
+                <p> Numéro d'étudiant : <input type="password" name="numeroEtu" id="numeroEtu"/></p>
                 <p><input class="button" type="submit" value="Créer" /></p>
             </form>
         </div>
