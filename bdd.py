@@ -15,7 +15,8 @@ class Etudiant(db.Model):
     idEtu = db.Column(db.Integer, primary_key=True)
     nomEtu = db.Column(db.String(50))
     prenomEtu = db.Column(db.String(50))
-    numeroEtu = db.Column(db.String(15))
+    numeroEtu = db.Column(db.String(50))
+    mdpEtu = db.Column(db.String(50))
     # idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)
 
     def __repr__(u):

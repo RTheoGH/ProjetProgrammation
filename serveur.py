@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
+from werkzeug.security import generate_password_hash,check_password_hash
 import random
 import string
+
 
 app = Flask(__name__)                                         #Création de app, instance de Flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'                      #Clé de session (utilisateurs)
@@ -11,8 +13,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fich
 db.init_app(app)
 
 # with app.app_context():
-    # db.drop_all()
-    # db.create_all()
+#     db.drop_all()
+#     db.create_all()
 
 nombreIdQuestion=0               #Variables utilisés pour 
 nombreIdCheck=0                  #la génération de réponses
@@ -27,15 +29,15 @@ def createId():                  #Fonction appelée à chaque fois qu'on a besoi
 
 @app.route("/")                  #Route principale
 def index():                                         #'page' est la référence de chaque page web actuelle
-    return render_template("index.html",page="Menu") #coloré en rouge dans la barre de navigation   
+    return render_template("accueil/index.html",page="Menu") #coloré en rouge dans la barre de navigation   
 
 @app.route("/espEnseignant")
 def espEnseignant():
-    return render_template("espEnseignant.html",page="Menu")
+    return render_template("accueil/espEnseignant.html",page="Menu")
 
 @app.route("/espEtudiant")
 def espEtudiant():
-    return render_template("espEtudiant.html",page="Menu")
+    return render_template("accueil/espEtudiant.html",page="Menu")
 
 @app.route("/creationCompteEnseignant",methods = ['POST', 'GET'])   #Route pour créer un compte utilisateur
 def creationCompteEnseignant():
@@ -51,7 +53,7 @@ def creationCompteEnseignant():
         except:
             return 'Erreur lors de la création du compte'
     else: 
-        return render_template("creationCompteEnseignant.html",page="Menu")
+        return render_template("compte/creationCompteEnseignant.html",page="Menu")
 
 @app.route("/listeUtilisateurs",methods = ['GET'])        #Cette route est uniquement technique pour pouvoir
 def listeUtilisateurs():                                  #visualiser les utilisateurs en aucun cas elle doit
@@ -70,7 +72,8 @@ def listeEtudiants():
         nomEtudiant=request.form['nomEtu']
         prenomEtudiant=request.form['prenomEtu']
         numeroEtudiant=request.form['numeroEtu']
-        new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant)
+        new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant,\
+            mdpEtu=generate_password_hash(numeroEtudiant, method='pbkdf2:sha256', salt_length=16))
 
         try:
             db.session.add(new_etudiant)               #Création d'un nouvel eleve
@@ -105,7 +108,7 @@ def connexionEnseignant():
             session['role'] = "enseignant"
         return redirect(url_for("index"))              
     else:                       
-        return render_template("connexionEnseignant.html",page="Menu")
+        return render_template("compte/connexionEnseignant.html",page="Menu")
 
 @app.route("/connexionEtudiant",methods=['POST','GET'])           #Route pour se connecter
 def connexionEtudiant():
@@ -116,15 +119,27 @@ def connexionEtudiant():
         # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
         if testLogin is None:
             flash('Nom ou mot de passe invalide')             #Il faut d'abord crée un compte
-            return redirect(url_for('connexion'))             
-        if request.form['passU'] == testLogin.numeroEtu:          #Vérifie que le mdp de l'utilisateur correspond
+            return redirect(url_for('connexion'))  
+        if check_password_hash(testLogin.mdpEtu,request.form['passU']):
+            print("mot de passe correspondant")
+        # if request.form['passU'] == testLogin.numeroEtu:          #Vérifie que le mdp de l'utilisateur correspond
             session['nomU'] = request.form['nomU']            
             session['idU'] = testLogin.idEtu
             session['preU'] = testLogin.prenomEtu
             session['role'] = "etudiant"
         return redirect(url_for("index"))              
     else:                       
-        return render_template("connexionEtudiant.html",page="Menu")
+        return render_template("compte/connexionEtudiant.html",page="Menu")
+
+@app.route("/modifMdp",methods=['POST','GET'])
+def modifMdp():
+    if request.method == 'POST':
+        mdpActuel=request.form['mdpEtu']
+        newMdp=request.form['nMdpEtu']
+
+        return redirect(url_for("index"))
+    else:
+        return render_template("compte/modifMdp.html")
 
 @app.route("/deconnexion")                        #Route de deconnexion
 def deconnexion():                                #Retire l'utilisateur de la session
