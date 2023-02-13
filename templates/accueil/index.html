@@ -27,10 +27,11 @@
         {% if session['nomU'] %}                 <!-- Si un utilisateur est déjà connecté -->
             {% if session['role']=='etudiant' %}
                 <p>Bonjour, {{session['nomU']}} {{session['preU']}}</p>
+                <a name="modificationMDP" href="{{ url_for('modifMdp', id=idEtu)}}">Changer de mot de passe</a>
             {% else %}
                 <p>Bonjour, {{session['nomU']}}</p>
             {% endif %}
-        <a class="button" name="deconnexion" href="/deconnexion">Deconnexion</a>
+        <p><a class="button" name="deconnexion" href="/deconnexion">Deconnexion</a></p>
         {% else %}                               <!-- sinon -->
         <a class="button" name="espEnseignant" href="/espEnseignant">Espace Enseignant</a>
         <a class="button" name="espEtudiant" href="/espEtudiant">Espace Etudiant</a>

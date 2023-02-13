@@ -31,7 +31,14 @@ def createId():                  #Fonction appelée à chaque fois qu'on a besoi
 
 @app.route("/")                  #Route principale
 def index():                                         #'page' est la référence de chaque page web actuelle
-    return render_template("accueil/index.html",page="Menu") #coloré en rouge dans la barre de navigation   
+    if 'nomU' not in session :  
+        return render_template("accueil/index.html",page="Menu") #coloré en rouge dans la barre de navigation
+    else:
+        if session['role']=='enseignant':
+            return render_template("accueil/index.html",page="Menu")
+        else:
+            etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
+            return render_template("accueil/index.html",page="Menu",idEtu=etudiantCO.idEtu)
 
 @app.route("/espEnseignant")
 def espEnseignant():
@@ -155,15 +162,31 @@ def connexionEtudiant():
     else:                       
         return render_template("compte/connexionEtudiant.html",page="Menu")
 
-@app.route("/modifMdp",methods=['POST','GET'])
-def modifMdp():
+@app.route("/modifMdp/<string:id>",methods=['POST','GET'])
+def modifMdp(id):
+    if 'nomU' not in session :                                          #Sécurité pour éviter d'aller sur une page
+        flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
+        return redirect(url_for('index'))
+    if session['role'] != 'etudiant' :                                     #si vous n'êtes pas etudiant
+        flash("Page réservée aux etudiants")           
+        return redirect(url_for('index'))
     if request.method == 'POST':
         mdpActuel=request.form['mdpEtu']
         newMdp=request.form['nMdpEtu']
+        mdpAModif = Etudiant.query.get_or_404(id)
 
-        return redirect(url_for("index"))
+        if check_password_hash(mdpAModif.mdpEtu,mdpActuel):
+            mdpAModif.mdpEtu = generate_password_hash(newMdp, method='pbkdf2:sha256', salt_length=16)
+            print("j'attribue le nouveau mot de passe ! :",newMdp)
+            db.session.commit()
+            return redirect(url_for("index"))
+        else:
+            flash("Mot de passe actuel incorrect")
+            print("tu as entré :",mdpActuel)
+            return redirect(url_for("index"))
     else:
-        return render_template("compte/modifMdp.html")
+        etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
+        return render_template("compte/modifMdp.html",page="Menu",idMAModif=etudiantCO.idEtu)
 
 @app.route("/deconnexion")                        #Route de deconnexion
 def deconnexion():                                #Retire l'utilisateur de la session
@@ -189,18 +212,19 @@ def ajout():
         new_question = Question(idQ=idQuest,enonce=question,idU=session['idU'])
         
         recupForm = request.form.getlist("reponse")     #On récupère la liste des questions
-        if recupForm == None:
-            rep_num1 = request.form["rep_num1"]
-            rep_num2 = request.form["rep_num2"]
-            rep_num = float(rep_num1) + float(float(rep_num2)*0.01)
+        if recupForm == []:
+            # rep_num1 = request.form["rep_num1"]
+            # rep_num2 = request.form["rep_num2"]
+            # rep_num = float(rep_num1) + float(float(rep_num2)*0.01)
+            rep_num = request.form["Rep_num"]
 
         #try:
         db.session.add(new_question)                #Ajout question -> base de donnée            
         db.session.commit()                         #Envoie des changements
         idQuestion = db.session.query(Question.idQ).filter(Question.enonce == question).first()
-        if recupForm == None:
+        if recupForm == []:
             db.session.add(Reponse(reponse=rep_num,correction = 1,estNumerique = True,idQ=idQuestion[0]))
-        
+            
         listeOn = []                              
         for key,value in request.form.items():      #Pour chaque item du formulaire
             if value == 'on':
@@ -215,6 +239,8 @@ def ajout():
                 reponseAjouter = Reponse(reponse= rep,correction = 0,idQ =idQuestion[0])
                 db.session.add(reponseAjouter)       
         db.session.commit()
+        
+
         print("idquestion de 0 = ",idQuestion[0]," id question en tout = ",idQuestion)
         print(db.session.query(Reponse.reponse).filter(Reponse.idQ == idQuestion[0]).all())#test
         selected_tags = request.form.getlist('tag') #On récupère la liste des étiquettes

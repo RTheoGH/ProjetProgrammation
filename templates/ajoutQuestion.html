@@ -19,7 +19,7 @@
                 <h1>Ecrivez une question</h1>
                 <p>Énoncé : <br/>
                     <!-- Zone de texte pour la question, methode onkeyup -->
-                    <textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiser()"></textarea>
+                    <textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiser()" required></textarea>
                 </p>
                 <hr/>
                 <div class="nouveauBouton">
@@ -29,8 +29,8 @@
                         window.addEventListener('load', () => {
                             document.querySelector('#demandereponse').disabled = true;
                             document.querySelector('#demandereponse').hidden = true;
-                            document.querySelector('#rep_num').disabled = true;
-                            document.querySelector('#rep_num').hidden = true;
+                            document.querySelector('#Rep_num').disabled = true;
+                            document.querySelector('#Rep_num').hidden = true;
                         });
 
                         function demandePlusReponse() {
@@ -84,11 +84,11 @@
                         function Question_Numerique() {
                             document.querySelector('#Quest_QCM').disabled = true;
                             document.querySelector('#Quest_QCM').hidden = true;
-                            document.querySelector('#rep_num').disabled = false;
-                            document.querySelector('#rep_num').hidden = false;
+                            document.querySelector('#Rep_num').disabled = false;
+                            document.querySelector('#Rep_num').hidden = false;
                             document.querySelector('#Quest_Num').disabled = true;
                             document.querySelector('#Quest_Num').hidden = true;
-                            document.querySelector('#rep_num1').setAttribute("required", "");
+                            document.querySelector('#Rep_num').setAttribute("required", "");
                         }
 
                         function Question_QCM() {
@@ -120,9 +120,13 @@
                 <!-- <p><input type="number" id="rep_num" name="rep_num"></p> -->
                 <!-- <label for="rep_num" class="label_rep_num"></label> -->
                 <p id="rep_num">
-                    <input type="text" id="rep_num1" name="rep_num1" pattern="[0-9]*" ><b>.</b>
-                    <input type="text" id="rep_num2" name="rep_num2" pattern="\d{0,2}" value="00"></p>
+                    <p><input type="text" pattern="\d*([.]\d{0,2})?" id="Rep_num" name="Rep_num"></p>
+                    <!-- <input type="text" id="rep_num1" name="rep_num1" pattern="[0-9]*"><b>.</b>
+                    <input type="text" id="rep_num2" name="rep_num2" pattern="\d{0,2}" value="00"> -->
+                </p>
                 <p><input class="button" type="submit" value="Ajouter la question" /></p>
+
+
             </form>
         </div>
         <div class="visu">
