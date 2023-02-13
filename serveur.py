@@ -14,9 +14,9 @@ from bdd import *                                             #Importation de la
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fichier de la base de donnée
 db.init_app(app)
 
-with app.app_context():
-    db.drop_all()
-    db.create_all()
+# with app.app_context():
+#     db.drop_all()
+#     db.create_all()
 
 nombreIdQuestion=0               #Variables utilisés pour 
 nombreIdCheck=0                  #la génération de réponses
@@ -78,8 +78,9 @@ def listeEtudiants():
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
     if request.method == 'POST':
-        fichierCsv = request.files['fichierEtu']                        #récupération du fichier depuis l'html
-        if fichierCsv.filename != '':                                   #etre sûr qu'on a nien récupéré le fichier
+        if 'fichierEtu' in request.files:    #J'ai modif pour qu'on puisse quand meme ajouter manuellement sinon ça marchait pas
+            fichierCsv = request.files['fichierEtu']                    #récupération du fichier depuis l'html
+        # if fichierCsv.filename != '':                                 #etre sûr qu'on a nien récupéré le fichier
             fichierCsv.save(fichierCsv.filename)                        #enregistre le fichier 
             Flecture = csv.reader(open(fichierCsv.filename),delimiter=";") #début de la lecture du fichier
             next(Flecture)                                              #élimination de la ligne de titre
@@ -110,15 +111,9 @@ def listeEtudiants():
         try:
             db.session.add(new_etudiant)               #Création d'un nouvel eleve
             db.session.commit()
-            # print("allo1")
-            # print(session['idU'])
-            # print(type(session['idU']))
             db.session.add(Classe(idCE=new_etudiant.idEtu,idCU=session['idU']))
-            # print("allo2")
             db.session.commit()
-            #print("allo3")
             return redirect(url_for("listeEtudiants"))
-            # print("allo4")
         except Exception as e:
             return str(e)
     else:
@@ -131,12 +126,15 @@ def connexionEnseignant():
         testLogin = db.session.query(Utilisateur).filter(Utilisateur.nomU == request.form['nomU']).first()
         # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
         if testLogin is None:
-            flash('Nom ou mot de passe invalide')             #Il faut d'abord crée un compte
+            flash('Nom invalide')             #Il faut d'abord crée un compte
             return redirect(url_for('connexionEnseignant'))             
         if request.form['passU'] == testLogin.passU:          #Vérifie que le mdp de l'utilisateur correspond
             session['nomU'] = request.form['nomU']            
             session['idU'] = testLogin.idU
             session['role'] = "enseignant"
+        else:
+            flash('Mot de passe invalide')             #Il faut d'abord crée un compte
+            return redirect(url_for('connexionEnseignant'))  
         return redirect(url_for("index"))              
     else:                       
         return render_template("compte/connexionEnseignant.html",page="Menu")
@@ -149,8 +147,8 @@ def connexionEtudiant():
         testLogin = db.session.query(Etudiant).filter(Etudiant.nomEtu == request.form['nomU']).first()
         # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
         if testLogin is None:
-            flash('Nom ou mot de passe invalide')             #Il faut d'abord crée un compte
-            return redirect(url_for('connexion'))  
+            flash('Nom invalide')             #Il faut d'abord crée un compte
+            return redirect(url_for('connexionEtudiant'))  
         if check_password_hash(testLogin.mdpEtu,request.form['passU']):
             print("mot de passe correspondant")
         # if request.form['passU'] == testLogin.numeroEtu:          #Vérifie que le mdp de l'utilisateur correspond
@@ -158,6 +156,9 @@ def connexionEtudiant():
             session['idU'] = testLogin.idEtu
             session['preU'] = testLogin.prenomEtu
             session['role'] = "etudiant"
+        else:
+            flash('Mot de passe invalide')             
+            return redirect(url_for('connexionEtudiant'))  
         return redirect(url_for("index"))              
     else:                       
         return render_template("compte/connexionEtudiant.html",page="Menu")
@@ -177,12 +178,12 @@ def modifMdp(id):
 
         if check_password_hash(mdpAModif.mdpEtu,mdpActuel):
             mdpAModif.mdpEtu = generate_password_hash(newMdp, method='pbkdf2:sha256', salt_length=16)
-            print("j'attribue le nouveau mot de passe ! :",newMdp)
+            # print("j'attribue le nouveau mot de passe ! :",newMdp)
             db.session.commit()
             return redirect(url_for("index"))
         else:
             flash("Mot de passe actuel incorrect")
-            print("tu as entré :",mdpActuel)
+            # print("tu as entré :",mdpActuel)
             return redirect(url_for("index"))
     else:
         etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
