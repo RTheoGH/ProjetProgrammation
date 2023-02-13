@@ -12,9 +12,9 @@ from bdd import *                                             #Importation de la
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fichier de la base de donnée
 db.init_app(app)
 
-# with app.app_context():
-#     db.drop_all()
-#     db.create_all()
+with app.app_context():
+    db.drop_all()
+    db.create_all()
 
 nombreIdQuestion=0               #Variables utilisés pour 
 nombreIdCheck=0                  #la génération de réponses
@@ -29,7 +29,14 @@ def createId():                  #Fonction appelée à chaque fois qu'on a besoi
 
 @app.route("/")                  #Route principale
 def index():                                         #'page' est la référence de chaque page web actuelle
-    return render_template("accueil/index.html",page="Menu") #coloré en rouge dans la barre de navigation   
+    if 'nomU' not in session :  
+        return render_template("accueil/index.html",page="Menu") #coloré en rouge dans la barre de navigation
+    else:
+        if session['role']=='enseignant':
+            return render_template("accueil/index.html",page="Menu")
+        else:
+            etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
+            return render_template("accueil/index.html",page="Menu",idEtu=etudiantCO.idEtu)
 
 @app.route("/espEnseignant")
 def espEnseignant():
@@ -131,15 +138,31 @@ def connexionEtudiant():
     else:                       
         return render_template("compte/connexionEtudiant.html",page="Menu")
 
-@app.route("/modifMdp",methods=['POST','GET'])
-def modifMdp():
+@app.route("/modifMdp/<string:id>",methods=['POST','GET'])
+def modifMdp(id):
+    if 'nomU' not in session :                                          #Sécurité pour éviter d'aller sur une page
+        flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
+        return redirect(url_for('index'))
+    if session['role'] != 'etudiant' :                                     #si vous n'êtes pas etudiant
+        flash("Page réservée aux etudiants")           
+        return redirect(url_for('index'))
     if request.method == 'POST':
         mdpActuel=request.form['mdpEtu']
         newMdp=request.form['nMdpEtu']
+        mdpAModif = Etudiant.query.get_or_404(id)
 
-        return redirect(url_for("index"))
+        if check_password_hash(mdpAModif.mdpEtu,mdpActuel):
+            mdpAModif.mdpEtu = generate_password_hash(newMdp, method='pbkdf2:sha256', salt_length=16)
+            print("j'attribue le nouveau mot de passe ! :",newMdp)
+            db.session.commit()
+            return redirect(url_for("index"))
+        else:
+            flash("Mot de passe actuel incorrect")
+            print("tu as entré :",mdpActuel)
+            return redirect(url_for("index"))
     else:
-        return render_template("compte/modifMdp.html")
+        etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
+        return render_template("compte/modifMdp.html",page="Menu",idMAModif=etudiantCO.idEtu)
 
 @app.route("/deconnexion")                        #Route de deconnexion
 def deconnexion():                                #Retire l'utilisateur de la session

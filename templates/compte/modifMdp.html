@@ -12,12 +12,14 @@
 
 <body>
     {%include 'partials/_nav.html'%}
-    <h1>Modifier votre mot de passe</h1>
-    <form action="/modifMdp" method="POST">  <!-- Création d'un etudiant' -->
-        <p> Mot de passe actuel : <input type="password" name="mdpEtu" id="mdpEtu"/></p>           <!-- Avec un nom -->
-        <p> Nouveau mot de passe : <input type="password" name="nMdpEtu" id="nMdpEtu"/></p>  <!-- Avec un prenom -->
-        <p><input class="button" type="submit" value="Créer" /></p>
-    </form>
+    <div class="menu">
+        <h1>Modifier votre <br> mot de passe</h1>
+        <form action="{{ url_for('modifMdp', id=idMAModif)}}" method="POST">  <!-- Création d'un etudiant' -->
+            <p> Mot de passe actuel : <input type="password" name="mdpEtu" id="mdpEtu"/></p>           <!-- Avec un nom -->
+            <p> Nouveau mot de passe : <input type="password" name="nMdpEtu" id="nMdpEtu"/></p>  <!-- Avec un prenom -->
+            <p><input class="button" type="submit" value="Modifier" /></p>
+        </form>
+    </div>
     {%include 'partials/footer.html'%}
 </body>
 </html>
