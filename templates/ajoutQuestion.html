@@ -1,139 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'partials/base.html' %}
 
-<head>
-    <link rel="icon" type="image/x-icon" href="/static/icone.png">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet"> {%include 'partials/Biblio.html'%}
-    <title>Ajout</title>
-</head>
+{% block main %}
+<div class="mid double">
+    <div class="code">
+        <!-- Partie écriture -->
+        <form action="/ajout" method="POST">
+            <h1>Ecrivez une question</h1>
+            <p>Énoncé : <br/>
+                <!-- Zone de texte pour la question, methode onkeyup -->
+                <textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiser()" required></textarea>
+            </p>
+            <hr/>
+            <div class="nouveauBouton">
+                <script>
+                    /* Fonction JS pour envoyer une requête GET à /plusDeReponse */
 
-<body>
-    {%include 'partials/_nav.html'%}
-    <div class="mid double">
-        <div class="code">
-            <!-- Partie écriture -->
-            <form action="/ajout" method="POST">
-                <h1>Ecrivez une question</h1>
-                <p>Énoncé : <br/>
-                    <!-- Zone de texte pour la question, methode onkeyup -->
-                    <textarea id="question" name="question" rows="4" cols="40" onkeyup="visualiser()" required></textarea>
-                </p>
-                <hr/>
-                <div class="nouveauBouton">
-                    <script>
-                        /* Fonction JS pour envoyer une requête GET à /plusDeReponse */
-
-                        window.addEventListener('load', () => {
-                            document.querySelector('#demandereponse').disabled = true;
-                            document.querySelector('#demandereponse').hidden = true;
-                            document.querySelector('#Rep_num').disabled = true;
-                            document.querySelector('#Rep_num').hidden = true;
-                        });
-
-                        function demandePlusReponse() {
-                            fetch('/plusDeReponse') /* Utilisation de l'API Fetch pour */
-                                .then(response => response.text()) /*envoyer une requête GET à /plusDeReponse */
-                                .then(data => {
-                                    $(".nouveauBouton").append(data); /* Ajout texte de la réponse */
-                                }); /* à un élément ayant la classe */
-                        } /* 'nouveauBouton' */
-
-                        function supprimerBouton(id) {
-                            for (let i = 0; i < 3; i++) {
-                                fetch('/supprimer_bouton', { /* Envoi d'une requête DELETE à la route  */
-                                    method: 'DELETE',
-                                    /* '/supprimer_bouton' avec un objet JSON */
-                                    body: JSON.stringify({ /* contenant l'id en paramètre */
-                                        'id': id
-                                    }),
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    }
-                                }); /* Suppression de l'élément HTML */
-                                $("#" + id).remove(); /* ayant pour id l'id passé en paramètre */
-                            }
-                            visualiser()
-                        }
-
-                        function visualiser() {
-                            // 
-                            let textAll = $("textarea"); /*Variable textAll qui recupere le contenu dee toutes les textarea*/
-                            // console.log(textAll);
-                            let texte = "<h2>Enoncé :</h2>";
-                            textAll.each(function(index) { /* Pour chaque zone de texte */
-                                // console.log(this);
-                                if (index == 0) { /* Si c'est la premiere zone de texte (énoncé)*/
-                                    texte += converter.makeHtml($(this).val());
-                                    texte += "<hr/><h2>Réponses :</h2>";
-                                } else { /* Pour les réponses */
-                                    texte += "<div class='repLi'>\
-                                        <div class='repCo'><input type='checkbox'/></div>\
-                                        <div class='repCo'> " + converter.makeHtml($(this).val()) + "</div>\
-                                        </div>";
-                                }
-                                // console.log(texte);
-                            })
-                            $(".visuel").html(texte); /* Remplacement du contenu HTML (jQuery) de l'élément ayant */
-                            MathJax.typeset(); /* la classe 'visuel' avec la valeur de texte */
-                            hljs.highlightAll();
-                        }
-
-                        function Question_Numerique() {
-                            document.querySelector('#Quest_QCM').disabled = true;
-                            document.querySelector('#Quest_QCM').hidden = true;
-                            document.querySelector('#Rep_num').disabled = false;
-                            document.querySelector('#Rep_num').hidden = false;
-                            document.querySelector('#Quest_Num').disabled = true;
-                            document.querySelector('#Quest_Num').hidden = true;
-                            document.querySelector('#Rep_num').setAttribute("required", "");
-                        }
-
-                        function Question_QCM() {
-                            document.querySelector('#demandereponse').disabled = false;
-                            document.querySelector('#demandereponse').hidden = false;
-                            document.querySelector('#Quest_Num').disabled = true;
-                            document.querySelector('#Quest_Num').hidden = true;
-                            document.querySelector('#Quest_QCM').disabled = true;
-                            document.querySelector('#Quest_QCM').hidden = true;
-                        }
-                    </script>
-                    <div class="affichageEtiquette">
-                        <fieldset>
-                            <legend>Étiquettes</legend>
-                            <ul>
-                                {% for etiquette in etiquettes %}
-                                <!-- Pour chaque etiquette parmi les etiquettes -->
-                                <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
-                                {% endfor %}
-                            </ul>
-                        </fieldset>
-                    </div>
-                    <hr/>
+                    window.addEventListener('load', () => {
+                        document.querySelector('#demandereponse').disabled = true;
+                        document.querySelector('#demandereponse').hidden = true;
+                        document.querySelector('#Rep_num').disabled = true;
+                        document.querySelector('#Rep_num').hidden = true;
+                    });
+                </script>
+                <div class="affichageEtiquette">
+                    <fieldset>
+                        <legend>Étiquettes</legend>
+                        <ul>
+                            {% for etiquette in etiquettes %}
+                            <!-- Pour chaque etiquette parmi les etiquettes -->
+                            <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
+                            {% endfor %}
+                        </ul>
+                    </fieldset>
                 </div>
-                <!-- Appel de la fonction demandePlusReponse avec la methode onclick -->
-                <p><button type="button" id="Quest_Num" onclick="Question_Numerique()">Passer en question numérique</button></p>
-                <p><button type="button" id="Quest_QCM" onclick="Question_QCM()">Passer en question à choix multiple</button></p>
-                <p><button type="button" id="demandereponse" onclick="demandePlusReponse()">Ajouter une réponse</button></p>
-                <!-- <p><input type="number" id="rep_num" name="rep_num"></p> -->
-                <!-- <label for="rep_num" class="label_rep_num"></label> -->
-                <p id="rep_num">
-                    <p><input type="text" pattern="\d*([.]\d{0,2})?" id="Rep_num" name="Rep_num"></p>
-                    <!-- <input type="text" id="rep_num1" name="rep_num1" pattern="[0-9]*"><b>.</b>
-                    <input type="text" id="rep_num2" name="rep_num2" pattern="\d{0,2}" value="00"> -->
-                </p>
-                <p><input class="button" type="submit" value="Ajouter la question" /></p>
-
-
-            </form>
-        </div>
-        <div class="visu">
-            <!-- Partie visualisation -->
-            <h1 class="middle">Visualisation</h1>
-            <div class="visuel"></div>
-        </div>
+                <hr/>
+            </div>
+            <!-- Appel de la fonction demandePlusReponse avec la methode onclick -->
+            <p><button type="button" id="Quest_Num" onclick="Question_Numerique()">Passer en question numérique</button></p>
+            <p><button type="button" id="Quest_QCM" onclick="Question_QCM()">Passer en question à choix multiple</button></p>
+            <p><button type="button" id="demandereponse" onclick="demandePlusReponse()">Ajouter une réponse</button></p>
+            <!-- <p><input type="number" id="rep_num" name="rep_num"></p> -->
+            <!-- <label for="rep_num" class="label_rep_num"></label> -->
+            <p id="rep_num">
+                <p><input type="text" pattern="\d*([.]\d{0,2})?" id="Rep_num" name="Rep_num"></p>
+                <!-- <input type="text" id="rep_num1" name="rep_num1" pattern="[0-9]*"><b>.</b>
+                <input type="text" id="rep_num2" name="rep_num2" pattern="\d{0,2}" value="00"> -->
+            </p>
+            <p><input class="button" type="submit" value="Ajouter la question" /></p>
+        </form>
     </div>
-    {%include 'partials/footer.html'%}
-</body>
+    <div class="visu">
+        <!-- Partie visualisation -->
+        <h1 class="middle">Visualisation</h1>
+        <div class="visuel"></div>
+    </div>
+</div>
+{% endblock %}

@@ -1,38 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'partials/base.html' %}
 
-<head>
-    <link rel="icon" type="image/x-icon" href="/static/icone.png">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet">
-    <title>Votre QCM</title>
-</head>
-
-<body>
-    {%include 'partials/_nav.html'%}
-    <div class="menu">
-        <h1>{{nomQcm}}</h1>
+{% block main %}
+<div class="menu">
+    <h1>{{nomQcm}}</h1>
+    <hr/>
+    <div class="affQCM">
+        {% for i in range(len) %}
+        <div class="affQuestion" id="Q{{listequestion[i].idQ}}">{{listequestion[i].enonce}}</div>
+        <script>                                            /* Conversion de l'énoncé avec showdown */
+            $('#Q{{listequestion[i].idQ}}').html(converter.makeHtml($('#Q{{listequestion[i].idQ}}').text()));
+        </script>
         <hr/>
-        <div class="affQCM">
-            {% for i in range(len) %}
-            <div class="affQuestion" id="Q{{listequestion[i].idQ}}">{{listequestion[i].enonce}}</div>
-            <script>                                            /* Conversion de l'énoncé avec showdown */
-                $('#Q{{listequestion[i].idQ}}').html(converter.makeHtml($('#Q{{listequestion[i].idQ}}').text()));
-            </script>
-            <hr/>
-            {% for reponse in listereponse[i] %}
-            <div class="affReponse"><input class="bigCheckbox" id="{{reponse.idR}}" type="checkbox"/> <label for="{{reponse.idR}}">{{reponse.reponse}}</label></div>
-            <script>
-                $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
-            </script>
-            {% endfor %}
-            <hr/>
-            {% endfor %}
-        </div>
+        {% for reponse in listereponse[i] %}
+        <div class="affReponse"><input class="bigCheckbox" id="{{reponse.idR}}" type="checkbox"/> <label for="{{reponse.idR}}">{{reponse.reponse}}</label></div>
+        <script>
+            $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
+        </script>
+        {% endfor %}
+        <hr/>
+        {% endfor %}
     </div>
-    {%include 'partials/footer.html'%}
-</body>
-
-</html>
+</div>
+{% endblock %}

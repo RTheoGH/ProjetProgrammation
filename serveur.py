@@ -34,26 +34,30 @@ def createId():                  #Fonction appelée à chaque fois qu'on a besoi
 
 @app.route("/")                  #Route principale
 def index():                                         #'page' est la référence de chaque page web actuelle
+    title='Accueil'
     if 'nomU' not in session :  
-        return render_template("accueil/index.html",page="Menu") #coloré en rouge dans la barre de navigation
+        return render_template("accueil/index.html",title=title,page="Menu") #coloré en rouge dans la barre de navigation
     else:
         if session['role']=='enseignant':
             enseignantCO= db.session.query(Utilisateur).filter(Utilisateur.idU==session['idU']).first()
-            return render_template("accueil/index.html",page="Menu",idU=enseignantCO.idU)
+            return render_template("accueil/index.html",title=title,page="Menu",idU=enseignantCO.idU)
         elif session['role']=='etudiant':
             etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
-            return render_template("accueil/index.html",page="Menu",idEtu=etudiantCO.idEtu)
+            return render_template("accueil/index.html",title=title,page="Menu",idEtu=etudiantCO.idEtu)
 
 @app.route("/espEnseignant")
 def espEnseignant():
-    return render_template("accueil/espEnseignant.html",page="Menu")
+    title='Espace Enseignant'
+    return render_template("accueil/espEnseignant.html",title=title,page="Menu")
 
 @app.route("/espEtudiant")
 def espEtudiant():
-    return render_template("accueil/espEtudiant.html",page="Menu")
+    title='Espace Etudiant'
+    return render_template("accueil/espEtudiant.html",title=title,page="Menu")
 
 @app.route("/creationCompteEnseignant",methods = ['POST', 'GET'])   #Route pour créer un compte utilisateur
 def creationCompteEnseignant():
+    title='Creation de compte'
     if request.method == 'POST':
         nomUtilisateur = request.form['creationNom']
         mdpUtilisateur = request.form['creationMdp']
@@ -66,18 +70,20 @@ def creationCompteEnseignant():
         except:
             return 'Erreur lors de la création du compte'
     else: 
-        return render_template("compte/creationCompteEnseignant.html",page="Menu")
+        return render_template("compte/creationCompteEnseignant.html",title=title,page="Menu")
 
 @app.route("/listeUtilisateurs",methods = ['GET'])        #Cette route est uniquement technique pour pouvoir
 def listeUtilisateurs():                                  #visualiser les utilisateurs en aucun cas elle doit
-    if 'nomU' not in session or session['nomU']!='ADMIN': #etre accessible via une redirection ou autre.
+    title='PRIVATE'                                       #etre accessible via une redirection ou autre.
+    if 'nomU' not in session or session['nomU']!='ADMIN': 
         flash("Vous n'avez pas les droits pour accéder à cette page")  #Si vous souhaitez néanmoins accéder à la
         return redirect(url_for('index'))                              #page, créez un compte 'ADMIN' puis
     utilisateurs = db.session.query(Utilisateur).all()                 #connectez vous avec.
-    return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs,page='listeUtilisateurs')
+    return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs,title=title,page='listeUtilisateurs')
 
 @app.route("/listeEtudiants",methods=['POST','GET'])
 def listeEtudiants():
+    title='Etudiants'
     if 'nomU' not in session:                                           #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
@@ -122,10 +128,11 @@ def listeEtudiants():
             return str(e)
     else:
         etudiants = db.session.query(Etudiant).filter(Etudiant.idEtu==Classe.idCE,Classe.idCU==session['idU']).all()
-        return render_template("lEtudiants.html",lEtudiants=etudiants,page='listeEtudiants')
+        return render_template("lEtudiants.html",lEtudiants=etudiants,title=title,page='listeEtudiants')
 
 @app.route("/connexionEnseignant",methods=['POST','GET'])           #Route pour se connecter
 def connexionEnseignant():
+    title='Connexion Enseignant'
     if request.method == 'POST':
         testLogin = db.session.query(Utilisateur).filter(Utilisateur.nomU == request.form['nomU']).first()
         # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
@@ -142,10 +149,11 @@ def connexionEnseignant():
             return redirect(url_for('connexionEnseignant'))  
         return redirect(url_for("index"))              
     else:                       
-        return render_template("compte/connexionEnseignant.html",page="Menu")
+        return render_template("compte/connexionEnseignant.html",title=title,page="Menu")
 
 @app.route("/connexionEtudiant",methods=['POST','GET'])           #Route pour se connecter
 def connexionEtudiant():
+    title='Connexion Etudiant'
     if request.method == 'POST':
         # testEnseignant = db.session.query(Utilisateur).filter(Utilisateur.nomU==request.form['selectEnseignant']).first()
 
@@ -166,10 +174,11 @@ def connexionEtudiant():
             return redirect(url_for('connexionEtudiant'))  
         return redirect(url_for("index"))              
     else:                       
-        return render_template("compte/connexionEtudiant.html",page="Menu")
+        return render_template("compte/connexionEtudiant.html",title=title,page="Menu")
 
 @app.route("/modifMdp/<string:id>",methods=['POST','GET'])
 def modifMdp(id):
+    title='Modification Mot de passe'
     if 'nomU' not in session :                                          #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
@@ -211,10 +220,10 @@ def modifMdp(id):
     else:
         if session['role']=='etudiant':
             etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
-            return render_template("compte/modifMdp.html",page="Menu",idMAModif=etudiantCO.idEtu)
+            return render_template("compte/modifMdp.html",title=title,page="Menu",idMAModif=etudiantCO.idEtu)
         elif session['role']=='enseignant':
             enseignantCO = db.session.query(Utilisateur).filter(Utilisateur.idU==session['idU']).first()
-            return render_template("compte/modifMdp.html",page="Menu",idMAModif=enseignantCO.idU)
+            return render_template("compte/modifMdp.html",title=title,page="Menu",idMAModif=enseignantCO.idU)
 
 @app.route("/deconnexion")                        #Route de deconnexion
 def deconnexion():                                #Retire l'utilisateur de la session
@@ -223,6 +232,7 @@ def deconnexion():                                #Retire l'utilisateur de la se
 
 @app.route("/ajout",methods = ['POST', 'GET'])    #Route pour ajouter une question
 def ajout():
+    title='Ajout'
     if 'nomU' not in session :                                          #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
@@ -281,10 +291,11 @@ def ajout():
         # except:
         #    return 'Erreur création de la question'
     else:
-        return render_template("ajoutQuestion.html",page="Créer")
+        return render_template("ajoutQuestion.html",title=title,page="Créer")
 
 @app.route("/creationEtiquettes",methods=['GET','POST']) #Route pour créer une étiquette
 def creationEtiquettes():
+    title='Etiquette'
     if 'nomU' not in session:                            #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
@@ -301,10 +312,11 @@ def creationEtiquettes():
             return 'Erreur : route /creationEtiquettes'
     else :
         ToutEtiq = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
-        return render_template("creationEtiquettes.html",page="Etiquettes",etiqs=ToutEtiq)
+        return render_template("creationEtiquettes.html",title=title,page="Etiquettes",etiqs=ToutEtiq)
 
 @app.route("/suppEtiquettes",methods=['GET','POST'])     #Route pour supprimer une étiquette
 def suppEtiquettes():
+    title='Etiquette'
     if 'nomU' not in session:                            #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
@@ -325,10 +337,11 @@ def suppEtiquettes():
         except:
             return 'Erreur : route /suppEtiquettes'
     else :
-        return render_template("creationEtiquettes.html",etiqs=ToutEtiq)
+        return render_template("creationEtiquettes.html",title=title,etiqs=ToutEtiq)
 
 @app.route("/modifEtiquettes",methods=['GET','POST'])     #Route pour modifier une étiquette
 def modifEtiquettes():
+    title='Etiquette'
     if 'nomU' not in session:                             #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
@@ -344,15 +357,16 @@ def modifEtiquettes():
         except:
             return 'Erreur : route /modifEtiquettes'
     else :
-        return render_template("creationEtiquettes.html",etiqs=ToutEtiq)
+        return render_template("creationEtiquettes.html",title=title,etiqs=ToutEtiq)
 
 @app.route("/creerQuestion",methods=['GET','POST'])       #Route pour afficher les étiquettes sur ajoutQuestion
 def creerQ():
+    title='Ajout'
     if 'nomU' not in session:                             #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
-    return render_template('ajoutQuestion.html', etiquettes=etiquettes, page="Créer")
+    return render_template('ajoutQuestion.html',title=title,etiquettes=etiquettes, page="Créer")
 
 @app.route("/plusDeReponse",methods = ['GET'])          #Route qui ajoute une réponse sur ajoutQuestion
 def plusDeReponse():
@@ -375,24 +389,27 @@ def supprimer_bouton():
 
 @app.route("/lquestion",methods = ['GET'])              #Route vers la liste de questions de l'utilisateur
 def lquestion():
+    title='Bibliothèque'
     if 'nomU' not in session:                           #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))               #Sélection des questions et étiquettes
     etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
     questions = db.session.query(Question).filter(Question.idU==session['idU']).all()
-    return render_template("lquestion.html",etiquettes=etiquettes,lquestion=questions,page="Consulter")
+    return render_template("lquestion.html",title=title,etiquettes=etiquettes,lquestion=questions,page="Consulter")
 
 @app.route("/filtre",methods = ['GET','POST'])          #Route de filtrage des questions de l'utilisateur
 def filtre():
+    title='Bibliothèque'
     etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
     tags = request.form['tag']
     if request.method == 'POST':                        #Affiche les questions avec les tags sélectionnés
         questionAffiche = db.session.query(Question).join(Associe, Associe.RidQ == Question.idQ)\
             .join(Etiquette, Etiquette.idE == Associe.RidE).filter(Etiquette.idE == tags,Etiquette.idU==session['idU']).all()
-        return render_template("lquestion.html",etiquettes=etiquettes, lquestion=questionAffiche, page="Consulter")
+        return render_template("lquestion.html",title=title,etiquettes=etiquettes, lquestion=questionAffiche, page="Consulter")
 
 @app.route("/modifier/<string:id>",methods=['POST','GET']) #Route pour modifier une question de l'utilisateur
 def modifier(id):
+    title='Modification Question'
     if 'nomU' not in session:                           #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
@@ -417,7 +434,7 @@ def modifier(id):
             return 'Erreur de modification'             #Renvoi message erreur en cas d'échec de la modification
     else:
         etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
-        return render_template("modifQuestion.html",enonce=questionModif.enonce,idQ=questionModif.idQ,reponses=reponseModif,etiquettes=etiquettes)
+        return render_template("modifQuestion.html",title=title,enonce=questionModif.enonce,idQ=questionModif.idQ,reponses=reponseModif,etiquettes=etiquettes)
 
 @app.route("/supprimer/<string:id>")                       #Route pour supprimer une question de l'utilisateur
 def supprimer(id):
@@ -445,15 +462,17 @@ def supprimer(id):
 
 @app.route("/QCM")                  #Route pour créer un qcm à partir des questions crée par l'utilisateur
 def qcm():
+    title='Création QCM'
     if 'nomU' not in session:       #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()  #Récupération questions de la base de données
     print(LQ)
-    return render_template("QCM.html",ListesQuestions=LQ,page="CréerQcm")
+    return render_template("QCM.html",title=title,ListesQuestions=LQ,page="CréerQcm")
 
 @app.route("/generate",methods = ['POST'])      #Route qui genere le qcm
 def generate():
+    title='Votre QCM'
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
@@ -484,7 +503,7 @@ def generate():
             except :
                 return "Erreur de création du lien 'contient' entre Qcm et Question"
     listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
-    return render_template("lQCM.html",listeQCM=listeQCM)
+    return render_template("lQCM.html",title=title,listeQCM=listeQCM)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
 
 if __name__ == '__main__':

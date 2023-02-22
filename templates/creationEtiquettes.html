@@ -1,51 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'partials/base.html' %}
 
-<head>
-    <link rel="icon" type="image/x-icon" href="/static/icone.png">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet">
-    {%include 'partials/Biblio.html'%}
-    <title>Etiquette</title>
-</head>
-
-<body>
-    {%include 'partials/_nav.html'%}
-    <div class="mid double">
-        <div class="gereEtiquette gaucheEtiquette">                                                    
-            <h1>Création d'une <br/> étiquette</h1>
-            <hr/>
-            <form action="/creationEtiquettes" method="POST">                            <!-- Crée une nouvelle étiquette -->
-                <p>Nom de l'étiquette : <input type="text" name="nom"></p>
-                <p><input class = "button" type="submit" value="Créer l'étiquette"></p>
-            </form>
-        </div>
-        <div class="gereEtiquette centreEtiquette">
-            <h1>Modification d'une <br/> étiquette</h1>
-            <hr/>
-            <form action="/modifEtiquettes" method="POST">                               <!-- Modifie une étiquette existante -->
-                <p> Sélectionnez l'étiquette à modifier : 
-                <select name="etiqAmodif">
-                    {% for etiq in etiqs%}                                               <!-- Récupère les étiquettes présentes -->
-                        <option value='{{etiq.idE}}'>{{etiq.nom}}</option>
-                    {% endfor %}
-                </select>
-                </p>
-                <p>Nouveau nom de l'étiquette : <input type="text" name="nom"></p>       <!-- Et change son nom -->
-                <p><input class="button" type="submit" value="Modifier l'étiquette"></p>
-            </form>
-        </div>
-        <div class="gereEtiquette droiteEtiquette">
-            <h1>Suppression d'une <br/> étiquette</h1>
-            <hr/>
-            <form action="/suppEtiquettes" method="POST">                                <!-- Supprime une étiquette -->
-                <p>Nom de l'étiquette : <input type="text" name="nom"></p>
-                <p><input class = "button" type="submit" value="Supprimer l'étiquette"></p>
-            </form>
-        </div>
+{% block main %}
+<div class="mid double">
+    <div class="gereEtiquette gaucheEtiquette">                                                    
+        <h1>Création d'une <br/> étiquette</h1>
+        <hr/>
+        <form action="/creationEtiquettes" method="POST">                            <!-- Crée une nouvelle étiquette -->
+            <p>Nom de l'étiquette : <input type="text" name="nom"></p>
+            <p><input class = "button" type="submit" value="Créer l'étiquette"></p>
+        </form>
     </div>
-    {%include 'partials/footer.html'%}
-</body>
-</html>
+    <div class="gereEtiquette centreEtiquette">
+        <h1>Modification d'une <br/> étiquette</h1>
+        <hr/>
+        <form action="/modifEtiquettes" method="POST">                               <!-- Modifie une étiquette existante -->
+            <p> Sélectionnez l'étiquette à modifier : 
+            <select name="etiqAmodif">
+                {% for etiq in etiqs%}                                               <!-- Récupère les étiquettes présentes -->
+                    <option value='{{etiq.idE}}'>{{etiq.nom}}</option>
+                {% endfor %}
+            </select>
+            </p>
+            <p>Nouveau nom de l'étiquette : <input type="text" name="nom"></p>       <!-- Et change son nom -->
+            <p><input class="button" type="submit" value="Modifier l'étiquette"></p>
+        </form>
+    </div>
+    <div class="gereEtiquette droiteEtiquette">
+        <h1>Suppression d'une <br/> étiquette</h1>
+        <hr/>
+        <form action="/suppEtiquettes" method="POST">                                <!-- Supprime une étiquette -->
+            <p>Nom de l'étiquette : <input type="text" name="nom"></p>
+            <p><input class = "button" type="submit" value="Supprimer l'étiquette"></p>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,53 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'partials/base.html' %}
 
-<head>
-    <link rel="icon" type="image/x-icon" href="/static/icone.png">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet">
-    {%include 'partials/Biblio.html'%}
-    <title>Bibliothèque</title>
-</head>
-
-<body>
-    {%include 'partials/_nav.html'%}
-    <div class="menu">
-        <h1>Liste des questions</h1>
-        <div class="liste">
-            <table>
-                <tr class="top">
-                    <td>Question</td>
-                    <td>Modifier/Supprimer</td>
-                </tr>
-                {% for questions in lquestion %}
-                <tr>
-                    <td class="left" id="{{questions.idQ}}">{{questions.enonce}}</td>
-                    <script>
-                        $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
-                        hljs.highlightAll();
-                    </script>
-                    <td>
-                        <p><a class="button" href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
-                        <a class="button" href="{{ url_for('supprimer', id=questions.idQ)}}">Supprimer</a></p>
-                    </td> 
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
-        <div class="affichageEtiquette">
-            <form action="/filtre" method="POST">
-                <fieldset><legend>Filtrer avec des étiquettes</legend>
-                    <ul>
-                        {% for etiquette in etiquettes %}       <!-- Pour chaque etiquette parmi les etiquettes -->
-                            <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
-                        {% endfor %}
-                    </ul>
-                </fieldset>
-                <p><input class="button" type="submit" value="Filtrer"></p>
-            </form>
-        </div>
+{% block main %}
+<div class="menu">
+    <h1>Liste des questions</h1>
+    <div class="liste">
+        <table>
+            <tr class="top">
+                <td>Question</td>
+                <td>Modifier/Supprimer</td>
+            </tr>
+            {% for questions in lquestion %}
+            <tr>
+                <td class="left" id="{{questions.idQ}}">{{questions.enonce}}</td>
+                <script>
+                    $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
+                    hljs.highlightAll();
+                </script>
+                <td>
+                    <p><a class="button" href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
+                    <a class="button" href="{{ url_for('supprimer', id=questions.idQ)}}">Supprimer</a></p>
+                </td> 
+            </tr>
+            {% endfor %}
+        </table>
     </div>
-    {%include 'partials/footer.html'%}
-</body>
+    <div class="affichageEtiquette">
+        <form action="/filtre" method="POST">
+            <fieldset><legend>Filtrer avec des étiquettes</legend>
+                <ul>
+                    {% for etiquette in etiquettes %}       <!-- Pour chaque etiquette parmi les etiquettes -->
+                        <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
+                    {% endfor %}
+                </ul>
+            </fieldset>
+            <p><input class="button" type="submit" value="Filtrer"></p>
+        </form>
+    </div>
+</div>
+{% endblock %}

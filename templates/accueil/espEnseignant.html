@@ -1,30 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="icon" type="image/x-icon" href="/static/icone.png">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet">
-    {%include 'partials/Biblio.html'%}
-    <title>Espace Enseignant</title>
-</head>
-<body>
-    {%include 'partials/_nav.html'%} 
-    <div class="menu menuAcc">
-        <h1>Espace<br/>Enseignant</h1>
-        {% with messages = get_flashed_messages() %}  <!-- Récupère les messages de flash() du serveur -->
-            {% if messages %}
-                <div class="flashes">
-                    {% for message in messages %}     <!-- Puis les affiches -->
-                        <p>{{ message }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-        <a class="button" name="creationCompteEns" href="/creationCompteEnseignant">Créer un compte</a>
-        <a class="button" name="connexionEns" href="/connexionEnseignant">Connexion</a>
-    </div>
-    {%include 'partials/footer.html'%}
-</body>
-</html>
+{% extends 'partials/base.html' %}
+
+{% block main %}
+<div class="menu menuAcc">
+    <h1>Espace<br/>Enseignant</h1>
+    {% with messages = get_flashed_messages() %}  <!-- Récupère les messages de flash() du serveur -->
+        {% if messages %}
+            <div class="flashes">
+                {% for message in messages %}     <!-- Puis les affiches -->
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <a class="button" name="creationCompteEns" href="/creationCompteEnseignant">Créer un compte</a>
+    <a class="button" name="connexionEns" href="/connexionEnseignant">Connexion</a>
+</div>
+{% endblock %}

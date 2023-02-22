@@ -1,54 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'partias/base.html' %}
 
-<head>
-    <link rel="icon" type="image/x-icon" href="/static/icone.png">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet"> {%include 'partials/Biblio.html'%}
-    <title>Ajout</title>
-</head>
-
-<body>
-    {%include 'partials/_nav.html'%}
-    <div class="double menu">
-        <!-- <form action="/visual" method="POST"> -->
-        <form class="double" action="{{ url_for('modifier', id=idQ)}}" method="POST">
-            <div>
-                <h1>Modifier votre énoncé</h1>
-                <p><textarea name="question" rows="4" cols="40">{{enonce}}</textarea></p>
-                <!-- affichage de l'énoncé à modifier-->
-                <h1>Modifier vos étiquettes</h1>
-                <div class="affichageEtiquette">
-                    <fieldset>
-                        <legend>Étiquettes</legend>
-                        <ul>
-                            {% for etiquette in etiquettes %}
-                            <!-- Pour chaque etiquette parmi les etiquettes -->
-                            <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
-                            {% endfor %}
-                        </ul>
-                    </fieldset>
-                </div>
+{% block main %}
+<div class="double menu">
+    <!-- <form action="/visual" method="POST"> -->
+    <form class="double" action="{{ url_for('modifier', id=idQ)}}" method="POST">
+        <div>
+            <h1>Modifier votre énoncé</h1>
+            <p><textarea name="question" rows="4" cols="40">{{enonce}}</textarea></p>
+            <!-- affichage de l'énoncé à modifier-->
+            <h1>Modifier vos étiquettes</h1>
+            <div class="affichageEtiquette">
+                <fieldset>
+                    <legend>Étiquettes</legend>
+                    <ul>
+                        {% for etiquette in etiquettes %}
+                        <!-- Pour chaque etiquette parmi les etiquettes -->
+                        <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
+                        {% endfor %}
+                    </ul>
+                </fieldset>
             </div>
-            <div class="liVer"></div>
-            <div>
-                <h1>Modifier vos réponses</h1>
+        </div>
+        <div class="liVer"></div>
+        <div>
+            <h1>Modifier vos réponses</h1>
 
-                {% for reponse in reponses %}
-                <!-- Pour chaque réponse parmis les réponses -->
-                {%if reponse.estNumerique %}
-                <p id="rep_num"><input type="text" id="Rep_num" name="R{{reponse.idR}}" pattern="[\d*([.]\d{0,2})?" value="{{reponse.reponse}}"></p>
-                <!-- <p><input class="button" type="submit" value="Ajouter la question" /></p> -->
+            {% for reponse in reponses %}
+            <!-- Pour chaque réponse parmis les réponses -->
+            {%if reponse.estNumerique %}
+            <p id="rep_num"><input type="text" id="Rep_num" name="R{{reponse.idR}}" pattern="[\d*([.]\d{0,2})?" value="{{reponse.reponse}}"></p>
+            <!-- <p><input class="button" type="submit" value="Ajouter la question" /></p> -->
 
-                {%else%}
-                <p><textarea name="R{{reponse.idR}}" rows="4" cols="40">{{reponse.reponse}}</textarea></p>
-                {%endif%} {% endfor %}
-                <p><input class="button" type="submit" value="Modifier" /></p>
-            </div>
-        </form>
-        <!-- <a class="button" name="menu" href="/">Retour au menu</a><br/> -->
-    </div>
-    {%include 'partials/footer.html'%}
-</body>
+            {%else%}
+            <p><textarea name="R{{reponse.idR}}" rows="4" cols="40">{{reponse.reponse}}</textarea></p>
+            {%endif%} {% endfor %}
+            <p><input class="button" type="submit" value="Modifier" /></p>
+        </div>
+    </form>
+    <!-- <a class="button" name="menu" href="/">Retour au menu</a><br/> -->
+</div>
+{% endblock %}

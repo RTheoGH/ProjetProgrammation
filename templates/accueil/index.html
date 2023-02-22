@@ -1,44 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <link rel="icon" type="image/x-icon" href="/static/icone.png">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet">
-    {%include 'partials/Biblio.html'%}           <!-- Inclusion de biblio.html -->
-    <title>Bienvenue !</title>
-</head>
-
-<body>
-    {%include 'partials/_nav.html'%}             <!-- Inclusion de la barre de navigation _nav.html -->
-    <div class="menu menuAcc">
-        <h1>Bienvenue<br/>sur<br/>Infomaker !</h1>
-        {% with messages = get_flashed_messages() %}  <!-- Récupère les messages de flash() du serveur -->
-            {% if messages %}
-                <div class="flashes">
-                    {% for message in messages %}     <!-- Puis les affiches -->
-                        <p>{{ message }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-        {% if session['nomU'] %}                 <!-- Si un utilisateur est déjà connecté -->
-            {% if session['role']=='etudiant' %}
-                <p>Bonjour, {{session['nomU']}} {{session['preU']}}</p>
-                <a name="modificationMDP" href="{{ url_for('modifMdp', id=idEtu)}}">Changer de mot de passe</a>
-            {% elif session['role']=='enseignant' %}
-                <p>Bonjour, {{session['nomU']}}</p>
-                <a name="modificationMDP" href="{{url_for('modifMdp',id=idU)}}">Changer de mot de passe</a>
-            {% endif %}
-        <p><a class="button" name="deconnexion" href="/deconnexion">Deconnexion</a></p>
-        {% else %}                               <!-- sinon -->
-        <a class="button" name="espEnseignant" href="/espEnseignant">Espace Enseignant</a>
-        <a class="button" name="espEtudiant" href="/espEtudiant">Espace Etudiant</a>
+{% extends 'partials/base.html' %}
+{% block main %}
+<div class="menu menuAcc">
+    <h1>Bienvenue<br/>sur<br/>Infomaker !</h1>
+    {% with messages = get_flashed_messages() %}  <!-- Récupère les messages de flash() du serveur -->
+        {% if messages %}
+            <div class="flashes">
+                {% for message in messages %}     <!-- Puis les affiches -->
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
         {% endif %}
-    </div>
-    {%include 'partials/footer.html'%}           <!-- Inclusion du bas de page footer.html -->
-</body>
-
-</html>
+    {% endwith %}
+    {% if session['nomU'] %}                 <!-- Si un utilisateur est déjà connecté -->
+        {% if session['role']=='etudiant' %}
+            <p>Bonjour, {{session['nomU']}} {{session['preU']}}</p>
+            <a name="modificationMDP" href="{{ url_for('modifMdp', id=idEtu)}}">Changer de mot de passe</a>
+        {% elif session['role']=='enseignant' %}
+            <p>Bonjour, {{session['nomU']}}</p>
+            <a name="modificationMDP" href="{{url_for('modifMdp',id=idU)}}">Changer de mot de passe</a>
+        {% endif %}
+    <p><a class="button" name="deconnexion" href="/deconnexion">Deconnexion</a></p>
+    {% else %}                               <!-- sinon -->
+    <a class="button" name="espEnseignant" href="/espEnseignant">Espace Enseignant</a>
+    <a class="button" name="espEtudiant" href="/espEtudiant">Espace Etudiant</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,59 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'partials/base.html' %}
 
-<head>
-    <link rel="icon" type="image/x-icon" href="/static/icone.png">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/style.css" rel="stylesheet">
-    {%include 'partials/Biblio.html'%}
-    <title>Etudiants</title>
-</head>
+{% block main %}
+<div class="menu">
+    <h1>Vos étudiants</h1>
+    <div class="liste">
+        <table>
+            <tr class="top">
+                <td>Nom</td>
+                <td>Prenom</td>
+                <td>Numéro d'étudiant</td>
+            </tr>
+            {% for etudiants in lEtudiants %}         <!-- Affiche chaque utilisateur avec son mot de passe -->
+            <tr>                                            <!-- Rappel : cette page est uniquement accessible si -->
+                <td>{{etudiants.nomEtu}}</td>              <!-- l'utilisateur est 'ADMIN' -->
+                <td>{{etudiants.prenomEtu}}</td>
+                <td>{{etudiants.numeroEtu}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <br/>
+    <div class="double newEtudiant">
+        <div style="margin-right: 1em;">
+            <h1>Ajout d'étudiants<br/> via CSV</h1>
+            <form action="/listeEtudiants" method="POST" enctype="multipart/form-data">  <!-- Création d'un etudiant' -->
+                <p>Seuls les fichiers d'extension .csv sont acceptés!</p>
+                <br/>
+                <p><input type="file" id="fichierEtu" name="fichierEtu" accept=".csv" ></p>
+                <p><input class="button" type="submit" value="Ajouter" /></p>
 
-<body>
-    {%include 'partials/_nav.html'%}
-    <div class="menu">
-        <h1>Vos étudiants</h1>
-        <div class="liste">
-            <table>
-                <tr class="top">
-                    <td>Nom</td>
-                    <td>Prenom</td>
-                    <td>Numéro d'étudiant</td>
-                </tr>
-                {% for etudiants in lEtudiants %}         <!-- Affiche chaque utilisateur avec son mot de passe -->
-                <tr>                                            <!-- Rappel : cette page est uniquement accessible si -->
-                    <td>{{etudiants.nomEtu}}</td>              <!-- l'utilisateur est 'ADMIN' -->
-                    <td>{{etudiants.prenomEtu}}</td>
-                    <td>{{etudiants.numeroEtu}}</td>
-                </tr>
-                {% endfor %}
-            </table>
+            </form>
         </div>
-        <br/>
-        <div class="double newEtudiant">
-            <div style="margin-right: 1em;">
-                <h1>Ajout d'étudiants<br/> via CSV</h1>
-                <form action="/listeEtudiants" method="POST" enctype="multipart/form-data">  <!-- Création d'un etudiant' -->
-                    <p>Seuls les fichiers d'extension .csv sont acceptés!</p>
-                    <br/>
-                    <p><input type="file" id="fichierEtu" name="fichierEtu" accept=".csv" ></p>
-                    <p><input class="button" type="submit" value="Ajouter" /></p>
-
-                </form>
-            </div>
-            <div class="liVer"></div>
-            <div style="margin-left: 1em;">
-                <h1>Ajout d'étudiants<br/> manuellement</h1>
-                <form action="/listeEtudiants" method="POST">
-                    <p> Nom : <input type="text" name="nomEtu" id="nomEtu"/></p>
-                    <p> Prenom : <input type="text" name="prenomEtu" id="prenomEtu"/></p>
-                    <p> Numéro d'étudiant : <input type="password" name="numeroEtu" id="numeroEtu"/></p>
-                    <p><input class="button" type="submit" value="Ajouter" /></p>
-                </form>
-            </div>
+        <div class="liVer"></div>
+        <div style="margin-left: 1em;">
+            <h1>Ajout d'étudiants<br/> manuellement</h1>
+            <form action="/listeEtudiants" method="POST">
+                <p> Nom : <input type="text" name="nomEtu" id="nomEtu"/></p>
+                <p> Prenom : <input type="text" name="prenomEtu" id="prenomEtu"/></p>
+                <p> Numéro d'étudiant : <input type="password" name="numeroEtu" id="numeroEtu"/></p>
+                <p><input class="button" type="submit" value="Ajouter" /></p>
+            </form>
         </div>
     </div>
-    {%include 'partials/footer.html'%}
-</body>
+</div>
+{% endblock %}
