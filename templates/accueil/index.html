@@ -13,7 +13,7 @@
 
 <body>
     {%include 'partials/_nav.html'%}             <!-- Inclusion de la barre de navigation _nav.html -->
-    <div class="menu">
+    <div class="menu menuAcc">
         <h1>Bienvenue<br/>sur<br/>Infomaker !</h1>
         {% with messages = get_flashed_messages() %}  <!-- Récupère les messages de flash() du serveur -->
             {% if messages %}
@@ -28,8 +28,9 @@
             {% if session['role']=='etudiant' %}
                 <p>Bonjour, {{session['nomU']}} {{session['preU']}}</p>
                 <a name="modificationMDP" href="{{ url_for('modifMdp', id=idEtu)}}">Changer de mot de passe</a>
-            {% else %}
+            {% elif session['role']=='enseignant' %}
                 <p>Bonjour, {{session['nomU']}}</p>
+                <a name="modificationMDP" href="{{url_for('modifMdp',id=idU)}}">Changer de mot de passe</a>
             {% endif %}
         <p><a class="button" name="deconnexion" href="/deconnexion">Deconnexion</a></p>
         {% else %}                               <!-- sinon -->

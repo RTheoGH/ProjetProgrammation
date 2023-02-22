@@ -17,6 +17,9 @@ db.init_app(app)
 # with app.app_context():
 #     db.drop_all()
 #     db.create_all()
+# si le "with" n'est pas commenté:
+#       si vous rechargez le serveur sans vous deconnecter, une erreur arrive au niveau de l'accueil,
+#          utilisez la route /deconnexion pour corriger le probleme
 
 nombreIdQuestion=0               #Variables utilisés pour 
 nombreIdCheck=0                  #la génération de réponses
@@ -35,8 +38,9 @@ def index():                                         #'page' est la référence 
         return render_template("accueil/index.html",page="Menu") #coloré en rouge dans la barre de navigation
     else:
         if session['role']=='enseignant':
-            return render_template("accueil/index.html",page="Menu")
-        else:
+            enseignantCO= db.session.query(Utilisateur).filter(Utilisateur.idU==session['idU']).first()
+            return render_template("accueil/index.html",page="Menu",idU=enseignantCO.idU)
+        elif session['role']=='etudiant':
             etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
             return render_template("accueil/index.html",page="Menu",idEtu=etudiantCO.idEtu)
 
@@ -53,7 +57,7 @@ def creationCompteEnseignant():
     if request.method == 'POST':
         nomUtilisateur = request.form['creationNom']
         mdpUtilisateur = request.form['creationMdp']
-        new_utilisateur = Utilisateur(nomU=nomUtilisateur,passU=mdpUtilisateur)
+        new_utilisateur = Utilisateur(nomU=nomUtilisateur,passU=generate_password_hash(mdpUtilisateur, method='pbkdf2:sha256', salt_length=16))
 
         try:
             db.session.add(new_utilisateur)               #Création du nouveau compte
@@ -127,8 +131,9 @@ def connexionEnseignant():
         # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
         if testLogin is None:
             flash('Nom invalide')             #Il faut d'abord crée un compte
-            return redirect(url_for('connexionEnseignant'))             
-        if request.form['passU'] == testLogin.passU:          #Vérifie que le mdp de l'utilisateur correspond
+            return redirect(url_for('connexionEnseignant'))      
+        if check_password_hash(testLogin.passU,request.form['passU']):       
+        # if request.form['passU'] == testLogin.passU:          #Vérifie que le mdp de l'utilisateur correspond
             session['nomU'] = request.form['nomU']            
             session['idU'] = testLogin.idU
             session['role'] = "enseignant"
@@ -168,26 +173,48 @@ def modifMdp(id):
     if 'nomU' not in session :                                          #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
-    if session['role'] != 'etudiant' :                                     #si vous n'êtes pas etudiant
-        flash("Page réservée aux etudiants")           
-        return redirect(url_for('index'))
+    # if session['role'] != 'etudiant' :                                     #si vous n'êtes pas etudiant
+    #     flash("Page réservée aux etudiants")           
+    #     return redirect(url_for('index'))
     if request.method == 'POST':
-        mdpActuel=request.form['mdpEtu']
-        newMdp=request.form['nMdpEtu']
-        mdpAModif = Etudiant.query.get_or_404(id)
+        mdpActuel=request.form['mdpActu']
+        newMdp=request.form['nMdp']
+        if session['role']=='etudiant':
+            mdpAModif = Etudiant.query.get_or_404(id)
 
-        if check_password_hash(mdpAModif.mdpEtu,mdpActuel):
-            mdpAModif.mdpEtu = generate_password_hash(newMdp, method='pbkdf2:sha256', salt_length=16)
-            # print("j'attribue le nouveau mot de passe ! :",newMdp)
-            db.session.commit()
-            return redirect(url_for("index"))
+            if check_password_hash(mdpAModif.mdpEtu,mdpActuel):
+                mdpAModif.mdpEtu = generate_password_hash(newMdp, method='pbkdf2:sha256', salt_length=16)
+                # print("j'attribue le nouveau mot de passe ! :",newMdp)
+                db.session.commit()
+                flash("Mot de passe modifié avec succès")
+                return redirect(url_for("index"))
+            else:
+                flash("Mot de passe actuel incorrect")
+                # print("tu as entré :",mdpActuel)
+                return redirect(url_for("index"))
+        elif session['role']=='enseignant':
+            mdpAModif = Utilisateur.query.get_or_404(id)
+            print("hein")
+            print(mdpAModif.passU)
+            print(mdpActuel)
+            if check_password_hash(mdpAModif.passU,mdpActuel):
+                print("hello ?")
+                mdpAModif.passU = generate_password_hash(newMdp,method='pbkdf2:sha256',salt_length=16)
+                db.session.commit()
+                flash("Mot de passe modifié avec succès")
+                return redirect(url_for("index"))
+            else:
+                flash("Mot de passe actuel incorect")
+                return redirect(url_for("index"))
         else:
-            flash("Mot de passe actuel incorrect")
-            # print("tu as entré :",mdpActuel)
-            return redirect(url_for("index"))
+            return "Erreur : aucun role ne correspond"
     else:
-        etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
-        return render_template("compte/modifMdp.html",page="Menu",idMAModif=etudiantCO.idEtu)
+        if session['role']=='etudiant':
+            etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
+            return render_template("compte/modifMdp.html",page="Menu",idMAModif=etudiantCO.idEtu)
+        elif session['role']=='enseignant':
+            enseignantCO = db.session.query(Utilisateur).filter(Utilisateur.idU==session['idU']).first()
+            return render_template("compte/modifMdp.html",page="Menu",idMAModif=enseignantCO.idU)
 
 @app.route("/deconnexion")                        #Route de deconnexion
 def deconnexion():                                #Retire l'utilisateur de la session

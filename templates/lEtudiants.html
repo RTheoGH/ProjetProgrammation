@@ -32,21 +32,27 @@
             </table>
         </div>
         <br/>
-        <div class="newEtudiant">
-            <h1>Ajout des étudiants</h1>
-            <form action="/listeEtudiants" method="POST" enctype="multipart/form-data">  <!-- Création d'un etudiant' -->
-                <p>Seuls les fichiers d'extension .csv sont acceptés!</p>
-                <p><input type="file" id="fichierEtu" name="fichierEtu" accept=".csv" ></p>
-                <p><input class="button" type="submit" value="Ajouter" /></p>
+        <div class="double newEtudiant">
+            <div style="margin-right: 1em;">
+                <h1>Ajout d'étudiants<br/> via CSV</h1>
+                <form action="/listeEtudiants" method="POST" enctype="multipart/form-data">  <!-- Création d'un etudiant' -->
+                    <p>Seuls les fichiers d'extension .csv sont acceptés!</p>
+                    <br/>
+                    <p><input type="file" id="fichierEtu" name="fichierEtu" accept=".csv" ></p>
+                    <p><input class="button" type="submit" value="Ajouter" /></p>
 
-            </form>
-            <form action="/listeEtudiants" method="POST">
-                <hr/>
-                <p> Nom : <input type="text" name="nomEtu" id="nomEtu"/></p>
-                <p> Prenom : <input type="text" name="prenomEtu" id="prenomEtu"/></p>
-                <p> Numéro d'étudiant : <input type="password" name="numeroEtu" id="numeroEtu"/></p>
-                <p><input class="button" type="submit" value="Créer" /></p>
-            </form>
+                </form>
+            </div>
+            <div class="liVer"></div>
+            <div style="margin-left: 1em;">
+                <h1>Ajout d'étudiants<br/> manuellement</h1>
+                <form action="/listeEtudiants" method="POST">
+                    <p> Nom : <input type="text" name="nomEtu" id="nomEtu"/></p>
+                    <p> Prenom : <input type="text" name="prenomEtu" id="prenomEtu"/></p>
+                    <p> Numéro d'étudiant : <input type="password" name="numeroEtu" id="numeroEtu"/></p>
+                    <p><input class="button" type="submit" value="Ajouter" /></p>
+                </form>
+            </div>
         </div>
     </div>
     {%include 'partials/footer.html'%}

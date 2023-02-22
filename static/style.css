@@ -20,9 +20,7 @@ td {
     border: 1px solid black;
 }
 
-
 /* Classe pour colorer les titres des colonnes d'un tableau */
-
 .top {
     background-color: darkgray;
 }
@@ -31,9 +29,7 @@ h1 {
     padding: 0.5em;
 }
 
-
 /* Classe basique affichage du menu au centre */
-
 .menu {
     border: 0.5em solid black;
     border-radius: 10px;
@@ -48,41 +44,38 @@ h1 {
     background-color: whitesmoke;
 }
 
+.menuAcc{
+    font-size: 1em;
+}
+
+/* Changement en fonction de la taille de l'écran */
+@media screen and (min-width: 1600px) {
+    .menuAcc {
+        font-size: 2em;
+    }
+}
 
 /* Ligne verticale */
-
 .liVer {
     background-color: black;
     width: 1px;
     margin: 1em;
 }
 
-
 /* Classe pour définir la taille d'une liste et la possibilité de scroll si dépassement */
-
 .liste {
     height: 30vh;
     border: 2px solid black;
     overflow-y: scroll;
 }
 
-
-/* Changement en fonction de la taille de l'écran */
-
-@media screen and (min-width: 1600px) {
-    .menu {
-        font-size: 1em;
-    }
-}
-
 .newEtudiant {
     border: 2px solid black;
     text-align: center;
+    justify-content: center;
 }
 
-
 /* Centrage d'un élément sur l'écran */
-
 .mid {
     position: absolute;
     top: 50%;
@@ -91,30 +84,23 @@ h1 {
     opacity: 0.9;
 }
 
-
 /* Texte au milieu */
-
 .middle {
     text-align: center;
 }
 
 
 /* Texte à gauche */
-
 .left {
     text-align: left;
 }
 
-
 /* Disposition flex */
-
 .double {
     display: flex;
 }
 
-
 /* Classe pour créer les questions dans ajoutQuestion (gauche) */
-
 .code {
     border: 0.5em solid black;
     border-radius: 10px;
@@ -129,7 +115,6 @@ h1 {
 
 
 /* Classe pour visualiser les questions dans ajoutQuestion (droite) */
-
 .visu {
     border: 0.5em solid black;
     border-radius: 10px;
@@ -142,14 +127,12 @@ h1 {
 
 
 /* Affichage réponses visuel ligne */
-
 .repLi {
     display: flex;
 }
 
 
 /* Affichage réponses visuel colonne */
-
 .repCo {
     display: flex;
     margin-right: 1em;
@@ -157,7 +140,6 @@ h1 {
 
 
 /* Classe pour modifier les <a> afin qu'ils ressemblent à des boutons */
-
 .button {
     /* outline: none; */
     text-align: center;
@@ -171,14 +153,12 @@ h1 {
 
 
 /* Si on a déjà cliquer sur un bouton */
-
 .button:visited {
     color: black;
 }
 
 
 /* Lorsqu'on passe le curseur dessus */
-
 .button:hover {
     background-color: lightgray;
     transition: 0.25s;
@@ -196,7 +176,6 @@ footer {
 
 
 /* Classe affichage de la barre de navigation */
-
 .nav-list {
     list-style-type: none;
     margin: 0;
@@ -208,14 +187,12 @@ footer {
 
 
 /* allignement des li de la navigation à gauche */
-
 .nav-list li {
     float: left;
 }
 
 
 /* Customisation des liens */
-
 .nav-list li a {
     display: block;
     color: white;
@@ -226,21 +203,18 @@ footer {
 
 
 /* Lorsqu'on passe le curseur dessus */
-
 .nav-list li a:hover {
     background-color: #111;
 }
 
 
 /* Colore en rouge, le bouton de la page actuelle */
-
 .active {
     background-color: darkred;
 }
 
 
 /* taille de l'icone pour supprimer une réponse */
-
 .delete {
     width: 1.5vw;
     height: 1.5vw;
@@ -248,7 +222,6 @@ footer {
 
 
 /* CSS de checkbox réponse (voir références) */
-
 [type="checkbox"].newReponse:not(:checked),
 [type="checkbox"].newReponse:checked {
     position: absolute;
@@ -300,7 +273,6 @@ footer {
 
 
 /* on checked */
-
 [type="checkbox"].newReponse:checked+label::before {
     background: #2fb41a;
 }
@@ -336,9 +308,7 @@ footer {
     margin-top: -1px;
 }
 
-
 /* Affichage du qcm crée */
-
 .affQCM {
     height: 60vh;
     width: 40vw;
@@ -346,47 +316,35 @@ footer {
     overflow-y: scroll;
 }
 
-
 /* Affichage des énoncés dans le qcm */
-
 .affQuestion {
     text-align: left;
     margin: 1em;
 }
 
-
 /* Affichage des réponses dans le qcm */
-
 .affReponse {
     text-align: left;
     margin: 1em;
 }
 
-
 /* Affichage de checkbox pour répondre dans le qcm */
-
 .bigCheckbox {
     height: 1.5em;
     width: 1.5em;
 }
 
-
 /* Div etiquette */
-
 .affichageEtiquette {
     margin: 0;
 }
 
-
 /* Style de la liste */
-
 .affichageEtiquette ul {
     list-style-type: none;
 }
 
-
 /* Style pour chaque etiquette */
-
 .affichageEtiquette li {
     float: left;
     width: 33%;
@@ -399,17 +357,13 @@ fieldset {
     font-weight: bold;
 }
 
-
 /* Style de flash() (Flask) */
-
 .flashes {
     color: red;
     font-weight: bold;
 }
 
-
 /* Style etiquette*/
-
 .gereEtiquette {
     border: 0.5em solid black;
     border-radius: 10px;
@@ -420,43 +374,33 @@ fieldset {
     text-align: center;
 }
 
-
 /* Changement en fonction de la taille de l'écran */
-
 @media screen and (min-width: 1280px) {
     .gereEtiquette {
         font-size: 1em;
     }
 }
-
 @media screen and (min-width: 1600px) {
     .gereEtiquette {
         width: 20vw;
     }
 }
 
-
 /* Style pour créer une étiquette */
-
 .gaucheEtiquette {
     margin-right: 5em;
 }
 
-
 /* Style pour modifier une étiquette */
-
 .centreEtiquette {
     margin-right: 2.5em;
     margin-left: 2.5em;
 }
 
-
 /* Style pour supprimer une étiquette */
-
 .droiteEtiquette {
     margin-left: 5em;
 }
-
 
 /* test
 
@@ -472,3 +416,62 @@ input:valid {
 input:invalid {
     background-color: lightpink;
 } */
+
+/* ------------------------------------------------------------------------ */
+/* VERSION MOBILE */
+/* ------------------------------------------------------------------------ */
+
+@media screen and (min-width: 1px) and (max-width:800px) {
+    .menu {
+        font-size: 0.7em;
+    }
+    .menu .button{
+        display: block;
+    }
+    .nav-list{
+        display:flex;
+        overflow-x: scroll;
+    }
+    body{
+        background-size:auto;
+    }
+    footer{
+        font-size: 0.7em;
+    }
+    .mid {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0.9;
+    }
+    .double{
+        font-size: 1em;
+        height:80vh;
+        display:grid;
+        overflow-y:scroll;
+    }
+    .code{
+        margin:0;
+        height:50vh;
+        width:70vw;
+        font-size: 0.75em;
+    }
+    .code textarea{
+        width:1px;
+    }
+    .code button{
+        font-size:0.9em;
+    }
+    .code .delete{
+        width:8vw;
+        height:8vw;
+    }
+    .visu{
+        margin:0;
+        height:50vh;
+        width:70vw;
+        font-size:0.8em;
+    }
+}
+/* ------------------------------------------------------------------------ */
