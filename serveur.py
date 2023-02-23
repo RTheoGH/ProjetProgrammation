@@ -79,7 +79,7 @@ def listeUtilisateurs():                                  #visualiser les utilis
         flash("Vous n'avez pas les droits pour accéder à cette page")  #Si vous souhaitez néanmoins accéder à la
         return redirect(url_for('index'))                              #page, créez un compte 'ADMIN' puis
     utilisateurs = db.session.query(Utilisateur).all()                 #connectez vous avec.
-    return render_template("lUtilisateurs.html",lUtilisateurs=utilisateurs,title=title,page='listeUtilisateurs')
+    return render_template("liste/lUtilisateurs.html",lUtilisateurs=utilisateurs,title=title,page='listeUtilisateurs')
 
 @app.route("/listeEtudiants",methods=['POST','GET'])
 def listeEtudiants():
@@ -102,7 +102,9 @@ def listeEtudiants():
 
             for eleve in contenuCsv:                                    #Ajout des elèves dans la base de donnée
                 print(eleve)
-                new_etudiant=Etudiant(idEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],numeroEtu=eleve[2],mdpEtu=eleve[2])
+                # new_etudiant=Etudiant(idEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],numeroEtu=eleve[2],mdpEtu=eleve[2])
+                new_etudiant=Etudiant(idEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],numeroEtu=eleve[2],\
+                    mdpEtu=generate_password_hash(numeroEtu,method='pbkdf2:sha256',salt_length=16))
                 print(new_etudiant)
                 try:
                     db.session.add(new_etudiant)
@@ -128,7 +130,7 @@ def listeEtudiants():
             return str(e)
     else:
         etudiants = db.session.query(Etudiant).filter(Etudiant.idEtu==Classe.idCE,Classe.idCU==session['idU']).all()
-        return render_template("lEtudiants.html",lEtudiants=etudiants,title=title,page='listeEtudiants')
+        return render_template("liste/lEtudiants.html",lEtudiants=etudiants,title=title,page='listeEtudiants')
 
 @app.route("/connexionEnseignant",methods=['POST','GET'])           #Route pour se connecter
 def connexionEnseignant():
@@ -291,7 +293,7 @@ def ajout():
         # except:
         #    return 'Erreur création de la question'
     else:
-        return render_template("ajoutQuestion.html",title=title,page="Créer")
+        return render_template("question/ajoutQuestion.html",title=title,page="Créer")
 
 @app.route("/creationEtiquettes",methods=['GET','POST']) #Route pour créer une étiquette
 def creationEtiquettes():
@@ -312,7 +314,7 @@ def creationEtiquettes():
             return 'Erreur : route /creationEtiquettes'
     else :
         ToutEtiq = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
-        return render_template("creationEtiquettes.html",title=title,page="Etiquettes",etiqs=ToutEtiq)
+        return render_template("question/creationEtiquettes.html",title=title,page="Etiquettes",etiqs=ToutEtiq)
 
 @app.route("/suppEtiquettes",methods=['GET','POST'])     #Route pour supprimer une étiquette
 def suppEtiquettes():
@@ -337,7 +339,7 @@ def suppEtiquettes():
         except:
             return 'Erreur : route /suppEtiquettes'
     else :
-        return render_template("creationEtiquettes.html",title=title,etiqs=ToutEtiq)
+        return render_template("question/creationEtiquettes.html",title=title,etiqs=ToutEtiq)
 
 @app.route("/modifEtiquettes",methods=['GET','POST'])     #Route pour modifier une étiquette
 def modifEtiquettes():
@@ -357,7 +359,7 @@ def modifEtiquettes():
         except:
             return 'Erreur : route /modifEtiquettes'
     else :
-        return render_template("creationEtiquettes.html",title=title,etiqs=ToutEtiq)
+        return render_template("question/creationEtiquettes.html",title=title,etiqs=ToutEtiq)
 
 @app.route("/creerQuestion",methods=['GET','POST'])       #Route pour afficher les étiquettes sur ajoutQuestion
 def creerQ():
@@ -366,7 +368,7 @@ def creerQ():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
-    return render_template('ajoutQuestion.html',title=title,etiquettes=etiquettes, page="Créer")
+    return render_template('question/ajoutQuestion.html',title=title,etiquettes=etiquettes, page="Créer")
 
 @app.route("/plusDeReponse",methods = ['GET'])          #Route qui ajoute une réponse sur ajoutQuestion
 def plusDeReponse():
@@ -395,7 +397,7 @@ def lquestion():
         return redirect(url_for('index'))               #Sélection des questions et étiquettes
     etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
     questions = db.session.query(Question).filter(Question.idU==session['idU']).all()
-    return render_template("lquestion.html",title=title,etiquettes=etiquettes,lquestion=questions,page="Consulter")
+    return render_template("liste/lquestion.html",title=title,etiquettes=etiquettes,lquestion=questions,page="Consulter")
 
 @app.route("/filtre",methods = ['GET','POST'])          #Route de filtrage des questions de l'utilisateur
 def filtre():
@@ -405,7 +407,7 @@ def filtre():
     if request.method == 'POST':                        #Affiche les questions avec les tags sélectionnés
         questionAffiche = db.session.query(Question).join(Associe, Associe.RidQ == Question.idQ)\
             .join(Etiquette, Etiquette.idE == Associe.RidE).filter(Etiquette.idE == tags,Etiquette.idU==session['idU']).all()
-        return render_template("lquestion.html",title=title,etiquettes=etiquettes, lquestion=questionAffiche, page="Consulter")
+        return render_template("liste/lquestion.html",title=title,etiquettes=etiquettes, lquestion=questionAffiche, page="Consulter")
 
 @app.route("/modifier/<string:id>",methods=['POST','GET']) #Route pour modifier une question de l'utilisateur
 def modifier(id):
@@ -434,7 +436,7 @@ def modifier(id):
             return 'Erreur de modification'             #Renvoi message erreur en cas d'échec de la modification
     else:
         etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
-        return render_template("modifQuestion.html",title=title,enonce=questionModif.enonce,idQ=questionModif.idQ,reponses=reponseModif,etiquettes=etiquettes)
+        return render_template("question/modifQuestion.html",title=title,enonce=questionModif.enonce,idQ=questionModif.idQ,reponses=reponseModif,etiquettes=etiquettes)
 
 @app.route("/supprimer/<string:id>")                       #Route pour supprimer une question de l'utilisateur
 def supprimer(id):
@@ -503,7 +505,7 @@ def generate():
             except :
                 return "Erreur de création du lien 'contient' entre Qcm et Question"
     listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
-    return render_template("lQCM.html",title=title,listeQCM=listeQCM)
+    return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
 
 if __name__ == '__main__':
