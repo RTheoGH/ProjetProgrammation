@@ -68,3 +68,5 @@ class QCM(db.Model):                                                            
 class Contient(db.Model):                                                 # Classe association entre qcm et question
     RidQCM = db.Column(db.String(50), db.ForeignKey(QCM.idQCM),nullable=False,primary_key=True) # id référence id qcm
     RidQ = db.Column(db.String(50),db.ForeignKey(Question.idQ),nullable=False,primary_key=True) # id référence id question
+
+    

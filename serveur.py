@@ -508,5 +508,12 @@ def generate():
     return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
             # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
 
+@app.route("/RepondreQCM",methods =["POST","GET"])
+def RepondreQCM():
+    if request.method == "POST":
+        flash("yes")
+    else:
+        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM")
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
