@@ -6,17 +6,16 @@
     <hr/>
     <div class="affQCM">
         {% for i in range(len) %}
-        <div class="affQuestion" id="Q{{listequestion[i].idQ}}">{{listequestion[i].enonce}}</div>
+        <div class="affQuestion" id="{{listeQuestions[i].idQ}}">{{listeQuestions[i].enonce}}</div>
         <script>                                            /* Conversion de l'énoncé avec showdown */
-            $('#Q{{listequestion[i].idQ}}').html(converter.makeHtml($('#Q{{listequestion[i].idQ}}').text()));
+            $('#{{listeQuestions[i].idQ}}').html(converter.makeHtml($('#{{listeQuestions[i].idQ}}').text()));
         </script>
-        <hr/>
-        {% for reponse in listereponse[i] %}
-        <div class="affReponse"><input class="bigCheckbox" id="{{reponse.idR}}" type="checkbox"/> <label for="{{reponse.idR}}">{{reponse.reponse}}</label></div>
-        <script>
-            $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
-        </script>
-        {% endfor %}
+            {% for reponse in listeReponses[i] %}
+            <div class="affReponse"><input class="bigCheckbox" id="{{reponse.idR}}" type="checkbox"/> <label for="{{reponse.idR}}">{{reponse.reponse}}</label></div>
+            <script>
+                $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
+            </script>
+            {% endfor %}
         <hr/>
         {% endfor %}
     </div>

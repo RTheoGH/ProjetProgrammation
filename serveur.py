@@ -438,7 +438,7 @@ def modifier(id):
         etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
         return render_template("question/modifQuestion.html",title=title,enonce=questionModif.enonce,idQ=questionModif.idQ,reponses=reponseModif,etiquettes=etiquettes)
 
-@app.route("/supprimer/<string:id>")                       #Route pour supprimer une question de l'utilisateur
+@app.route("/supprimer/<string:id>")                    #Route pour supprimer une question de l'utilisateur
 def supprimer(id):
     if 'nomU' not in session:                           #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
@@ -472,33 +472,33 @@ def qcm():
     print(LQ)
     return render_template("QCM.html",title=title,ListesQuestions=LQ,page="CréerQcm")
 
-@app.route("/generate",methods = ['POST'])      #Route qui genere le qcm
+@app.route("/generateQCM",methods = ['POST'])      #Route qui genere le qcm
 def generate():
-    title='Votre QCM'
+    title='Vos QCM'
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    global nombreIdQCM
-    nombreIdQCM+=1
-    checked_checkboxes = [] 
-    reponse_checkboxes = []                         #Initialisation liste pour stocker les questions cochées
-    nomQcm = request.form['nomQcm']
+    #global nombreIdQCM
+    #nombreIdQCM+=1
     #insert sur qcm avec un idqcm : 
     #db.session.add(QCM(Nom = ))
-    new_QCM = QCM(idQCM=nombreIdQCM,Nom=nomQcm,idU=session['idU'])
+    #idQCM=nombreIdQCM,Nom=nomQcm,idU=session['idU'])
+
+    #Création de l'objet QCM
+    idQcm = createId()
+    while idQcm in db.session.query(QCM.idQCM):
+            idQcm = createId()
+    nomQcm = request.form['nomQcm']
+    new_QCM = QCM(idQCM=idQcm,Nom=nomQcm,idU=session['idU'])
     try : 
         db.session.add(new_QCM)
         db.session.commit()
     except : 
         return 'erreur dans la création du QCM'
-    for key, value in request.form.items():
+    #Association du QCM à ses Questions
+    for key, value in request.form.items():         #key=idQuestion ; value=valeur du commutateur
         if value == 'on':
-            # Récupération de l'enoncé de la question correspondant à l'id reçu
-            EL = db.session.query(Question).filter(Question.idQ == key,Question.idU==session['idU']).first()
-            checked_checkboxes.append(EL)                                   #insert to dans contient idqcm(global a cette fun) et EL.idQ 
-            ListeReponse = db.session.query(Reponse).filter(Reponse.idQ==key).all() #Ajout de l'enoncé à la liste des questions cochées
-            reponse_checkboxes.append(ListeReponse)
-            new_contient = Contient(RidQCM=nombreIdQCM,RidQ=key)
+            new_contient = Contient(RidQCM=idQcm,RidQ=key)
             try :
                 db.session.add(new_contient)
                 db.session.commit()
@@ -506,7 +506,24 @@ def generate():
                 return "Erreur de création du lien 'contient' entre Qcm et Question"
     listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
     return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
-            # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
+
+@app.route("/afficheQCM/<string:id>")
+def afficheQCM(id):
+    #Affichage des questions du Qcm avec leurs réponses
+    # Rq: le [0] sert à isoler la chaine de char, puisque la requête renvoie un objet 
+    nomQcm = db.session.query(QCM.Nom).filter(QCM.idQCM==id).first()[0]
+    listeIdQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==id).all() #Liste des idQuestions cochées
+    print(listeIdQuestions)
+    checked_questions = []                          #Liste des questions du QCM (objets Question entiers)
+    checked_reponses = []                           #Leurs reponses respectives (liste de listes)
+    for idQuestion in listeIdQuestions:             #Pour chaque idQuestion, on récupère
+        idQuestion = idQuestion[0]
+        objetQuestion = db.session.query(Question).filter(Question.idQ==idQuestion).first()
+        checked_questions.append(objetQuestion)     #   l'objet Question entier
+        listeReponse = db.session.query(Reponse).filter(Reponse.idQ==idQuestion).all() 
+        checked_reponses.append(listeReponse)       #   et les réponses correspondantes à cette question
+    return render_template("Affichage.html",nomQcm=nomQcm,listeQuestions=checked_questions,listeReponses=checked_reponses,len=len(checked_questions))
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
