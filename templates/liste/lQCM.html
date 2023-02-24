@@ -10,7 +10,7 @@
             </tr>
             {% for QCM in listeQCM %}
             <tr>
-                <td class="left" id="{{QCM.idQCM}}">{{QCM.Nom}}</td>    
+                <td class="left" id="{{QCM.idQCM}}"> <a href="{{ url_for('afficheQCM', id=QCM.idQCM)}}">{{QCM.Nom}}</a> </td> 
             </tr>
             {% endfor %}
         </table>

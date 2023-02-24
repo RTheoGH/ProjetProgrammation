@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 import random
 import string
 import csv
-import os
+import pathlib
 
 
 app = Flask(__name__)                                         #Création de app, instance de Flask
@@ -88,30 +88,30 @@ def listeEtudiants():
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
     if request.method == 'POST':
-        if 'fichierEtu' in request.files:    #J'ai modif pour qu'on puisse quand meme ajouter manuellement sinon ça marchait pas
+        if 'fichierEtu' in request.files:
             fichierCsv = request.files['fichierEtu']                    #récupération du fichier depuis l'html
-        # if fichierCsv.filename != '':                                 #etre sûr qu'on a nien récupéré le fichier
-            fichierCsv.save(fichierCsv.filename)                        #enregistre le fichier 
-            Flecture = csv.reader(open(fichierCsv.filename),delimiter=";") #début de la lecture du fichier
-            next(Flecture)                                              #élimination de la ligne de titre
-            contenuCsv = []                                             #Contenu du fichier sous forme de liste de listes
-            for ligne in Flecture:
-                contenuCsv.append(ligne)
-            fichierCsv.close
-            os.remove(str(fichierCsv.filename))                         #Supprimer du dossier courant le fichierCsv enregistré
+            if fichierCsv != '':
+                fichierCsv.save(fichierCsv.filename)                        #enregistre le fichier 
+                Flecture = csv.reader(open(fichierCsv.filename),delimiter=";") #début de la lecture du fichier
+                next(Flecture)                                              #élimination de la ligne de titre
+                contenuCsv = []                                             #Contenu du fichier sous forme de liste de listes
+                for ligne in Flecture:
+                    contenuCsv.append(ligne)
+                fichierCsv.close
+                pathlib.Path(str(fichierCsv.filename)).unlink()                         #Supprimer du dossier courant le fichierCsv enregistré
 
-            for eleve in contenuCsv:                                    #Ajout des elèves dans la base de donnée
-                print(eleve)
-                # new_etudiant=Etudiant(idEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],numeroEtu=eleve[2],mdpEtu=eleve[2])
-                new_etudiant=Etudiant(idEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],numeroEtu=eleve[2],\
-                    mdpEtu=generate_password_hash(numeroEtu,method='pbkdf2:sha256',salt_length=16))
-                print(new_etudiant)
-                try:
-                    db.session.add(new_etudiant)
-                    db.session.add(Classe(idCE=new_etudiant.idEtu,idCU=session['idU']))
-                    db.session.commit()
-                except Exception as e:
-                    return str(e)
+                for eleve in contenuCsv:                                    #Ajout des elèves dans la base de donnée
+                    new_etudiant=Etudiant(idEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],numeroEtu=eleve[2],\
+                        mdpEtu=generate_password_hash(eleve[2],method='pbkdf2:sha256',salt_length=16))
+                    try:
+                        db.session.add(new_etudiant)
+                        db.session.add(Classe(idCE=new_etudiant.idEtu,idCU=session['idU']))
+                        db.session.commit()
+                    except Exception as e:
+                        return str(e)
+            # else:  Include le flash
+            #     flash("")  
+            return redirect(url_for("listeEtudiants"))
 
         else:
             nomEtudiant=request.form['nomEtu']
@@ -120,14 +120,14 @@ def listeEtudiants():
             new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant,\
                 mdpEtu=generate_password_hash(numeroEtudiant, method='pbkdf2:sha256', salt_length=16))
 
-        try:
-            db.session.add(new_etudiant)               #Création d'un nouvel eleve
-            db.session.commit()
-            db.session.add(Classe(idCE=new_etudiant.idEtu,idCU=session['idU']))
-            db.session.commit()
-            return redirect(url_for("listeEtudiants"))
-        except Exception as e:
-            return str(e)
+            try:
+                db.session.add(new_etudiant)               #Création d'un nouvel eleve
+                db.session.commit()
+                db.session.add(Classe(idCE=new_etudiant.idEtu,idCU=session['idU']))
+                db.session.commit()
+                return redirect(url_for("listeEtudiants"))
+            except Exception as e:
+                return str(e)
     else:
         etudiants = db.session.query(Etudiant).filter(Etudiant.idEtu==Classe.idCE,Classe.idCU==session['idU']).all()
         return render_template("liste/lEtudiants.html",lEtudiants=etudiants,title=title,page='listeEtudiants')
@@ -438,7 +438,7 @@ def modifier(id):
         etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
         return render_template("question/modifQuestion.html",title=title,enonce=questionModif.enonce,idQ=questionModif.idQ,reponses=reponseModif,etiquettes=etiquettes)
 
-@app.route("/supprimer/<string:id>")                       #Route pour supprimer une question de l'utilisateur
+@app.route("/supprimer/<string:id>")                    #Route pour supprimer une question de l'utilisateur
 def supprimer(id):
     if 'nomU' not in session:                           #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
@@ -472,33 +472,33 @@ def qcm():
     print(LQ)
     return render_template("QCM.html",title=title,ListesQuestions=LQ,page="CréerQcm")
 
-@app.route("/generate",methods = ['POST'])      #Route qui genere le qcm
+@app.route("/generateQCM",methods = ['POST'])      #Route qui genere le qcm
 def generate():
-    title='Votre QCM'
+    title='Vos QCM'
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    global nombreIdQCM
-    nombreIdQCM+=1
-    checked_checkboxes = [] 
-    reponse_checkboxes = []                         #Initialisation liste pour stocker les questions cochées
-    nomQcm = request.form['nomQcm']
+    #global nombreIdQCM
+    #nombreIdQCM+=1
     #insert sur qcm avec un idqcm : 
     #db.session.add(QCM(Nom = ))
-    new_QCM = QCM(idQCM=nombreIdQCM,Nom=nomQcm,idU=session['idU'])
+    #idQCM=nombreIdQCM,Nom=nomQcm,idU=session['idU'])
+
+    #Création de l'objet QCM
+    idQcm = createId()
+    while idQcm in db.session.query(QCM.idQCM):
+            idQcm = createId()
+    nomQcm = request.form['nomQcm']
+    new_QCM = QCM(idQCM=idQcm,Nom=nomQcm,idU=session['idU'])
     try : 
         db.session.add(new_QCM)
         db.session.commit()
     except : 
         return 'erreur dans la création du QCM'
-    for key, value in request.form.items():
+    #Association du QCM à ses Questions
+    for key, value in request.form.items():         #key=idQuestion ; value=valeur du commutateur
         if value == 'on':
-            # Récupération de l'enoncé de la question correspondant à l'id reçu
-            EL = db.session.query(Question).filter(Question.idQ == key,Question.idU==session['idU']).first()
-            checked_checkboxes.append(EL)                                   #insert to dans contient idqcm(global a cette fun) et EL.idQ 
-            ListeReponse = db.session.query(Reponse).filter(Reponse.idQ==key).all() #Ajout de l'enoncé à la liste des questions cochées
-            reponse_checkboxes.append(ListeReponse)
-            new_contient = Contient(RidQCM=nombreIdQCM,RidQ=key)
+            new_contient = Contient(RidQCM=idQcm,RidQ=key)
             try :
                 db.session.add(new_contient)
                 db.session.commit()
@@ -506,7 +506,24 @@ def generate():
                 return "Erreur de création du lien 'contient' entre Qcm et Question"
     listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
     return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
-            # Rendu du template 'affichage.html' avec la variable question contenant la liste des questions cochées
+
+@app.route("/afficheQCM/<string:id>")
+def afficheQCM(id):
+    #Affichage des questions du Qcm avec leurs réponses
+    # Rq: le [0] sert à isoler la chaine de char, puisque la requête renvoie un objet 
+    nomQcm = db.session.query(QCM.Nom).filter(QCM.idQCM==id).first()[0]
+    listeIdQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==id).all() #Liste des idQuestions cochées
+    print(listeIdQuestions)
+    checked_questions = []                          #Liste des questions du QCM (objets Question entiers)
+    checked_reponses = []                           #Leurs reponses respectives (liste de listes)
+    for idQuestion in listeIdQuestions:             #Pour chaque idQuestion, on récupère
+        idQuestion = idQuestion[0]
+        objetQuestion = db.session.query(Question).filter(Question.idQ==idQuestion).first()
+        checked_questions.append(objetQuestion)     #   l'objet Question entier
+        listeReponse = db.session.query(Reponse).filter(Reponse.idQ==idQuestion).all() 
+        checked_reponses.append(listeReponse)       #   et les réponses correspondantes à cette question
+    return render_template("Affichage.html",nomQcm=nomQcm,listeQuestions=checked_questions,listeReponses=checked_reponses,len=len(checked_questions))
+
 
 @app.route("/RepondreQCM",methods =["POST","GET"])
 def RepondreQCM():
