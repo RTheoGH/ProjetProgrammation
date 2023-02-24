@@ -472,7 +472,7 @@ def qcm():
     print(LQ)
     return render_template("QCM.html",title=title,ListesQuestions=LQ,page="CréerQcm")
 
-@app.route("/generateQCM",methods = ['POST'])      #Route qui genere le qcm
+@app.route("/generateQCM",methods = ['GET','POST'])      #Route qui genere le qcm
 def generate():
     title='Vos QCM'
     if 'nomU' not in session:                   #Sécurité connexion
@@ -485,27 +485,31 @@ def generate():
     #idQCM=nombreIdQCM,Nom=nomQcm,idU=session['idU'])
 
     #Création de l'objet QCM
-    idQcm = createId()
-    while idQcm in db.session.query(QCM.idQCM):
-            idQcm = createId()
-    nomQcm = request.form['nomQcm']
-    new_QCM = QCM(idQCM=idQcm,Nom=nomQcm,idU=session['idU'])
-    try : 
-        db.session.add(new_QCM)
-        db.session.commit()
-    except : 
-        return 'erreur dans la création du QCM'
-    #Association du QCM à ses Questions
-    for key, value in request.form.items():         #key=idQuestion ; value=valeur du commutateur
-        if value == 'on':
-            new_contient = Contient(RidQCM=idQcm,RidQ=key)
-            try :
-                db.session.add(new_contient)
-                db.session.commit()
-            except :
-                return "Erreur de création du lien 'contient' entre Qcm et Question"
-    listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
-    return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
+    if request.method == 'POST':
+        idQcm = createId()
+        while idQcm in db.session.query(QCM.idQCM):
+                idQcm = createId()
+        nomQcm = request.form['nomQcm']
+        new_QCM = QCM(idQCM=idQcm,Nom=nomQcm,idU=session['idU'])
+        try : 
+            db.session.add(new_QCM)
+            db.session.commit()
+        except : 
+            return 'erreur dans la création du QCM'
+        #Association du QCM à ses Questions
+        for key, value in request.form.items():         #key=idQuestion ; value=valeur du commutateur
+            if value == 'on':
+                new_contient = Contient(RidQCM=idQcm,RidQ=key)
+                try :
+                    db.session.add(new_contient)
+                    db.session.commit()
+                except :
+                    return "Erreur de création du lien 'contient' entre Qcm et Question"
+        listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
+        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
+    else:
+        listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
+        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
 
 @app.route("/afficheQCM/<string:id>")
 def afficheQCM(id):
