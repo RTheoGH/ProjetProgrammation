@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 import random
 import string
 import csv
-import os
+import pathlib
 
 
 app = Flask(__name__)                                         #Création de app, instance de Flask
@@ -98,7 +98,7 @@ def listeEtudiants():
                 for ligne in Flecture:
                     contenuCsv.append(ligne)
                 fichierCsv.close
-                os.remove(str(fichierCsv.filename))                         #Supprimer du dossier courant le fichierCsv enregistré
+                pathlib.Path(str(fichierCsv.filename)).unlink()                         #Supprimer du dossier courant le fichierCsv enregistré
 
                 for eleve in contenuCsv:                                    #Ajout des elèves dans la base de donnée
                     new_etudiant=Etudiant(idEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],numeroEtu=eleve[2],\
