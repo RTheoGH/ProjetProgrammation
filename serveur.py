@@ -42,8 +42,8 @@ def index():                                         #'page' est la référence 
             enseignantCO= db.session.query(Utilisateur).filter(Utilisateur.idU==session['idU']).first()
             return render_template("accueil/index.html",title=title,page="Menu",idU=enseignantCO.idU)
         elif session['role']=='etudiant':
-            etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
-            return render_template("accueil/index.html",title=title,page="Menu",idEtu=etudiantCO.idEtu)
+            etudiantCO = db.session.query(Etudiant).filter(Etudiant.numeroEtu==session['idU']).first()
+            return render_template("accueil/index.html",title=title,page="Menu",numeroEtu=etudiantCO.numeroEtu)
 
 @app.route("/espEnseignant")
 def espEnseignant():
@@ -90,22 +90,30 @@ def listeEtudiants():
     if request.method == 'POST':
         if 'fichierEtu' in request.files:
             fichierCsv = request.files['fichierEtu']                    #récupération du fichier depuis l'html
-            if fichierCsv != '':
-                fichierCsv.save(fichierCsv.filename)                        #enregistre le fichier 
-                Flecture = csv.reader(open(fichierCsv.filename),delimiter=";") #début de la lecture du fichier
-                next(Flecture)                                              #élimination de la ligne de titre
-                contenuCsv = []                                             #Contenu du fichier sous forme de liste de listes
-                for ligne in Flecture:
+            if fichierCsv.filename != '':
+                # fichierCsv.save(fichierCsv.filename)                        #enregistre le fichier 
+                # Flecture = csv.reader(open(fichierCsv.filename),delimiter=";") #début de la lecture du fichier
+                # next(Flecture)                                              #élimination de la ligne de titre
+                # contenuCsv = []                                             #Contenu du fichier sous forme de liste de listes
+                # for ligne in Flecture:
+                #     contenuCsv.append(ligne)
+                # fichierCsv.close
+                # pathlib.Path(str(fichierCsv.filename)).unlink()             #Supprimer du dossier courant le fichierCsv enregistré
+
+                contenuCsv = []                                               #Contenu du fichier sous forme de liste de listes
+                decoded_file = fichierCsv.read().decode('iso-8859-1')         #Decodeur
+                reader = csv.reader(decoded_file.splitlines(), delimiter=';') #Début de la lecture du fichier
+                for ligne in reader:
+                    print(ligne)
                     contenuCsv.append(ligne)
-                fichierCsv.close
-                pathlib.Path(str(fichierCsv.filename)).unlink()                         #Supprimer du dossier courant le fichierCsv enregistré
 
                 for eleve in contenuCsv:                                    #Ajout des elèves dans la base de donnée
-                    new_etudiant=Etudiant(idEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],numeroEtu=eleve[2],\
+                    print(eleve[0],"|",eleve[1],"|",eleve[2])
+                    new_etudiant=Etudiant(numeroEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],\
                         mdpEtu=generate_password_hash(eleve[2],method='pbkdf2:sha256',salt_length=16))
                     try:
                         db.session.add(new_etudiant)
-                        db.session.add(Classe(idCE=new_etudiant.idEtu,idCU=session['idU']))
+                        db.session.add(Classe(idCE=new_etudiant.numeroEtu,idCU=session['idU']))
                         db.session.commit()
                     except Exception as e:
                         return str(e)
@@ -117,19 +125,19 @@ def listeEtudiants():
             nomEtudiant=request.form['nomEtu']
             prenomEtudiant=request.form['prenomEtu']
             numeroEtudiant=request.form['numeroEtu']
-            new_etudiant=Etudiant(nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,numeroEtu=numeroEtudiant,\
+            new_etudiant=Etudiant(numeroEtu=numeroEtudiant,nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,\
                 mdpEtu=generate_password_hash(numeroEtudiant, method='pbkdf2:sha256', salt_length=16))
 
             try:
                 db.session.add(new_etudiant)               #Création d'un nouvel eleve
                 db.session.commit()
-                db.session.add(Classe(idCE=new_etudiant.idEtu,idCU=session['idU']))
+                db.session.add(Classe(idCE=new_etudiant.numeroEtu,idCU=session['idU']))
                 db.session.commit()
                 return redirect(url_for("listeEtudiants"))
             except Exception as e:
                 return str(e)
     else:
-        etudiants = db.session.query(Etudiant).filter(Etudiant.idEtu==Classe.idCE,Classe.idCU==session['idU']).all()
+        etudiants = db.session.query(Etudiant).filter(Etudiant.numeroEtu==Classe.idCE,Classe.idCU==session['idU']).all()
         return render_template("liste/lEtudiants.html",lEtudiants=etudiants,title=title,page='listeEtudiants')
 
 @app.route("/connexionEnseignant",methods=['POST','GET'])           #Route pour se connecter
@@ -168,7 +176,7 @@ def connexionEtudiant():
             print("mot de passe correspondant")
         # if request.form['passU'] == testLogin.numeroEtu:          #Vérifie que le mdp de l'utilisateur correspond
             session['nomU'] = request.form['nomU']            
-            session['idU'] = testLogin.idEtu
+            session['idU'] = testLogin.numeroEtu
             session['preU'] = testLogin.prenomEtu
             session['role'] = "etudiant"
         else:
@@ -178,7 +186,7 @@ def connexionEtudiant():
     else:                       
         return render_template("compte/connexionEtudiant.html",title=title,page="Menu")
 
-@app.route("/modifMdp/<string:id>",methods=['POST','GET'])
+@app.route("/modifMdp/<int:id>",methods=['POST','GET'])
 def modifMdp(id):
     title='Modification Mot de passe'
     if 'nomU' not in session :                                          #Sécurité pour éviter d'aller sur une page
@@ -192,7 +200,7 @@ def modifMdp(id):
         newMdp=request.form['nMdp']
         if session['role']=='etudiant':
             mdpAModif = Etudiant.query.get_or_404(id)
-
+            print("numero a modifier:",mdpAModif)
             if check_password_hash(mdpAModif.mdpEtu,mdpActuel):
                 mdpAModif.mdpEtu = generate_password_hash(newMdp, method='pbkdf2:sha256', salt_length=16)
                 # print("j'attribue le nouveau mot de passe ! :",newMdp)
@@ -221,8 +229,8 @@ def modifMdp(id):
             return "Erreur : aucun role ne correspond"
     else:
         if session['role']=='etudiant':
-            etudiantCO = db.session.query(Etudiant).filter(Etudiant.idEtu==session['idU']).first()
-            return render_template("compte/modifMdp.html",title=title,page="Menu",idMAModif=etudiantCO.idEtu)
+            etudiantCO = db.session.query(Etudiant).filter(Etudiant.numeroEtu==session['idU']).first()
+            return render_template("compte/modifMdp.html",title=title,page="Menu",idMAModif=etudiantCO.numeroEtu)
         elif session['role']=='enseignant':
             enseignantCO = db.session.query(Utilisateur).filter(Utilisateur.idU==session['idU']).first()
             return render_template("compte/modifMdp.html",title=title,page="Menu",idMAModif=enseignantCO.idU)

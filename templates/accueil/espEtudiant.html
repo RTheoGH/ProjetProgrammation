@@ -3,15 +3,7 @@
 {% block main %}
 <div class="menu menuAcc">
     <h1>Espace<br/>Etudiant</h1>
-    {% with messages = get_flashed_messages() %}  <!-- Récupère les messages de flash() du serveur -->
-        {% if messages %}
-            <div class="flashes">
-                {% for message in messages %}     <!-- Puis les affiches -->
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
+    {% include 'partials/flash.html' %}
     <a class="button" name="connexionEtu" href="/connexionEtudiant">Connexion</a>
 </div>
 {% endblock %}

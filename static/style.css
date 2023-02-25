@@ -51,7 +51,7 @@ h1 {
 /* Changement en fonction de la taille de l'écran */
 @media screen and (min-width: 1600px) {
     .menuAcc {
-        font-size: 2em;
+        font-size: 1.5em;
     }
 }
 
@@ -67,6 +67,11 @@ h1 {
     height: 30vh;
     border: 2px solid black;
     overflow-y: scroll;
+}
+@media screen and (min-width: 1600px) {
+    .liste {
+        font-size: 2em;
+    }
 }
 
 .newEtudiant {

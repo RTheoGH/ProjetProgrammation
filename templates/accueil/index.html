@@ -2,19 +2,11 @@
 {% block main %}
 <div class="menu menuAcc">
     <h1>Bienvenue<br/>sur<br/>Infomaker !</h1>
-    {% with messages = get_flashed_messages() %}  <!-- Récupère les messages de flash() du serveur -->
-        {% if messages %}
-            <div class="flashes">
-                {% for message in messages %}     <!-- Puis les affiches -->
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
+    {% include 'partials/flash.html' %}
     {% if session['nomU'] %}                 <!-- Si un utilisateur est déjà connecté -->
         {% if session['role']=='etudiant' %}
             <p>Bonjour, {{session['nomU']}} {{session['preU']}}</p>
-            <a name="modificationMDP" href="{{ url_for('modifMdp', id=idEtu)}}">Changer de mot de passe</a>
+            <a name="modificationMDP" href="{{ url_for('modifMdp', id=numeroEtu)}}">Changer de mot de passe</a>
         {% elif session['role']=='enseignant' %}
             <p>Bonjour, {{session['nomU']}}</p>
             <a name="modificationMDP" href="{{url_for('modifMdp',id=idU)}}">Changer de mot de passe</a>
