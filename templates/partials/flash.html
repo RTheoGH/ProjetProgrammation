@@ -1,7 +1,7 @@
 {% with messages = get_flashed_messages() %}  <!-- Récupère les messages de flash() du serveur -->
     {% if messages %}
         <div class="flashes">
-            {% for message in messages %}     <!-- Puis les affiches -->
+            {% for message in messages %}     <!-- Puis les affiche -->
                 <p>{{ message }}</p>
             {% endfor %}
         </div>

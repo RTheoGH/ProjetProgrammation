@@ -4,8 +4,6 @@ from werkzeug.security import generate_password_hash,check_password_hash
 import random
 import string
 import csv
-import pathlib
-
 
 app = Flask(__name__)                                         #Création de app, instance de Flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'                      #Clé de session (utilisateurs)
@@ -25,7 +23,6 @@ nombreIdQuestion=0               #Variables utilisés pour
 nombreIdCheck=0                  #la génération de réponses
 nombreIdQCM=0
 
-
 def createId():                  #Fonction appelée à chaque fois qu'on a besoin de générer un nouvel id
     id=""
     for _ in range(8):
@@ -35,22 +32,22 @@ def createId():                  #Fonction appelée à chaque fois qu'on a besoi
 @app.route("/")                  #Route principale
 def index():                                         #'page' est la référence de chaque page web actuelle
     title='Accueil'
-    if 'nomU' not in session :  
+    if 'nomU' not in session :                       #Accueil si aucun utilisateur n'est connecté
         return render_template("accueil/index.html",title=title,page="Menu") #coloré en rouge dans la barre de navigation
     else:
-        if session['role']=='enseignant':
+        if session['role']=='enseignant':            #Accueil si l'utilisateur connecté est un enseignant
             enseignantCO= db.session.query(Utilisateur).filter(Utilisateur.idU==session['idU']).first()
             return render_template("accueil/index.html",title=title,page="Menu",idU=enseignantCO.idU)
-        elif session['role']=='etudiant':
+        elif session['role']=='etudiant':            #Accueil si l'utilisateur connecté est un etudiant
             etudiantCO = db.session.query(Etudiant).filter(Etudiant.numeroEtu==session['idU']).first()
             return render_template("accueil/index.html",title=title,page="Menu",numeroEtu=etudiantCO.numeroEtu)
 
-@app.route("/espEnseignant")
+@app.route("/espEnseignant")                         #Espace dédié aux enseignants
 def espEnseignant():
     title='Espace Enseignant'
     return render_template("accueil/espEnseignant.html",title=title,page="Menu")
 
-@app.route("/espEtudiant")
+@app.route("/espEtudiant")                           #Espace dédié aux etudiants
 def espEtudiant():
     title='Espace Etudiant'
     return render_template("accueil/espEtudiant.html",title=title,page="Menu")
@@ -59,8 +56,8 @@ def espEtudiant():
 def creationCompteEnseignant():
     title='Creation de compte'
     if request.method == 'POST':
-        nomUtilisateur = request.form['creationNom']
-        mdpUtilisateur = request.form['creationMdp']
+        nomUtilisateur = request.form['creationNom']                #generate_password_hash est une methode de
+        mdpUtilisateur = request.form['creationMdp']                #werkzeug.security pour crypter les mot de passes
         new_utilisateur = Utilisateur(nomU=nomUtilisateur,passU=generate_password_hash(mdpUtilisateur, method='pbkdf2:sha256', salt_length=16))
 
         try:
@@ -91,24 +88,16 @@ def listeEtudiants():
         if 'fichierEtu' in request.files:
             fichierCsv = request.files['fichierEtu']                    #récupération du fichier depuis l'html
             if fichierCsv.filename != '':
-                # fichierCsv.save(fichierCsv.filename)                        #enregistre le fichier 
-                # Flecture = csv.reader(open(fichierCsv.filename),delimiter=";") #début de la lecture du fichier
-                # next(Flecture)                                              #élimination de la ligne de titre
-                # contenuCsv = []                                             #Contenu du fichier sous forme de liste de listes
-                # for ligne in Flecture:
-                #     contenuCsv.append(ligne)
-                # fichierCsv.close
-                # pathlib.Path(str(fichierCsv.filename)).unlink()             #Supprimer du dossier courant le fichierCsv enregistré
-
                 contenuCsv = []                                               #Contenu du fichier sous forme de liste de listes
-                decoded_file = fichierCsv.read().decode('iso-8859-1')         #Decodeur
+                decoded_file = fichierCsv.read().decode('iso-8859-1')         #Decodeur (iso equivalent de utf-8)
                 reader = csv.reader(decoded_file.splitlines(), delimiter=';') #Début de la lecture du fichier
+                next(reader)                                                  #on ignore la ligne avec les titres des colonnes
                 for ligne in reader:
                     print(ligne)
                     contenuCsv.append(ligne)
 
                 for eleve in contenuCsv:                                    #Ajout des elèves dans la base de donnée
-                    print(eleve[0],"|",eleve[1],"|",eleve[2])
+                    print(eleve[0],"|",eleve[1],"|",eleve[2])               #via un csv
                     new_etudiant=Etudiant(numeroEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],\
                         mdpEtu=generate_password_hash(eleve[2],method='pbkdf2:sha256',salt_length=16))
                     try:
@@ -117,20 +106,17 @@ def listeEtudiants():
                         db.session.commit()
                     except Exception as e:
                         return str(e)
-            # else:  Include le flash
-            #     flash("")  
             return redirect(url_for("listeEtudiants"))
-
         else:
-            nomEtudiant=request.form['nomEtu']
-            prenomEtudiant=request.form['prenomEtu']
+            nomEtudiant=request.form['nomEtu']                              #Ajout d'un elève dans la base de donnée
+            prenomEtudiant=request.form['prenomEtu']                        #manuellement
             numeroEtudiant=request.form['numeroEtu']
             new_etudiant=Etudiant(numeroEtu=numeroEtudiant,nomEtu=nomEtudiant,prenomEtu=prenomEtudiant,\
                 mdpEtu=generate_password_hash(numeroEtudiant, method='pbkdf2:sha256', salt_length=16))
 
             try:
-                db.session.add(new_etudiant)               #Création d'un nouvel eleve
-                db.session.commit()
+                db.session.add(new_etudiant)               
+                db.session.commit()                        
                 db.session.add(Classe(idCE=new_etudiant.numeroEtu,idCU=session['idU']))
                 db.session.commit()
                 return redirect(url_for("listeEtudiants"))
@@ -145,17 +131,15 @@ def connexionEnseignant():
     title='Connexion Enseignant'
     if request.method == 'POST':
         testLogin = db.session.query(Utilisateur).filter(Utilisateur.nomU == request.form['nomU']).first()
-        # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
         if testLogin is None:
-            flash('Nom invalide')             #Il faut d'abord crée un compte
-            return redirect(url_for('connexionEnseignant'))      
-        if check_password_hash(testLogin.passU,request.form['passU']):       
-        # if request.form['passU'] == testLogin.passU:          #Vérifie que le mdp de l'utilisateur correspond
-            session['nomU'] = request.form['nomU']            
+            flash('Nom invalide')                                        #Il faut d'abord crée un compte
+            return redirect(url_for('connexionEnseignant'))              #check_password_hash est une methode de
+        if check_password_hash(testLogin.passU,request.form['passU']):   #werkzeug.security pour verifier qu'un mot de passe
+            session['nomU'] = request.form['nomU']                       #correspond avec le cryptage
             session['idU'] = testLogin.idU
             session['role'] = "enseignant"
         else:
-            flash('Mot de passe invalide')             #Il faut d'abord crée un compte
+            flash('Mot de passe invalide')             
             return redirect(url_for('connexionEnseignant'))  
         return redirect(url_for("index"))              
     else:                       
@@ -165,16 +149,12 @@ def connexionEnseignant():
 def connexionEtudiant():
     title='Connexion Etudiant'
     if request.method == 'POST':
-        # testEnseignant = db.session.query(Utilisateur).filter(Utilisateur.nomU==request.form['selectEnseignant']).first()
-
         testLogin = db.session.query(Etudiant).filter(Etudiant.nomEtu == request.form['nomU']).first()
-        # if request.form['nomU'] == request.form['passU']:   #ancienne méthode pour vérifier si nom=mdp
         if testLogin is None:
             flash('Nom invalide')             #Il faut d'abord crée un compte
             return redirect(url_for('connexionEtudiant'))  
-        if check_password_hash(testLogin.mdpEtu,request.form['passU']):
-            print("mot de passe correspondant")
-        # if request.form['passU'] == testLogin.numeroEtu:          #Vérifie que le mdp de l'utilisateur correspond
+        if check_password_hash(testLogin.mdpEtu,request.form['passU']): #Vérifie que le mdp correspond
+            print("mot de passe correspondant")     
             session['nomU'] = request.form['nomU']            
             session['idU'] = testLogin.numeroEtu
             session['preU'] = testLogin.prenomEtu
@@ -186,23 +166,20 @@ def connexionEtudiant():
     else:                       
         return render_template("compte/connexionEtudiant.html",title=title,page="Menu")
 
-@app.route("/modifMdp/<int:id>",methods=['POST','GET'])
+@app.route("/modifMdp/<int:id>",methods=['POST','GET'])          #Route pour modifier son mot de passe
 def modifMdp(id):
     title='Modification Mot de passe'
     if 'nomU' not in session :                                          #Sécurité pour éviter d'aller sur une page
         flash("Connectez vous ou créer un compte pour accéder à cette page") #sans se connecter
         return redirect(url_for('index'))
-    # if session['role'] != 'etudiant' :                                     #si vous n'êtes pas etudiant
-    #     flash("Page réservée aux etudiants")           
-    #     return redirect(url_for('index'))
     if request.method == 'POST':
-        mdpActuel=request.form['mdpActu']
-        newMdp=request.form['nMdp']
-        if session['role']=='etudiant':
+        mdpActuel=request.form['mdpActu']            #Mot de passe actuel
+        newMdp=request.form['nMdp']                  #Nouveau mot de passe
+        if session['role']=='etudiant':                                #Pour les étudiants
             mdpAModif = Etudiant.query.get_or_404(id)
             print("numero a modifier:",mdpAModif)
-            if check_password_hash(mdpAModif.mdpEtu,mdpActuel):
-                mdpAModif.mdpEtu = generate_password_hash(newMdp, method='pbkdf2:sha256', salt_length=16)
+            if check_password_hash(mdpAModif.mdpEtu,mdpActuel):        #Verifie la correspondance mdp entré/mdp actuel
+                mdpAModif.mdpEtu = generate_password_hash(newMdp, method='pbkdf2:sha256', salt_length=16) #Attribue le nouveau mdp
                 # print("j'attribue le nouveau mot de passe ! :",newMdp)
                 db.session.commit()
                 flash("Mot de passe modifié avec succès")
@@ -211,13 +188,10 @@ def modifMdp(id):
                 flash("Mot de passe actuel incorrect")
                 # print("tu as entré :",mdpActuel)
                 return redirect(url_for("index"))
-        elif session['role']=='enseignant':
+        elif session['role']=='enseignant':                            #Pour les enseignants
             mdpAModif = Utilisateur.query.get_or_404(id)
-            print("hein")
-            print(mdpAModif.passU)
-            print(mdpActuel)
             if check_password_hash(mdpAModif.passU,mdpActuel):
-                print("hello ?")
+                print("hello ?")                                       #Verifie la correspondance mdp entré/mdp actuel
                 mdpAModif.passU = generate_password_hash(newMdp,method='pbkdf2:sha256',salt_length=16)
                 db.session.commit()
                 flash("Mot de passe modifié avec succès")
@@ -297,7 +271,7 @@ def ajout():
             db.session.add(new_assos)                              #et étiquette
             db.session.commit()                     #Envoie des changements
         print("reponse.exe = ",db.session.query(Reponse.reponse).filter(Reponse.idQ==idQuestion[0]).all())
-        return redirect(url_for('lquestion'))       #Redirection vers la liste des questions
+        return redirect(url_for('lQuestion'))       #Redirection vers la liste des questions
         # except:
         #    return 'Erreur création de la question'
     else:
@@ -397,15 +371,15 @@ def supprimer_bouton():
     #qqc comme ça en bdd
     return 'SUCCES'
 
-@app.route("/lquestion",methods = ['GET'])              #Route vers la liste de questions de l'utilisateur
-def lquestion():
+@app.route("/lQuestion",methods = ['GET'])              #Route vers la liste de questions de l'utilisateur
+def lQuestion():
     title='Bibliothèque'
     if 'nomU' not in session:                           #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))               #Sélection des questions et étiquettes
     etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
     questions = db.session.query(Question).filter(Question.idU==session['idU']).all()
-    return render_template("liste/lquestion.html",title=title,etiquettes=etiquettes,lquestion=questions,page="Consulter")
+    return render_template("liste/lQuestion.html",title=title,etiquettes=etiquettes,lquestion=questions,page="Consulter")
 
 @app.route("/filtre",methods = ['GET','POST'])          #Route de filtrage des questions de l'utilisateur
 def filtre():
@@ -415,7 +389,7 @@ def filtre():
     if request.method == 'POST':                        #Affiche les questions avec les tags sélectionnés
         questionAffiche = db.session.query(Question).join(Associe, Associe.RidQ == Question.idQ)\
             .join(Etiquette, Etiquette.idE == Associe.RidE).filter(Etiquette.idE == tags,Etiquette.idU==session['idU']).all()
-        return render_template("liste/lquestion.html",title=title,etiquettes=etiquettes, lquestion=questionAffiche, page="Consulter")
+        return render_template("liste/lQuestion.html",title=title,etiquettes=etiquettes, lquestion=questionAffiche, page="Consulter")
 
 @app.route("/modifier/<string:id>",methods=['POST','GET']) #Route pour modifier une question de l'utilisateur
 def modifier(id):
@@ -439,7 +413,7 @@ def modifier(id):
                 new_assos = Associe(RidE=tag_id,RidQ=questionModif.idQ)
                 db.session.add(new_assos)
                 db.session.commit()  
-            return redirect(url_for('lquestion'))       #Redirection vers la page de liste des questions
+            return redirect(url_for('lQuestion'))       #Redirection vers la page de liste des questions
         except:
             return 'Erreur de modification'             #Renvoi message erreur en cas d'échec de la modification
     else:
@@ -465,7 +439,7 @@ def supprimer(id):
                 db.session.commit()
         db.session.delete(questionSupp)                 #Suppression question de la base de données
         db.session.commit()                             #Envoi des modifications à la base de données
-        return redirect(url_for('lquestion'))           #Redirection vers la page de liste des questions
+        return redirect(url_for('lQuestion'))           #Redirection vers la page de liste des questions
     except:
         return 'Erreur lors de la suppression de la question'
         #Renvoi message d'erreur si échec de la suppression de la question
@@ -534,15 +508,14 @@ def afficheQCM(id):
         checked_questions.append(objetQuestion)     #   l'objet Question entier
         listeReponse = db.session.query(Reponse).filter(Reponse.idQ==idQuestion).all() 
         checked_reponses.append(listeReponse)       #   et les réponses correspondantes à cette question
-    return render_template("Affichage.html",nomQcm=nomQcm,listeQuestions=checked_questions,listeReponses=checked_reponses,len=len(checked_questions))
+    return render_template("affichage.html",nomQcm=nomQcm,listeQuestions=checked_questions,listeReponses=checked_reponses,len=len(checked_questions))
 
-
-@app.route("/RepondreQCM",methods =["POST","GET"])
+@app.route("/repondreQCM",methods =["POST","GET"])
 def RepondreQCM():
     if request.method == "POST":
         flash("yes")
     else:
-        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM")
+        return render_template("wooclap/repondreQCM.html",page="RepondreQCM")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

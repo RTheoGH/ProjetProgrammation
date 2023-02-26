@@ -3,9 +3,9 @@
 {% block main %}
 <div class="menu">
     <h1>Modifier votre <br> mot de passe</h1>
-    <form action="{{ url_for('modifMdp', id=idMAModif)}}" method="POST">  <!-- Création d'un etudiant' -->
-        <p> Mot de passe actuel : <input type="password" name="mdpActu" id="mdpActu"/></p>           <!-- Avec un nom -->
-        <p> Nouveau mot de passe : <input type="password" name="nMdp" id="nMdp"/></p>  <!-- Avec un prenom -->
+    <form action="{{ url_for('modifMdp', id=idMAModif)}}" method="POST">             <!-- Modification mot de passe -->
+        <p> Mot de passe actuel : <input type="password" name="mdpActu" id="mdpActu"/></p> <!-- Mot de passe actuel -->
+        <p> Nouveau mot de passe : <input type="password" name="nMdp" id="nMdp"/></p>      <!-- Nouveau mot de passe -->
         <p><input class="button" type="submit" value="Modifier" /></p>
     </form>
 </div>

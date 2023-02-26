@@ -8,7 +8,7 @@
         {% if session['nomU'] and session['role']=='enseignant' %}<li {% if page=="generateQCM" %} class="active" {% endif %}><a href="/generateQCM">Consulter QCM</a></li>{% endif %}
         {% if session['nomU'] and session['role']=='enseignant' %}<li {% if page=="listeEtudiants" %} class="active" {% endif %}><a href="/listeEtudiants">Consulter Etudiants</a></li>{% endif %}
         {% if session['nomU']=='ADMIN'and session['role']=='enseignant' %}<li {% if page=="listeUtilisateurs" %} class="active" {% endif %}><a href="/listeUtilisateurs">Consulter Utilisateurs</a></li>{% endif %}
-        {% if session['role']=='etudiant' %}<li {% if page=="RepondreQCM" %} class="active" {% endif %}><a href="/RepondreQCM">Repondre au Question</a></li>{% endif %}
+        {% if session['nomU'] and session['role']=='etudiant' %}<li {% if page=="RepondreQCM" %} class="active" {% endif %}><a href="/RepondreQCM">Repondre au Question</a></li>{% endif %}
     </ul>
 </nav>
 
