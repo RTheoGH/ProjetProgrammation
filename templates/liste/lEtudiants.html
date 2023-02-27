@@ -10,11 +10,16 @@
                 <td>Prenom</td>
                 <td>Numéro d'étudiant</td>
             </tr>
-            {% for etudiants in lEtudiants %}            <!-- Affiche chaque étudiant avec nom,prenom,numero -->
+            {% for etudiant in lEtudiants %}            <!-- Affiche chaque étudiant avec nom,prenom,numero -->
             <tr>
-                <td>{{etudiants.nomEtu}}</td>
-                <td>{{etudiants.prenomEtu}}</td>
-                <td>{{etudiants.numeroEtu}}</td>
+                <td>{{etudiant.nomEtu}}</td>
+                <td>{{etudiant.prenomEtu}}</td>
+                <td>{{etudiant.numeroEtu}}</td>
+                <td>
+                    <a href="{{ url_for('retirerEtu', id=etudiant.numeroEtu)}}">
+                        <input style="margin-top: 4px; margin-bottom:-3px;" class="delete" type="image" src="/static/image/delete.png">
+                    </a>
+                </td> 
             </tr>
             {% endfor %}
         </table>

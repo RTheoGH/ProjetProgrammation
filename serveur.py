@@ -126,6 +126,22 @@ def listeEtudiants():
         etudiants = db.session.query(Etudiant).filter(Etudiant.numeroEtu==Classe.idCE,Classe.idCU==session['idU']).all()
         return render_template("liste/lEtudiants.html",lEtudiants=etudiants,title=title,page='listeEtudiants')
 
+@app.route("/retirerEtu/<int:id>")                    #Route pour retirer un étudiant
+def retirerEtu(id):
+    if 'nomU' not in session:                           #Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+    etudiantMoins = Etudiant.query.get_or_404(id)                          #Récupération étudiant
+    classeMoins = db.session.query(Classe).filter(Classe.idCE==id).first() #Récupération classe
+    
+    try:
+        db.session.delete(classeMoins)                  #Suppression classe
+        db.session.delete(etudiantMoins)                #Suppression etudiant
+        db.session.commit()                             #Envoi des modifications à la base de données
+        return redirect(url_for('listeEtudiants'))          #Redirection vers la liste d'étudiants
+    except:
+        return 'Erreur lors de la suppression'
+
 @app.route("/connexionEnseignant",methods=['POST','GET'])           #Route pour se connecter
 def connexionEnseignant():
     title='Connexion Enseignant'
