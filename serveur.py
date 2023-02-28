@@ -513,15 +513,17 @@ def afficheQCM(id):
     # Rq: le [0] sert à isoler la chaine de char, puisque la requête renvoie un objet 
     nomQcm = db.session.query(QCM.Nom).filter(QCM.idQCM==id).first()[0]
     listeIdQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==id).all() #Liste des idQuestions cochées
-    print(listeIdQuestions)
     checked_questions = []                          #Liste des questions du QCM (objets Question entiers)
     checked_reponses = []                           #Leurs reponses respectives (liste de listes)
     for idQuestion in listeIdQuestions:             #Pour chaque idQuestion, on récupère
         idQuestion = idQuestion[0]
         objetQuestion = db.session.query(Question).filter(Question.idQ==idQuestion).first()
         checked_questions.append(objetQuestion)     #   l'objet Question entier
-        listeReponse = db.session.query(Reponse).filter(Reponse.idQ==idQuestion).all() 
-        checked_reponses.append(listeReponse)       #   et les réponses correspondantes à cette question
+        listeReponse = db.session.query(Reponse).filter(Reponse.idQ==idQuestion).all()
+        if (listeReponse[0].estNumerique):
+            checked_reponses.append([])
+        else:
+            checked_reponses.append(listeReponse)       #   et les réponses correspondantes à cette question
     return render_template("affichage.html",nomQcm=nomQcm,listeQuestions=checked_questions,listeReponses=checked_reponses,len=len(checked_questions))
 
 @app.route("/repondreQCM",methods =["POST","GET"])
