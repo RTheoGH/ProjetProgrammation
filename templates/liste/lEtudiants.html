@@ -10,20 +10,25 @@
                 <td>Prenom</td>
                 <td>Numéro d'étudiant</td>
             </tr>
-            {% for etudiants in lEtudiants %}         <!-- Affiche chaque utilisateur avec son mot de passe -->
-            <tr>                                            <!-- Rappel : cette page est uniquement accessible si -->
-                <td>{{etudiants.nomEtu}}</td>              <!-- l'utilisateur est 'ADMIN' -->
-                <td>{{etudiants.prenomEtu}}</td>
-                <td>{{etudiants.numeroEtu}}</td>
+            {% for etudiant in lEtudiants %}            <!-- Affiche chaque étudiant avec nom,prenom,numero -->
+            <tr>
+                <td>{{etudiant.nomEtu}}</td>
+                <td>{{etudiant.prenomEtu}}</td>
+                <td>{{etudiant.numeroEtu}}</td>
+                <td>
+                    <a href="{{ url_for('retirerEtu', id=etudiant.numeroEtu)}}">
+                        <input style="margin-top: 4px; margin-bottom:-3px;" class="delete" type="image" src="/static/image/delete.png">
+                    </a>
+                </td> 
             </tr>
             {% endfor %}
         </table>
     </div>
     <br/>
     <div class="double newEtudiant">
-        <div style="margin-right: 1em;">
+        <div style="margin-right: 1em;">                 <!-- Ajout d'un étudiant via un csv -->
             <h1>Ajout d'étudiants<br/> via CSV</h1>
-            <form action="/listeEtudiants" method="POST" enctype="multipart/form-data">  <!-- Création d'un etudiant' -->
+            <form action="/listeEtudiants" method="POST" enctype="multipart/form-data">  
                 <p>Seuls les fichiers d'extension .csv sont acceptés!</p>
                 <br/>
                 <p><input type="file" id="fichierEtu" name="fichierEtu" accept=".csv" ></p>
@@ -32,7 +37,7 @@
             </form>
         </div>
         <div class="liVer"></div>
-        <div style="margin-left: 1em;">
+        <div style="margin-left: 1em;">                 <!-- Ajout d'un étudiant manuellement -->
             <h1>Ajout d'étudiants<br/> manuellement</h1>
             <form action="/listeEtudiants" method="POST">
                 <p> Nom : <input type="text" name="nomEtu" id="nomEtu"/></p>

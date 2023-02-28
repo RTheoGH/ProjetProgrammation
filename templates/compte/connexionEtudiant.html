@@ -6,7 +6,7 @@
     <p>Votre mot de passe est <br/> votre numéro étudiant</p>
     <hr/>
     {% include 'partials/flash.html' %}
-    <form action="/connexionEtudiant" method="POST">                                     <!-- Connexion d'un utilisateur -->
+    <form action="/connexionEtudiant" method="POST">                             <!-- Connexion d'un utilisateur -->
         <p> Nom d'utilisateur : </p><input type="text" name="nomU" id="nomU"/>   <!-- Nom correspondant -->
         <p> Mot de passe : </p><input type="password" name="passU" id="passU"/>  <!-- Mot de passe correspondant-->
         <p><input class="button" type="submit" value="Connexion" /></p>

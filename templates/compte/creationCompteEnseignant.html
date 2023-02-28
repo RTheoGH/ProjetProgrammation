@@ -3,9 +3,8 @@
 {% block main %}
 <div class="menu">
     <h1>Créer votre compte</h1>
-    <!-- <p>Pour faire plus simple, il est préférable de mettre <br/> son nom en tant que mot de passe</p> -->
     <hr/>
-    <form action="/creationCompteEnseignant" method="POST">                             <!-- Création du compte -->
+    <form action="/creationCompteEnseignant" method="POST">                   <!-- Création du compte -->
         <p> Nom d'utilisateur : </p><input type="text" name="creationNom"/>   <!-- Avec un nom -->
         <p> Mot de passe : </p><input type="password" name="creationMdp"/>    <!-- Et un mot de passe -->
         <p><input class="button" type="submit" value="Créer" /></p>
