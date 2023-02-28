@@ -103,12 +103,11 @@ def listeEtudiants():
                 contenuCsv = []                                               #Contenu du fichier sous forme de liste de listes
                 decoded_file = fichierCsv.read().decode('iso-8859-1')         #Decodeur
                 reader = csv.reader(decoded_file.splitlines(), delimiter=';') #Début de la lecture du fichier
+                next(reader)                                              #élimination de la ligne de titre
                 for ligne in reader:
-                    print(ligne)
                     contenuCsv.append(ligne)
 
                 for eleve in contenuCsv:                                    #Ajout des elèves dans la base de donnée
-                    print(eleve[0],"|",eleve[1],"|",eleve[2])
                     new_etudiant=Etudiant(numeroEtu=int(eleve[2]),nomEtu=eleve[0],prenomEtu=eleve[1],\
                         mdpEtu=generate_password_hash(eleve[2],method='pbkdf2:sha256',salt_length=16))
                     try:
