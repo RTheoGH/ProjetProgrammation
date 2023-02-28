@@ -7,6 +7,7 @@
         <li {% if page=="Consulter" %} class="active" {% endif %}><a href="/lquestion">Consulter Questions</a></li>{% endif %} {% if session['nomU'] and session['role']=='enseignant' %}
         <li {% if page=="CréerQcm" %} class="active" {% endif %}><a href="/QCM">Créer QCM</a></li>{% endif %} {% if session['nomU'] and session['role']=='enseignant' %}
         <li {% if page=="generateQCM" %} class="active" {% endif %}><a href="/generateQCM">Consulter QCM</a></li>{% endif %} {% if session['nomU'] and session['role']=='enseignant' %}
+        <li {% if page=="EnvoyerQCM" %} class="active" {% endif %}><a href="/EnvoyerQCM">Envoyer des enoncées</a></li>{% endif %} {% if session['nomU'] and session['role']=='enseignant' %}
         <li {% if page=="listeEtudiants" %} class="active" {% endif %}><a href="/listeEtudiants">Consulter Etudiants</a></li>{% endif %} {% if session['nomU']=='ADMIN'and session['role']=='enseignant' %}
         <li {% if page=="listeUtilisateurs" %} class="active" {% endif %}><a href="/listeUtilisateurs">Consulter Utilisateurs</a></li>{% endif %} {% if session['role']=='etudiant' %}
         <li {% if page=="RepondreQCM" %} class="active" {% endif %}><a href="/RepondreQCM">Repondre au Question</a></li>{% endif %}

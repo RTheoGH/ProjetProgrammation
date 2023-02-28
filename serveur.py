@@ -531,10 +531,30 @@ def afficheQCM(id):
 
 @app.route("/RepondreQCM",methods =["POST","GET"])
 def RepondreQCM():
+    title='Reponder au question'
+    if 'nomU' not in session:                   #Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     if request.method == "POST":
         flash("yes")
     else:
-        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM")
+        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",)
+
+@app.route("/EnvoyerQCM",methods = ["POST","GET"])
+def wooclap():
+    title='EnvoyerQCM'
+    if 'nomU' not in session:                   #Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+    if request.method == "POST":
+        
+        listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
+        return render_template("wooclap/EnvoyerQCM.html",title=title,listeQCM=listeQCM,page = "EnvoyerQCM")
+
+
+    else:
+        listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
+        return render_template("wooclap/EnvoyerQCM.html",title=title,listeQCM=listeQCM,page = "EnvoyerQCM")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
