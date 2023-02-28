@@ -421,11 +421,65 @@ input:invalid {
 /* ------------------------------------------------------------------------ */
 
 @media screen and (min-width: 1px) and (max-width:800px) {
-    .menu {
-        font-size: 0.7em;
+    .menu{
+        font-size: 0.8em;
+        width: 80vw;
+        height: 66vh;
     }
-    .menu .button{
-        display: block;
+    .menuAcc{
+        width: 70vw;
+        height:auto;
+    }
+    .menuAcc .button{
+        display: unset;
+    }
+    .mid{
+        font-size: 1em;
+        width: 90vw;
+        height: 75vh;
+        display: grid;
+        overflow-y: scroll;
+    }
+    .gereEtiquette{
+        width: 70vw;
+        font-size: 0.8em;
+    }
+    .gaucheEtiquette{
+        margin-right: 0em;
+    }
+    .centreEtiquette {
+        margin-right: 0em;
+        margin-left: 0em;
+    }
+    .droiteEtiquette {
+        margin-left: 0em;
+    }
+    .liste{
+        font-size: 0.8em;
+        width: 80vw;
+    }
+    .liste tr{
+        display: flex;
+        flex-direction: column;
+        width: 75vw;
+    }
+    .liste .delete{
+        width: 5vw;
+        height: 5vw;
+    }
+    .newEtudiant {
+        border: 2px solid black;
+        text-align: center;
+        width: 80vw;
+        font-size: 0.75em;
+        display:grid;
+        overflow-y:scroll;
+    }
+    .newEtudiant .button{
+        display: unset;
+    }
+    .liVer{
+        display: unset;
     }
     .nav-list{
         display:flex;
@@ -437,16 +491,16 @@ input:invalid {
     footer{
         font-size: 0.7em;
     }
-    .mid {
+    .mid{
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         opacity: 0.9;
     }
-    .double{
-        font-size: 1em;
-        height:80vh;
+    .menu .double{
+        font-size: 0.75em;
+        height:20vh;
         display:grid;
         overflow-y:scroll;
     }
@@ -457,7 +511,7 @@ input:invalid {
         font-size: 0.75em;
     }
     .code textarea{
-        width:1px;
+        width:10em;
     }
     .code button{
         font-size:0.9em;
