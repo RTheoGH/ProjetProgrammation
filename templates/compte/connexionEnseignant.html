@@ -1,19 +1,10 @@
 {% extends 'partials/base.html' %}
 
 {% block main %}
-<div class="menu">
+<div class="menu menuAcc">
     <h1>Connexion</h1>
-    <!-- <p>Pour faire plus simple, il est préférable de mettre <br/> son nom en tant que mot de passe</p> -->
     <hr/>
-    {% with messages = get_flashed_messages() %}       <!-- Récupère les messages de flash() du serveur -->
-        {% if messages %}
-            <div class="flashes">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
+    {% include 'partials/flash.html' %}
     <form action="/connexionEnseignant" method="POST">                                     <!-- Connexion d'un utilisateur -->
         <p> Nom d'utilisateur : </p><input type="text" name="nomU" id="nomU"/>   <!-- Nom correspondant -->
         <p> Mot de passe : </p><input type="password" name="passU" id="passU"/>  <!-- Mot de passe correspondant-->

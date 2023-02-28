@@ -3,28 +3,26 @@ db = SQLAlchemy()
 
 # Voir README pour le schéma de la base de données
 
-class Utilisateur(db.Model):                           # Classe Utilisateur
-    idU = db.Column(db.Integer, primary_key=True)      #   identifiant de l'utilisateur
-    nomU = db.Column(db.String(50))                    #   nom de l'utilisateur
-    passU = db.Column(db.String(50))                   #   Mot de passe de l'utilisateur
+class Utilisateur(db.Model):                             # Classe Utilisateur
+    idU = db.Column(db.Integer, primary_key=True)        #   identifiant de l'utilisateur
+    nomU = db.Column(db.String(50))                      #   nom de l'utilisateur
+    passU = db.Column(db.String(50))                     #   mot de passe de l'utilisateur
 
-    def __repr__(u):                                   # représentation de l'objet 
-        return 'Utilisateur %r'% u.idU                 # pour un print par exemple
+    def __repr__(u):                                     # représentation de l'objet 
+        return 'Utilisateur %r'% u.idU                   # pour un print par exemple
 
-class Etudiant(db.Model):
-    idEtu = db.Column(db.Integer, primary_key=True)
-    nomEtu = db.Column(db.String(50))
-    prenomEtu = db.Column(db.String(50))
-    numeroEtu = db.Column(db.String(50))
-    mdpEtu = db.Column(db.String(50))
-    # idU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU), nullable=False)
+class Etudiant(db.Model):                                # Classe Etudiant
+    numeroEtu = db.Column(db.Integer, primary_key=True)  #   identifiant de l'étudiant (son numero d'étudiant)
+    nomEtu = db.Column(db.String(50))                    #   nom de l'étudiant
+    prenomEtu = db.Column(db.String(50))                 #   prenom de l'étudiant
+    mdpEtu = db.Column(db.String(50))                    #   mot de passe de l'étudiant
 
     def __repr__(u):
-        return 'Etudiant : %r' % u.idEtu
+        return 'Etudiant : %r' % u.numeroEtu
 
 class Classe(db.Model):
     idCU = db.Column(db.Integer, db.ForeignKey(Utilisateur.idU),nullable=False,primary_key=True)
-    idCE = db.Column(db.Integer, db.ForeignKey(Etudiant.idEtu),nullable=False,primary_key=True)
+    idCE = db.Column(db.Integer, db.ForeignKey(Etudiant.numeroEtu),nullable=False,primary_key=True)
 
 class Question(db.Model):                                                        # Classe Question
     idQ = db.Column(db.String(50), primary_key=True)                             #   identifiant question
@@ -53,7 +51,6 @@ class Reponse(db.Model):                                                    # Cl
     estNumerique = db.Column(db.Boolean,default = False, nullable = False)
     idQ = db.Column(db.String(50), db.ForeignKey(Question.idQ),nullable=False) #   id référence de id question
 
-
     def __repr__(u):
         return 'Reponse %r'% u.idR
 
@@ -68,5 +65,3 @@ class QCM(db.Model):                                                            
 class Contient(db.Model):                                                 # Classe association entre qcm et question
     RidQCM = db.Column(db.String(50), db.ForeignKey(QCM.idQCM),nullable=False,primary_key=True) # id référence id qcm
     RidQ = db.Column(db.String(50),db.ForeignKey(Question.idQ),nullable=False,primary_key=True) # id référence id question
-
-    
