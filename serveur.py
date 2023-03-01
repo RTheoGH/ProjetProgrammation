@@ -526,7 +526,7 @@ def afficheQCM(id):
             checked_reponses.append(listeReponse)       #   et les réponses correspondantes à cette question
     return render_template("affichage.html",nomQcm=nomQcm,listeQuestions=checked_questions,listeReponses=checked_reponses,len=len(checked_questions))
 
-@app.route("/repondreQCM",methods =["POST","GET"])
+@app.route("/RepondreQCM",methods =["POST","GET"])
 def RepondreQCM():
     title='Reponder au question'
     if 'nomU' not in session:                   #Sécurité connexion
@@ -544,9 +544,7 @@ def wooclap():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     if request.method == "POST":
-        
-        listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
-        return render_template("wooclap/EnvoyerQCM.html",title=title,listeQCM=listeQCM,page = "EnvoyerQCM")
+        pass
 
 
     else:
