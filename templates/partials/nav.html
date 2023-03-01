@@ -1,17 +1,16 @@
 <nav>
     <ul class="nav-list">
-        <li {% if page=="Menu" %} class="active" {% endif %}><a href="/">Accueil</a></li>
-        {% if session['nomU'] and session['role']=='enseignant' %}
-        <li {% if page=="Créer" %} class="active" {% endif %}><a href="/creerQuestion">Créer Question</a></li>{% endif %} {% if session['nomU'] and session['role']=='enseignant' %}
-        <li {% if page=="Etiquettes" %} class="active" {% endif %}><a href="/creationEtiquettes">Gérer Étiquette</a></li>{% endif %} {% if session['nomU'] and session['role']=='enseignant' %}
-        <li {% if page=="Consulter" %} class="active" {% endif %}><a href="/lquestion">Consulter Questions</a></li>{% endif %} {% if session['nomU'] and session['role']=='enseignant' %}
-        <li {% if page=="CréerQcm" %} class="active" {% endif %}><a href="/QCM">Créer QCM</a></li>{% endif %} {% if session['nomU'] and session['role']=='enseignant' %}
-        <li {% if page=="generateQCM" %} class="active" {% endif %}><a href="/generateQCM">Consulter QCM</a></li>{% endif %} {% if session['nomU'] and session['role']=='enseignant' %}
-        <li {% if page=="EnvoyerQCM" %} class="active" {% endif %}><a href="/EnvoyerQCM">Envoyer des enoncées</a></li>{% endif %} {% if session['nomU'] and session['role']=='enseignant' %}
-        <li {% if page=="listeEtudiants" %} class="active" {% endif %}><a href="/listeEtudiants">Consulter Etudiants</a></li>{% endif %} {% if session['nomU']=='ADMIN'and session['role']=='enseignant' %}
-        <li {% if page=="listeUtilisateurs" %} class="active" {% endif %}><a href="/listeUtilisateurs">Consulter Utilisateurs</a></li>{% endif %} {% if session['role']=='etudiant' %}
-        <li {% if page=="RepondreQCM" %} class="active" {% endif %}><a href="/RepondreQCM">Repondre au Question</a></li>{% endif %}
-
+        <li class="navBouton" {% if page=="Menu" %} class="active" {% endif %}><a href="/">Accueil</a></li>
+        {% if session['nomU'] and session['role']=='enseignant' %}<li class="navBouton" {% if page=="Créer" %} class="active" {% endif %}><a href="/creerQuestion">Créer Question</a></li>{% endif %}
+        {% if session['nomU'] and session['role']=='enseignant' %}<li class="navBouton" {% if page=="Etiquettes" %} class="active" {% endif %}><a href="/creationEtiquettes">Gérer Étiquette</a></li>{% endif %}
+        {% if session['nomU'] and session['role']=='enseignant' %}<li class="navBouton" {% if page=="Consulter" %} class="active" {% endif %}><a href="/lQuestion">Consulter Questions</a></li>{% endif %}
+        {% if session['nomU'] and session['role']=='enseignant' %}<li class="navBouton" {% if page=="CréerQcm" %} class="active" {% endif %}><a href="/QCM">Créer QCM</a></li>{% endif %}
+        {% if session['nomU'] and session['role']=='enseignant' %}<li class="navBouton" {% if page=="generateQCM" %} class="active" {% endif %}><a href="/generateQCM">Consulter QCM</a></li>{% endif %}
+        {% if session['nomU'] and session['role']=='enseignant' %}<li class="navBouton" {% if page=="EnvoyerQCM" %} class="active" {% endif %}><a href="/EnvoyerQCM">Envoyer des enoncées</a></li>{% endif %}
+        {% if session['nomU'] and session['role']=='enseignant' %}<li class="navBouton" {% if page=="listeEtudiants" %} class="active" {% endif %}><a href="/listeEtudiants">Consulter Etudiants</a></li>{% endif %}
+        {% if session['nomU']=='ADMIN'and session['role']=='enseignant' %}<li class="navBouton" {% if page=="listeUtilisateurs" %} class="active" {% endif %}><a href="/listeUtilisateurs">Consulter Utilisateurs</a></li>{% endif %}
+        {% if session['nomU'] and session['role']=='etudiant' %}<li class="navBouton" {% if page=="RepondreQCM" %} class="active" {% endif %}><a href="/RepondreQCM">Repondre au Question</a></li>{% endif %}
+        {% if session['nomU'] %}<li class="deco"><a href="/deconnexion">Deconnexion</a></li>{% endif %}
     </ul>
 </nav>
 

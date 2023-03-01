@@ -38,7 +38,7 @@ h1 {
     opacity: 0.9;
     top: 50%;
     left: 50%;
-    font-size: 0.7em;
+    font-size: 1em;
     transform: translate(-50%, -50%);
     text-align: center;
     background-color: whitesmoke;
@@ -47,13 +47,6 @@ h1 {
 /* Classe menu alternative compte */
 .menuAcc{
     font-size: 1em;
-}
-
-/* Changement en fonction de la taille de l'écran */
-@media screen and (min-width: 1600px) {
-    .menuAcc {
-        font-size: 1.5em;
-    }
 }
 
 /* Ligne verticale */
@@ -68,11 +61,6 @@ h1 {
     height: 30vh;
     border: 2px solid black;
     overflow-y: scroll;
-}
-@media screen and (min-width: 1600px) {
-    .liste {
-        font-size: 2em;
-    }
 }
 
 /* Classe de la création d'étudiants */
@@ -95,7 +83,6 @@ h1 {
 .middle {
     text-align: center;
 }
-
 
 /* Texte à gauche */
 .left {
@@ -270,7 +257,6 @@ footer {
     left: 5px;
 }
 
-
 /* on checked */
 [type="checkbox"].newReponse:checked+label::before {
     background: #2fb41a;
@@ -373,18 +359,6 @@ fieldset {
     text-align: center;
 }
 
-/* Changement en fonction de la taille de l'écran */
-@media screen and (min-width: 1280px) {
-    .gereEtiquette {
-        font-size: 1em;
-    }
-}
-@media screen and (min-width: 1600px) {
-    .gereEtiquette {
-        width: 20vw;
-    }
-}
-
 /* Style pour créer une étiquette */
 .gaucheEtiquette {
     margin-right: 5em;
@@ -415,6 +389,87 @@ input:valid {
 input:invalid {
     background-color: lightpink;
 } */
+
+/* ------------------------------------------------------------------------ */
+/* Responsivité */
+/* ------------------------------------------------------------------------ */
+
+@media screen and (min-width: 801px) and (max-width: 1024px) {
+    body{
+        background-size:auto;
+    }
+    .nav-list li a {
+        padding: 10px 12px;
+    }
+    .code {
+        font-size: 0.9em;
+        margin-right: 1em;
+        overflow-y: scroll;
+    }
+    .visu {
+        font-size: 0.9em;
+        margin-left: 1em;
+        overflow-y: scroll;
+    }
+    .liste{
+        font-size: 0.8em;
+        height:20vh;
+        width: auto;
+    }
+    .liste td a{
+        display: block;
+    }
+    table{
+        width: 55vw;
+    }
+    .newEtudiant{
+        font-size: 0.6em;
+        height: 30vh;
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    .menuAcc {
+        font-size: 1.3em;
+    }
+    .gereEtiquette {
+        width: 20vw;
+        font-size: 1em;
+    }
+    .centreEtiquette{
+        margin-left: 0em;
+        margin-right: 0em;
+    }
+    .code{
+        height: 70vh;
+    }
+    .liste td a{
+        display: block;
+    }
+    .liste{
+        font-size: 1.2em;
+        height:20vh;
+        width: auto;
+    }
+    table{
+        width: 45vw;
+    }
+    .newEtudiant{
+        font-size: 0.9em;
+        height: 40vh;
+    }
+}
+@media screen and (min-width: 1440px) {
+    /* Pas nécessaire pour le moment */
+}
+@media screen and (min-width: 1680px) {
+    .menuAcc {
+        font-size: 1.5em;
+    }
+    .gereEtiquette {
+        width: 20vw;
+    }
+}
 
 /* ------------------------------------------------------------------------ */
 /* VERSION MOBILE */
