@@ -2,10 +2,11 @@
 
 {% block main %}
 <div class="menu">
-    <form action="/generateQCM" method="POST">
+    <form action="{{ url_for('modificationQCMdansBDD') }}" method="POST">
+        <input type="hidden" name="QCMmodif" value="{{ QCMmodif.idQCM }}">    
         <!--ce form permet d'afficher la liste des question -->
         <h1>Modifier votre examen</h1>
-        <p>Donnez un titre à votre QCM : <input type="text" name="nomQcm" placeholder="Titre" value={{QCMmodif.Nom}}/></p>
+        <p>Donnez un titre à votre QCM : <input type="text" name="nomQcm" placeholder="Titre" value="{{QCMmodif.Nom}}"/></p>
         <div class="liste">
             <table>
                 <tr class="top">
@@ -15,7 +16,7 @@
                 {% for q in ListesQuestions %}
                     <tr>
                         <label>
-                            <td><input type="checkbox" name="{{q.idQuestion}}" value="{{q.idQuestion}}"
+                            <td><input type="checkbox" name="{{q.idQ}}"
                             {% if q in questions %} checked {% endif %}></td>
                             <td>{{q.enonce}}</td>
                         </label>

@@ -577,6 +577,9 @@ def modifQCM():
 
 @app.route("/ModificationQCM",methods = ["POST","GET"])
 def modificationQCM():
+    if 'nomU' not in session:                   #Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     idQCMmodif = request.form['QCMmodif']
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
@@ -585,6 +588,53 @@ def modificationQCM():
     LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()  #Récupération questions de la base de données
     questions = Question.query.join(Contient).filter(Question.idU==session['idU'],Contient.RidQCM==idQCMmodif).all()
     return render_template("ModificationQCM.html", page="ModifierQCM", QCMmodif = QCMmodif, ListesQuestions=LQ, questions=questions )
+
+@app.route("/modificationQCMdansBDD", methods=["POST"])
+def modificationQCMdansBDD():
+    # Récupérer les données du formulaire
+    nomQcm = request.form["nomQcm"]
+    idQCMmodif = request.form["QCMmodif"]
+    questions = request.form.getlist("questions")
+    print(questions)
+    title='Vos QCM'
+    if 'nomU' not in session:                   #Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+    #Suppréssion de l'objet QCM
+    if request.method == 'POST':
+        try :
+            Contient.query.filter_by(RidQCM=idQCMmodif).delete()
+            QCM.query.filter(QCM.idU==session['idU'], QCM.idQCM==idQCMmodif).delete()
+        except :
+            return "Erreur dans la suppréssion du QCM"
+    #Création de l'objet QCM
+    if request.method == 'POST':
+        idQcm = createId()
+        while idQcm in db.session.query(QCM.idQCM):
+                idQcm = createId()
+        nomQcm = request.form['nomQcm']
+        new_QCM = QCM(idQCM=idQcm,Nom=nomQcm,idU=session['idU'])
+        try : 
+            db.session.add(new_QCM)
+            db.session.commit()
+        except : 
+            return 'erreur dans la création du QCM'
+        #Association du QCM à ses Questions
+        print(request.form.items())
+        for key, value in request.form.items():         #key=idQuestion ; value=valeur du commutateur
+            if value == 'on':
+                new_contient = Contient(RidQCM=idQcm,RidQ=key)
+                try :
+                    db.session.add(new_contient)
+                    db.session.commit()
+                except :
+                    return "Erreur de création du lien 'contient' entre Qcm et Question"
+        listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
+        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
+    else:
+        listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
+        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
