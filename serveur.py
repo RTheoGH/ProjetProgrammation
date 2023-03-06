@@ -468,7 +468,7 @@ def qcm():
     print(LQ)
     return render_template("QCM.html",title=title,ListesQuestions=LQ,page="CréerQcm")
 
-@app.route("/generateQCM",methods = ['GET','POST'])      #Route qui genere le qcm
+@app.route("/listeQCM",methods = ['GET','POST'])      #Route qui genere le qcm
 def generate():
     title='Vos QCM'
     if 'nomU' not in session:                   #Sécurité connexion
@@ -505,7 +505,7 @@ def generate():
         return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
     else:
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
-        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
+        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM,page="listeQCM")
 
 @app.route("/afficheQCM/<string:id>")
 def afficheQCM(id):
@@ -525,7 +525,7 @@ def afficheQCM(id):
             checked_reponses.append([])
         else:
             checked_reponses.append(listeReponse)       #   et les réponses correspondantes à cette question
-    return render_template("affichage.html",title=title,nomQcm=nomQcm,listeQuestions=checked_questions,listeReponses=checked_reponses,len=len(checked_questions))
+    return render_template("affichage.html",title=title,nomQcm=nomQcm,listeQuestions=checked_questions,listeReponses=checked_reponses,len=len(checked_questions),page="generateQCM")
 
 @app.route("/RepondreQCM",methods =["POST","GET"])
 def RepondreQCM():

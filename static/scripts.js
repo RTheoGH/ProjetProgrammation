@@ -1,3 +1,5 @@
+const uwu = 3;
+
 function demandePlusReponse() {
     fetch('/plusDeReponse') /* Utilisation de l'API Fetch pour */
         .then(response => response.text()) /*envoyer une requête GET à /plusDeReponse */
@@ -64,28 +66,4 @@ function Question_QCM() {
     document.querySelector('#Quest_Num').hidden = true;
     document.querySelector('#Quest_QCM').disabled = true;
     document.querySelector('#Quest_QCM').hidden = true;
-}
-
-/* EN TRAVAUX */
-function downloadHtml() {
-    // Récupération du code HTML à enregistrer
-    var html = "<html><head><title>Mon titre</title></head><body><h1>Bienvenue !</h1></body></html>";
-
-    // Création d'un objet Blob contenant le code HTML
-    var blob = new Blob([html], {type: "text/html;charset=utf-8"});
-
-    // Création d'un objet URL pour le fichier
-    var url = URL.createObjectURL(blob);
-
-    // Création d'un élément <a> pour le téléchargement du fichier
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = "monfichier.html";
-
-    // Ajout de l'élément <a> au DOM et simulation du clic pour le téléchargement
-    document.body.appendChild(a);
-    a.click();
-
-    // Nettoyage de l'objet URL
-    URL.revokeObjectURL(url);
 }

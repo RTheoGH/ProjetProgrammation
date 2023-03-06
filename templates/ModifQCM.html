@@ -1,7 +1,7 @@
 {% extends 'partials/base.html' %}
 
 {% block main %}
-<div class="gereEtiquette centreEtiquette">
+<div class="menu">
     <h1>Modification d'un <br/> QCM</h1>
     <hr/>
     <form action="/ModificationQCM" method="POST">                               <!-- Modifie une étiquette existante -->
@@ -11,7 +11,7 @@
                 <option value='{{QCM.idQCM}}'>{{QCM.Nom}}</option>
             {% endfor %}
         </select>
-        <input class="button" type="submit" value="Modifier le QCM"></p>
+        <p><input class="button" type="submit" value="Modifier le QCM"></p>
     </form>
 </div>
 {% endblock %}
