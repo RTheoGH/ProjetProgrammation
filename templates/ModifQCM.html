@@ -1,0 +1,17 @@
+{% extends 'partials/base.html' %}
+
+{% block main %}
+<div class="gereEtiquette centreEtiquette">
+    <h1>Modification d'un <br/> QCM</h1>
+    <hr/>
+    <form action="/ModificationQCM" method="POST">                               <!-- Modifie une étiquette existante -->
+        <p> Sélectionnez le QCM à modifier : 
+        <select name="QCMmodif">
+            {% for QCM in listeQCM%}                                               <!-- Récupère les étiquettes présentes -->
+                <option value='{{QCM.idQCM}}'>{{QCM.Nom}}</option>
+            {% endfor %}
+        </select>
+        <input class="button" type="submit" value="Modifier le QCM"></p>
+    </form>
+</div>
+{% endblock %}

@@ -551,5 +551,24 @@ def wooclap():
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
         return render_template("wooclap/EnvoyerQCM.html",title=title,listeQCM=listeQCM,page = "EnvoyerQCM")
 
+@app.route("/ModifierQCM",methods = ["POST","GET"])
+def modifQCM():
+    if 'nomU' not in session:                   #Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+    listeQCMmodif = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
+    return render_template("ModifQCM.html", page="ModifierQCM", listeQCM=listeQCMmodif)
+
+@app.route("/ModificationQCM",methods = ["POST","GET"])
+def modificationQCM():
+    idQCMmodif = request.form['QCMmodif']
+    if 'nomU' not in session:                   #Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+    QCMmodif = db.session.query(QCM).filter(QCM.idU==session['idU'],QCM.idQCM==idQCMmodif).first()
+    LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()  #Récupération questions de la base de données
+    questions = Question.query.join(Contient).filter(Question.idU==session['idU'],Contient.RidQCM==idQCMmodif).all()
+    return render_template("ModificationQCM.html", page="ModifierQCM", QCMmodif = QCMmodif, ListesQuestions=LQ, questions=questions )
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
