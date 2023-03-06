@@ -25,8 +25,10 @@ function supprimerBouton(id) {
 
 function visualiser() {
     // 
-    let textAll = $("textarea"); /*Variable textAll qui recupere le contenu dee toutes les textarea*/
-    // console.log(textAll);
+    let textAll = $("textarea, input:text")
+    //let textAll = $("textarea"); /*Variable textAll qui recupere le contenu de toutes les textarea*/
+    //textAll.append($("input"))
+    console.log(textAll);
     let texte = "<h2>Enoncé :</h2>";
     textAll.each(function(index) { /* Pour chaque zone de texte */
         // console.log(this);
@@ -39,7 +41,6 @@ function visualiser() {
                 <div class='repCo'> " + converter.makeHtml($(this).val()) + "</div>\
                 </div>";
         }
-        // console.log(texte);
     })
     $(".visuel").html(texte); /* Remplacement du contenu HTML (jQuery) de l'élément ayant */
     MathJax.typeset(); /* la classe 'visuel' avec la valeur de texte */
