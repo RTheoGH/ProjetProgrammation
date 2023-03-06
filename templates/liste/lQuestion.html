@@ -12,7 +12,7 @@
             {% for questions in lquestion %}
             <tr>
                 <td class="left" id="{{questions.idQ}}">{{questions.enonce}}</td>
-                <script>
+                <script>              /* Convertisseur */
                     $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
                     hljs.highlightAll();
                 </script>
