@@ -2,26 +2,16 @@
 
 
 <div class="menu">
-    <div class="menu">
-        <h1>{{nomQcm}}</h1>
-        <hr/>
-        <div class="affQCM">
-            {% for i in range(len) %}
-            <div class="affQuestion" id="{{listeQuestions[i].idQ}}">{{listeQuestions[i].enonce}}</div>
-            <script>
-                /* Conversion de l'énoncé avec showdown */
-                $('#{{listeQuestions[i].idQ}}').html(converter.makeHtml($('#{{listeQuestions[i].idQ}}').text()));
-            </script>
-            {% if listeReponses[i] == [] %}
-            <p><input type="text" pattern="\d*([.]\d{0,2})?"></p>
-            {% else %} {% for reponse in listeReponses[i] %}
-            <div class="affReponse"><input class="bigCheckbox" id="{{reponse.idR}}" type="checkbox" /> <label for="{{reponse.idR}}">{{reponse.reponse}}</label></div>
-            <script>
-                $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
-            </script>
-            {% endfor %} {% endif %}
-            <hr/> {% endfor %}
-        </div>
+    <script>
+        function test(){
+            $.ajax({type : "GET",url : "/majRepondre"}).done(function(data){if(data!="{{Enonce}}"){}console.log("aa")})
+        }
+        setInterval(test,500)
+        
+    </script>
+    <div class ="Reponse_etudiant">
+        <p class ="Reponse_etudiant">{{Enonce}}</p>
+    </div>
     </div>
 
 

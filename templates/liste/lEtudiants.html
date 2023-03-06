@@ -16,7 +16,7 @@
                 <td>{{etudiant.prenomEtu}}</td>
                 <td>{{etudiant.numeroEtu}}</td>
                 <td>
-                    <a href="{{ url_for('retirerEtu', id=etudiant.numeroEtu)}}">
+                    <a href="{{ url_for('retirerEtu', id=etudiant.numeroEtu)}}">         <!-- Bouton supprimer -->
                         <input style="margin-top: 4px; margin-bottom:-3px;" class="delete" type="image" src="/static/image/delete.png">
                     </a>
                 </td> 
@@ -26,7 +26,7 @@
     </div>
     <br/>
     <div class="double newEtudiant">
-        <div style="margin-right: 1em;">                 <!-- Ajout d'un étudiant via un csv -->
+        <div style="margin-right: 1em;">                <!-- Ajout d'un étudiant via un csv -->
             <h1>Ajout d'étudiants<br/> via CSV</h1>
             <form action="/listeEtudiants" method="POST" enctype="multipart/form-data">  
                 <p>Seuls les fichiers d'extension .csv sont acceptés!</p>

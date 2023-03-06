@@ -512,6 +512,7 @@ def afficheQCM(id):
     #Affichage des questions du Qcm avec leurs réponses
     # Rq: le [0] sert à isoler la chaine de char, puisque la requête renvoie un objet 
     nomQcm = db.session.query(QCM.Nom).filter(QCM.idQCM==id).first()[0]
+    title = nomQcm
     listeIdQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==id).all() #Liste des idQuestions cochées
     checked_questions = []                          #Liste des questions du QCM (objets Question entiers)
     checked_reponses = []                           #Leurs reponses respectives (liste de listes)
@@ -524,18 +525,24 @@ def afficheQCM(id):
             checked_reponses.append([])
         else:
             checked_reponses.append(listeReponse)       #   et les réponses correspondantes à cette question
-    return render_template("affichage.html",nomQcm=nomQcm,listeQuestions=checked_questions,listeReponses=checked_reponses,len=len(checked_questions))
+    return render_template("affichage.html",title=title,nomQcm=nomQcm,listeQuestions=checked_questions,listeReponses=checked_reponses,len=len(checked_questions))
 
 @app.route("/RepondreQCM",methods =["POST","GET"])
 def RepondreQCM():
-    title='Reponder au question'
+    title='Repondez aux questions'
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     if request.method == "POST":
         flash("yes")
     else:
-        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",)
+        Enonce = []
+        # aux = db.session.query(EnvoyerQCM).first()
+        # aux2 = db.session.query(Contient).filter(Contient.idQCM == aux.idQCM).all()
+        # for key in aux2.idQ:
+        #     Enonce.append(db.session.query(Question).filter(Question.idQ == key.idQ))
+        #     for Rkey in 
+        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",test ="albaz",Enonce = Enonce)
 
 @app.route("/EnvoyerQCM",methods = ["POST","GET"])
 def wooclap():
@@ -550,6 +557,15 @@ def wooclap():
     else:
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
         return render_template("wooclap/EnvoyerQCM.html",title=title,listeQCM=listeQCM,page = "EnvoyerQCM")
+
+@app.route("/majRepondre",methods = ["POST","GET"])
+def majRepondre():
+    if 'nomU' not in session:                   #Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+    
+    Enonce = db.session.query(EnvoyerQCM).all()
+    return Enonce
 
 @app.route("/ModifierQCM",methods = ["POST","GET"])
 def modifQCM():

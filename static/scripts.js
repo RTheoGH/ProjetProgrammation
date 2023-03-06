@@ -25,8 +25,10 @@ function supprimerBouton(id) {
 
 function visualiser() {
     // 
-    let textAll = $("textarea"); /*Variable textAll qui recupere le contenu dee toutes les textarea*/
-    // console.log(textAll);
+    let textAll = $("textarea, input:text")
+    //let textAll = $("textarea"); /*Variable textAll qui recupere le contenu de toutes les textarea*/
+    //textAll.append($("input"))
+    console.log(textAll);
     let texte = "<h2>Enoncé :</h2>";
     textAll.each(function(index) { /* Pour chaque zone de texte */
         // console.log(this);
@@ -39,7 +41,6 @@ function visualiser() {
                 <div class='repCo'> " + converter.makeHtml($(this).val()) + "</div>\
                 </div>";
         }
-        // console.log(texte);
     })
     $(".visuel").html(texte); /* Remplacement du contenu HTML (jQuery) de l'élément ayant */
     MathJax.typeset(); /* la classe 'visuel' avec la valeur de texte */
@@ -63,4 +64,28 @@ function Question_QCM() {
     document.querySelector('#Quest_Num').hidden = true;
     document.querySelector('#Quest_QCM').disabled = true;
     document.querySelector('#Quest_QCM').hidden = true;
+}
+
+/* EN TRAVAUX */
+function downloadHtml() {
+    // Récupération du code HTML à enregistrer
+    var html = "<html><head><title>Mon titre</title></head><body><h1>Bienvenue !</h1></body></html>";
+
+    // Création d'un objet Blob contenant le code HTML
+    var blob = new Blob([html], {type: "text/html;charset=utf-8"});
+
+    // Création d'un objet URL pour le fichier
+    var url = URL.createObjectURL(blob);
+
+    // Création d'un élément <a> pour le téléchargement du fichier
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "monfichier.html";
+
+    // Ajout de l'élément <a> au DOM et simulation du clic pour le téléchargement
+    document.body.appendChild(a);
+    a.click();
+
+    // Nettoyage de l'objet URL
+    URL.revokeObjectURL(url);
 }
