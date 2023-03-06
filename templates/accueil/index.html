@@ -1,13 +1,14 @@
 {% extends 'partials/base.html' %}
+
 {% block main %}
 <div class="menu menuAcc">
     <h1>Bienvenue<br/>sur<br/>Infomaker !</h1>
     {% include 'partials/flash.html' %}
     {% if session['nomU'] %}                 <!-- Si un utilisateur est déjà connecté -->
-        {% if session['role']=='etudiant' %}
+        {% if session['role']=='etudiant' %} <!-- Si c'est un étudiant -->
             <p>Bonjour, {{session['nomU']}} {{session['preU']}}</p>
             <a name="modificationMDP" href="{{ url_for('modifMdp', id=numeroEtu)}}">Changer de mot de passe</a>
-        {% elif session['role']=='enseignant' %}
+        {% elif session['role']=='enseignant' %} <!-- Si c'est un enseignant -->
             <p>Bonjour, {{session['nomU']}}</p>
             <a name="modificationMDP" href="{{url_for('modifMdp',id=idU)}}">Changer de mot de passe</a>
         {% endif %}
