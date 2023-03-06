@@ -428,7 +428,7 @@ input:invalid {
     }
 }
 
-@media screen and (min-width: 1280px) {
+@media screen and (min-width: 1025px) and (max-width: 1280px) {
     .menuAcc {
         font-size: 1.3em;
     }
@@ -459,10 +459,12 @@ input:invalid {
         height: 40vh;
     }
 }
-@media screen and (min-width: 1440px) {
+
+@media screen and (min-width: 1281px) and (max-width: 1440px) {
     /* Pas nécessaire pour le moment */
 }
-@media screen and (min-width: 1680px) {
+
+@media screen and (min-width: 1441px) and (max-width: 1680px) {
     .menuAcc {
         font-size: 1.5em;
     }
