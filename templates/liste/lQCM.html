@@ -1,19 +1,53 @@
 {% extends 'partials/base.html' %}
 
 {% block main %}
-<div class="menu">
-    <h1>Liste des QCM</h1>
-    <div class="liste">
-        <table>
-            <tr class="top">
-                <td>QCM</td>
-            </tr>
-            {% for QCM in listeQCM %}
-            <tr>
-                <td class="left" id="{{QCM.idQCM}}"> <a href="{{ url_for('afficheQCM', id=QCM.idQCM)}}">{{QCM.Nom}}</a> </td> 
-            </tr>
-            {% endfor %}
-        </table>
+<div class="mid double">
+    <div class="menuLQcm">
+        <h1>Liste des QCM</h1>
+        <div class="listeQCM">
+            
+            <table>
+                <tr class="top">
+                    <td>QCM</td>
+                </tr>
+                {% for QCM in listeQCM %}
+                <tr>
+                    <td class="left" id="{{QCM.idQCM}}"> <a href="{{ url_for('afficheQCM', id=QCM.idQCM)}}">{{QCM.Nom}}</a> </td> 
+                    <td style="border:none;width:2em">
+                        <a href="">         <!-- Bouton supprimer -->
+                            <input style="margin-top: 4px; margin-bottom:-3px;" class="imgTab" type="image" src="/static/image/edit.png">
+                        </a>
+                    </td> 
+                </tr>
+                
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="menuNQcm">
+        <form action="/listeQCM" method="POST">
+            <!--ce form permet d'afficher la liste des question -->
+            <h1>Nouveau QCM</h1>
+            <p>Donnez un titre à votre QCM : <input type="text" name="nomQcm" placeholder="Titre" /></p>
+            <div class="liste">
+                <table>
+                    <tr class="top">
+                        <td>Sélectionner</td>
+                        <td>Questions</td>
+                    </tr>
+                    {%for element in ListesQuestions%}
+                    <tr>
+                        <td><input type="checkbox" name="{{element.idQ}}"></td>
+                        <td class="left" id="{{element.idQ}}">{{element.enonce}}</td>
+                        <script>                                                /* converti chaque énoncé */
+                            $('#{{element.idQ}}').html(converter.makeHtml($('#{{element.idQ}}').text()));
+                        </script>
+                    </tr>
+                    {%endfor%}
+                </table>
+            </div>
+            <p><input class="button" type="submit" value="Confirmer" /></p>
+        </form>
     </div>
 </div>
 {% endblock %}

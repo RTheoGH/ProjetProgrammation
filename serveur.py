@@ -76,7 +76,7 @@ def listeUtilisateurs():                                  #visualiser les utilis
         flash("Vous n'avez pas les droits pour accéder à cette page")  #Si vous souhaitez néanmoins accéder à la
         return redirect(url_for('index'))                              #page, créez un compte 'ADMIN' puis
     utilisateurs = db.session.query(Utilisateur).all()                 #connectez vous avec.
-    return render_template("liste/lUtilisateurs.html",lUtilisateurs=utilisateurs,title=title,page='listeUtilisateurs')
+    return render_template("liste/lUtilisateurs.html",lUtilisateurs=utilisateurs,title=title,page='ListeUtilisateurs')
 
 @app.route("/listeEtudiants",methods=['POST','GET'])
 def listeEtudiants():
@@ -122,7 +122,7 @@ def listeEtudiants():
                 return str(e)
     else:
         etudiants = db.session.query(Etudiant).filter(Etudiant.numeroEtu==Classe.idCE,Classe.idCU==session['idU']).all()
-        return render_template("liste/lEtudiants.html",lEtudiants=etudiants,title=title,page='listeEtudiants')
+        return render_template("liste/lEtudiants.html",lEtudiants=etudiants,title=title,page='ListeEtudiants')
 
 @app.route("/retirerEtu/<int:id>")                    #Route pour retirer un étudiant
 def retirerEtu(id):
@@ -289,7 +289,7 @@ def ajout():
         # except:
         #    return 'Erreur création de la question'
     else:
-        return render_template("question/ajoutQuestion.html",title=title,page="Créer")
+        return render_template("question/ajoutQuestion.html",title=title,page="Question")
 
 @app.route("/creationEtiquettes",methods=['GET','POST']) #Route pour créer une étiquette
 def creationEtiquettes():
@@ -364,7 +364,7 @@ def creerQ():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
-    return render_template('question/ajoutQuestion.html',title=title,etiquettes=etiquettes, page="Créer")
+    return render_template('question/ajoutQuestion.html',title=title,etiquettes=etiquettes, page="Question")
 
 @app.route("/plusDeReponse",methods = ['GET'])          #Route qui ajoute une réponse sur ajoutQuestion
 def plusDeReponse():
@@ -393,7 +393,7 @@ def lQuestion():
         return redirect(url_for('index'))               #Sélection des questions et étiquettes
     etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
     questions = db.session.query(Question).filter(Question.idU==session['idU']).all()
-    return render_template("liste/lQuestion.html",title=title,etiquettes=etiquettes,lquestion=questions,page="Consulter")
+    return render_template("liste/lQuestion.html",title=title,etiquettes=etiquettes,lquestion=questions,page="ListeQuestions")
 
 @app.route("/filtre",methods = ['GET','POST'])          #Route de filtrage des questions de l'utilisateur
 def filtre():
@@ -403,7 +403,7 @@ def filtre():
     if request.method == 'POST':                        #Affiche les questions avec les tags sélectionnés
         questionAffiche = db.session.query(Question).join(Associe, Associe.RidQ == Question.idQ)\
             .join(Etiquette, Etiquette.idE == Associe.RidE).filter(Etiquette.idE == tags,Etiquette.idU==session['idU']).all()
-        return render_template("liste/lQuestion.html",title=title,etiquettes=etiquettes, lquestion=questionAffiche, page="Consulter")
+        return render_template("liste/lQuestion.html",title=title,etiquettes=etiquettes, lquestion=questionAffiche, page="ListeQuestions")
 
 @app.route("/modifier/<string:id>",methods=['POST','GET']) #Route pour modifier une question de l'utilisateur
 def modifier(id):
@@ -432,7 +432,8 @@ def modifier(id):
             return 'Erreur de modification'             #Renvoi message erreur en cas d'échec de la modification
     else:
         etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
-        return render_template("question/modifQuestion.html",title=title,enonce=questionModif.enonce,idQ=questionModif.idQ,reponses=reponseModif,etiquettes=etiquettes)
+        return render_template("question/modifQuestion.html",title=title,enonce=questionModif.enonce,\
+            idQ=questionModif.idQ,reponses=reponseModif,etiquettes=etiquettes,page="ListeQuestions")
 
 @app.route("/supprimer/<string:id>")                    #Route pour supprimer une question de l'utilisateur
 def supprimer(id):
@@ -458,17 +459,19 @@ def supprimer(id):
         return 'Erreur lors de la suppression de la question'
         #Renvoi message d'erreur si échec de la suppression de la question
 
-@app.route("/QCM")                  #Route pour créer un qcm à partir des questions crée par l'utilisateur
-def qcm():
-    title='Création QCM'
-    if 'nomU' not in session:       #Sécurité connexion
-        flash("Connectez vous ou créer un compte pour accéder à cette page")
-        return redirect(url_for('index'))
-    LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()  #Récupération questions de la base de données
-    print(LQ)
-    return render_template("QCM.html",title=title,ListesQuestions=LQ,page="CréerQcm")
+# @app.route("/QCM")                  #Route pour créer un qcm à partir des questions crée par l'utilisateur
+# def qcm():
+#     title='Création QCM'
+#     if 'nomU' not in session:       #Sécurité connexion
+#         flash("Connectez vous ou créer un compte pour accéder à cette page")
+#         return redirect(url_for('index'))
+#     LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()  #Récupération questions de la base de données
+#     print(LQ)
+#     return render_template("QCM.html",title=title,ListesQuestions=LQ,page="CréerQcm")
 
-@app.route("/listeQCM",methods = ['GET','POST'])      #Route qui genere le qcm
+# Fusion de la route /QCM et /listeQCM
+
+@app.route("/listeQCM",methods = ['POST','GET'])      #Route qui genere le qcm
 def generate():
     title='Vos QCM'
     if 'nomU' not in session:                   #Sécurité connexion
@@ -502,10 +505,12 @@ def generate():
                 except :
                     return "Erreur de création du lien 'contient' entre Qcm et Question"
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
-        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM)
+        LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()
+        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM,ListesQuestions=LQ,page="ListeQCM")
     else:
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
-        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM,page="listeQCM")
+        LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()
+        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM,ListesQuestions=LQ,page="ListeQCM")
 
 @app.route("/afficheQCM/<string:id>")
 def afficheQCM(id):
@@ -525,7 +530,8 @@ def afficheQCM(id):
             checked_reponses.append([])
         else:
             checked_reponses.append(listeReponse)       #   et les réponses correspondantes à cette question
-    return render_template("affichage.html",title=title,nomQcm=nomQcm,listeQuestions=checked_questions,listeReponses=checked_reponses,len=len(checked_questions),page="generateQCM")
+    return render_template("affichage.html",title=title,nomQcm=nomQcm,listeQuestions=checked_questions,\
+        listeReponses=checked_reponses,len=len(checked_questions),page="ListeQCM")
 
 @app.route("/RepondreQCM",methods =["POST","GET"])
 def RepondreQCM():
@@ -581,9 +587,7 @@ def modificationQCM():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     idQCMmodif = request.form['QCMmodif']
-    if 'nomU' not in session:                   #Sécurité connexion
-        flash("Connectez vous ou créer un compte pour accéder à cette page")
-        return redirect(url_for('index'))
+
     QCMmodif = db.session.query(QCM).filter(QCM.idU==session['idU'],QCM.idQCM==idQCMmodif).first()
     LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()  #Récupération questions de la base de données
     questions = Question.query.join(Contient).filter(Question.idU==session['idU'],Contient.RidQCM==idQCMmodif).all()

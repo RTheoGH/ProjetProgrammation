@@ -3,11 +3,11 @@
 {% block main %}
 <div class="menu">
     <h1>Liste des questions</h1>
-    <div class="liste">
+    <div class="listeQuestions">
         <table>
             <tr class="top">
                 <td>Question</td>
-                <td>Modifier/Supprimer</td>
+                <!-- <td>Modifier/Supprimer</td> -->
             </tr>
             {% for questions in lquestion %}
             <tr>
@@ -16,9 +16,11 @@
                     $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
                     hljs.highlightAll();
                 </script>
-                <td>
-                    <p><a class="button" href="{{ url_for('modifier', id=questions.idQ)}}">Modifier</a>
-                    <a class="button" href="{{ url_for('supprimer', id=questions.idQ)}}">Supprimer</a></p>
+                <td style="border:none;width:2em">
+                    <a href="{{ url_for('modifier', id=questions.idQ)}}">
+                        <input style="margin-top: 4px; margin-bottom:-3px;" class="imgTab" type="image" src="/static/image/edit.png"></a>
+                    <a href="{{ url_for('supprimer', id=questions.idQ)}}">
+                        <input style="margin-top: 4px; margin-bottom:-3px;" class="imgTab" type="image" src="/static/image/delete.png"></a>
                 </td> 
             </tr>
             {% endfor %}

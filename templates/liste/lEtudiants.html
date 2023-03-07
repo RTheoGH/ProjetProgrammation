@@ -15,9 +15,9 @@
                 <td>{{etudiant.nomEtu}}</td>
                 <td>{{etudiant.prenomEtu}}</td>
                 <td>{{etudiant.numeroEtu}}</td>
-                <td>
+                <td style="border:none;width:2em">
                     <a href="{{ url_for('retirerEtu', id=etudiant.numeroEtu)}}">         <!-- Bouton supprimer -->
-                        <input style="margin-top: 4px; margin-bottom:-3px;" class="delete" type="image" src="/static/image/delete.png">
+                        <input style="margin-top: 4px; margin-bottom:-3px;" class="imgTab" type="image" src="/static/image/delete.png">
                     </a>
                 </td> 
             </tr>

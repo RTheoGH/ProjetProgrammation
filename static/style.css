@@ -63,6 +63,55 @@ h1 {
     overflow-y: scroll;
 }
 
+.listeQuestions{
+    height: 40vh;
+    border: 2px solid black;
+    overflow-y: scroll;
+}
+
+.menuLQcm{
+    border: 0.5em solid black;
+    border-radius: 10px;
+    padding: 2em;
+    width: 25em;
+    height:auto;
+    background-color: whitesmoke;
+    text-align: center;
+    margin-right: 5em;
+}
+
+.menuNQcm {
+    border: 0.5em solid black;
+    border-radius: 10px;
+    padding: 2em;
+    width: 45em;
+    height:60vh;
+    background-color: whitesmoke;
+    text-align: center;
+    margin-left: 5em;
+}
+
+.menuNQcm .liste{
+    font-size: 0.8em;
+    height: 30vh;
+}
+
+.listeQCM{
+    height: 40vh;
+    width: 25em;
+    border: 2px solid black;
+    overflow-y: scroll;
+}
+
+.listeQCM table{
+    width: 23.5em;
+    text-align: center;
+}
+
+.listeQCM table td{
+    text-align: center;
+}
+
 /* Classe de la création d'étudiants */
 .newEtudiant {
     border: 2px solid black;
@@ -100,7 +149,7 @@ h1 {
     border-radius: 10px;
     padding: 2em;
     width: 25em;
-    height: 30vw;
+    /* height: 30vh; */
     background-color: whitesmoke;
     text-align: center;
     margin-right: 5em;
@@ -202,7 +251,7 @@ footer {
 }
 
 /* taille de l'icone pour supprimer une réponse */
-.delete {
+.imgTab {
     width: 1.5vw;
     height: 1.5vw;
 }
@@ -295,7 +344,7 @@ footer {
 
 /* Affichage du qcm crée */
 .affQCM {
-    height: 60vh;
+    height: 50vh;
     width: 40vw;
     background-color: wheat;
     overflow-y: scroll;
