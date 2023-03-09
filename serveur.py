@@ -572,5 +572,9 @@ def modifierQCM(id):
         questions=Question.query.join(Contient).filter(Question.idU==session['idU'],Contient.RidQCM==id).all()
         return render_template("qcm/modifQCM.html",title=title,page="ListeQCM",QCMmodif=qcm_modif,ListesQuestions=LQ,questions=questions)
 
+@app.route("/stats", methods=['GET'])
+def stats():
+    return render_template("statistiques.html")
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

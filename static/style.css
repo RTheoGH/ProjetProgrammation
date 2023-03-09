@@ -424,6 +424,12 @@ fieldset {
     margin-left: 5em;
 }
 
+.stats p{
+    text-align: center;
+    font-size: large;
+    font-style: italic;
+}
+
 /* test
 
 label {
