@@ -13,12 +13,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fich
 db.init_app(app)
 
 # with app.app_context(): 
-#     idq = QCM.query.first()
-#     print("idq = " , idq.idU)
-#     envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
-#     print("envoyerTest = ",envoyerTest)
-#     db.session.add(envoyerTest)
-#     db.session.commit()
+    # idq = QCM.query.first()
+    # print("idq = " , idq.idU)
+    # envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
+    # print("envoyerTest = ",envoyerTest)
+    # db.session.add(envoyerTest)
+    # db.session.commit()
     # db.drop_all()
     # db.create_all()
 # si le "with" n'est pas commenté:
@@ -528,8 +528,9 @@ def RepondreQCM():
         ListeReponseQcm = []
         for key in ListeQuestionsQcm:
             add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
-            ListeReponseQcm.append(add)   
-        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm)
+            ListeReponseQcm.append(add)
+        lena = len(ListeQuestionsQcm)  
+        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm)
 
 @app.route("/EnvoyerEnonce",methods = ["POST","GET"])
 def caster():
