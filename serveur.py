@@ -540,19 +540,22 @@ def caster():
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    # if request.method == "POST":
-    #     if 'question' in request.form:
-    #         typeElement = "question"
-    #     else:
-    #         typeElement = "sequence"
-    #     idElementCaste = request.form['radio']
-    #     print(typeElement,idElementCaste)
-    #     return redirect(url_for('casterEnonce'))
+    if request.method == "POST":
+        idElementCaste = request.form['radio']
+        if 'question' in request.form:
+            questions = db.session.query(Question).filter(Question.idQ==idElementCaste).all()
+        else:
+            questions=[]
+            liQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==idElementCaste).all()
+            for quest in liQuestions:                
+                idQ = db.session.query(Question).filter(Question.idQ==quest[0]).all()
+                questions.append(idQ[0])
+        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions)
 
     else:
-        listeQuestions = db.session.query(Question).filter(QCM.idU==session['idU']).all()
+        listeQuestions = db.session.query(Question).filter(Question.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
-        return render_template("wooclap/EnvoyerQCM.html",title=title,listeQCM=listeQCM,page = "EnvoyerQCM")
+        return render_template("wooclap/EnvoyerEnonce.html",title=title,listeQCM=listeQCM,listeQuestions=listeQuestions,page = "EnvoyerEnonce")
 
 @app.route("/majRepondre",methods = ["POST","GET"])
 def majRepondre():
