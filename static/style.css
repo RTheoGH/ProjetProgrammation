@@ -92,8 +92,12 @@ h1 {
 }
 
 .menuNQcm .liste{
-    font-size: 0.8em;
+    font-size: 1em;
     height: 30vh;
+}
+
+.menuNQcm .liste table{
+    width: 44em;
 }
 
 .listeQCM{
@@ -143,13 +147,34 @@ h1 {
     display: flex;
 }
 
+.caster{
+    border: 0.5em solid black;
+    border-radius: 10px;
+    padding: 2em;
+    width: 25vw;
+    height: 60vh;
+    background-color: whitesmoke;
+    text-align: center;
+    margin-right: 5em;
+}
+
+.listeCaster{
+    border: 1px solid black;
+    width: 25vw;
+    height: 45vh;
+    overflow-y: scroll;
+}
+.listeCaster table{
+    width: 25vw;
+}
+
 /* Classe pour créer les questions dans ajoutQuestion (gauche) */
 .code {
     border: 0.5em solid black;
     border-radius: 10px;
     padding: 2em;
     width: 25em;
-    /* height: 30vh; */
+    height: 60vh;
     background-color: whitesmoke;
     text-align: center;
     margin-right: 5em;
@@ -542,6 +567,7 @@ input:invalid {
     }
     .gereEtiquette {
         width: 20vw;
+        font-size: 1em;
     }
 }
 
@@ -592,7 +618,18 @@ input:invalid {
         flex-direction: column;
         width: 75vw;
     }
-    .liste .delete{
+    .liste .imgTab{
+        width: 5vw;
+        height: 5vw;
+    }
+    .listeQuestions{
+        font-size: 0.8em;
+        width: 80vw;
+    }
+    .listeQuestions table{
+        width: 80vw;
+    }
+    .listeQuestions .imgTab{
         width: 5vw;
         height: 5vw;
     }
@@ -654,6 +691,62 @@ input:invalid {
         height:50vh;
         width:70vw;
         font-size:0.8em;
+    }
+    .menuLQcm{
+        margin:0;
+        height:50vh;
+        width:70vw;
+        font-size: 0.75em;
+    }
+    .menuLQcm .listeQCM{
+        height: 40vh;
+        width: 70vw;
+        border: 2px solid black;
+        overflow-y: scroll;
+    }
+    .menuLQcm .listeQCM table{
+        width: 70vw;
+    }
+    .menuLQcm .listeQCM .imgTab{
+        width: 5vw;
+        height: 5vw;
+    }
+    .menuNQcm{
+        margin:0;
+        height:55vh;
+        width:70vw;
+        font-size: 0.75em;
+    }
+    .menuNQcm .liste{
+        width:70vw
+    }
+    .menuNQcm .liste table{
+        width: 65vw;
+        font-size: 0.75em;
+    }
+    .menuNQcm .liste tr{
+        display:table;
+        /* flex-direction:initial; */
+        width: 65vw;
+    }
+    .caster{
+        border: 0.5em solid black;
+        border-radius: 10px;
+        padding: 2em;
+        width: 65vw;
+        height: 60vh;
+        background-color: whitesmoke;
+        text-align: center;
+        margin-right: 5em;
+    }
+    .listeCaster{
+        border: 1px solid black;
+        width: 65vw;
+        height: 30vh;
+        overflow-y: scroll;
+    }
+    .listeCaster table{
+        width: 65vw;
     }
 }
 /* ------------------------------------------------------------------------ */

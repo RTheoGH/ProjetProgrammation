@@ -533,7 +533,7 @@ def RepondreQCM():
         print(Enonce)
         return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",test ="albaz",Enonce = Enonce,ListeQuestionsQcm = ListeQuestionsQcm)
 
-@app.route("/EnvoyerEnonce",methods = ["POST","GET"])
+@app.route("/envoyerEnonce",methods = ["POST","GET"])
 def caster():
     title='Envoyer un énoncé'
     if 'nomU' not in session:                   #Sécurité connexion
@@ -554,7 +554,7 @@ def caster():
     else:
         listeQuestions = db.session.query(Question).filter(Question.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
-        return render_template("wooclap/EnvoyerEnonce.html",title=title,listeQCM=listeQCM,listeQuestions=listeQuestions,page = "EnvoyerEnonce")
+        return render_template("wooclap/envoyerEnonce.html",title=title,listeQCM=listeQCM,listeQuestions=listeQuestions,page = "EnvoyerEnonce")
 
 @app.route("/majRepondre",methods = ["POST","GET"])
 def majRepondre():
