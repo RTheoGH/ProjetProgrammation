@@ -8,7 +8,12 @@
         
     </script>
     <div class ="Reponse_etudiant">
-        <p class ="Reponse_etudiant">{{Enonce[0].enonce}}</p>
+        {%for i in range(lena)%}
+        <p class ="Reponse_etudiant">{{ListeQuestionsQcm[i].idQ}}</p>
+        {%for key in ListeReponseQcm[i] %}
+        <p>{{key.reponse}}</p>
+        {%endfor%}
+        {%endfor%}
     </div>
     </div>
 
