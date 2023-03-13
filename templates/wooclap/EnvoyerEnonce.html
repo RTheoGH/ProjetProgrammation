@@ -1,0 +1,52 @@
+{% extends 'partials/base.html' %} {% block main %}
+
+<div class="mid double">
+    <div class="code">
+        <form action="/EnvoyerEnonce" method="POST">
+            <div>
+                <h3>Caster Une Question</h3>
+                <table>
+                    <tr class="top">
+                        <td>Sélectionner</td>
+                        <td>Questions</td>
+                    </tr>
+                    {% for question in listeQuestions %}
+                    <tr>
+                        <td><input type="radio" value="{{question.idQ}}" name="radio"></td>
+                        <td class="left" id="{{question.idQ}}">{{question.enonce}}</td>
+                        <script>                                                /* converti chaque énoncé */
+                            $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
+                        </script>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <p><input class="button" type="submit" value="Caster une question" name="question" /></p>
+        </form>
+    </div>
+    <div class="code">
+        <form action="/EnvoyerEnonce" method="POST">
+            <div>   
+                <h3>Caster Une Séquence</h3>         
+                <table>
+                    <tr class="top">
+                        <td>Sélectionner</td>
+                        <td>QCM</td>
+                    </tr>
+                    {% for qcm in listeQCM %}
+                    <tr>
+                        <td><input type="radio" value="{{qcm.idQCM}}" name="radio"></td>
+                        <td class="left" id="{{qcm.idQCM}}">{{qcm.Nom}}</td>
+                        <script>                                                /* converti chaque énoncé */
+                            $('#{{qcm.idQCM}}').html(converter.makeHtml($('#{{qcm.idQCM}}').text()));
+                        </script>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <p><input class="button" type="submit" value="Caster une séquence" name="sequence"/></p>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -454,8 +454,8 @@ def supprimer(id):
         return 'Erreur lors de la suppression de la question'
         #Renvoi message d'erreur si échec de la suppression de la question
 
-@app.route("/listeQCM",methods = ['POST','GET'])      #Route qui genere le qcm
-def generate():
+@app.route("/listeQCM",methods = ['GET','POST'])      #Route qui genere le qcm
+def listeQCM():
     title='Vos QCM'
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
@@ -516,25 +516,32 @@ def RepondreQCM():
     if request.method == "POST":
         flash("yes")
     else:
-        Enonce = []
+        ListeQuestionsQcm = db.session.query(Contient.RidQ).all()
+        Enonce
         # aux = db.session.query(EnvoyerQCM).first()
         # aux2 = db.session.query(Contient).filter(Contient.idQCM == aux.idQCM).all()
         # for key in aux2.idQ:
         #     Enonce.append(db.session.query(Question).filter(Question.idQ == key.idQ))
         #     for Rkey in 
-        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",test ="albaz",Enonce = Enonce)
+        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",test ="albaz",Enonce = Enonce,ListeQuestionsQcm = ListeQuestionsQcm)
 
-@app.route("/EnvoyerQCM",methods = ["POST","GET"])
-def wooclap():
-    title='EnvoyerQCM'
+@app.route("/EnvoyerEnonce",methods = ["POST","GET"])
+def caster():
+    title='Envoyer un énoncé'
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    if request.method == "POST":
-        pass
-
+    # if request.method == "POST":
+    #     if 'question' in request.form:
+    #         typeElement = "question"
+    #     else:
+    #         typeElement = "sequence"
+    #     idElementCaste = request.form['radio']
+    #     print(typeElement,idElementCaste)
+    #     return redirect(url_for('casterEnonce'))
 
     else:
+        listeQuestions = db.session.query(Question).filter(QCM.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
         return render_template("wooclap/EnvoyerQCM.html",title=title,listeQCM=listeQCM,page = "EnvoyerQCM")
 
