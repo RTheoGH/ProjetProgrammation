@@ -3,14 +3,12 @@
 
 <div class="menu">
     <script>
-        function test(){
-            $.ajax({type : "GET",url : "/majRepondre"}).done(function(data){if(data!="{{Enonce}}"){}console.log("aa")})
-        }
-        setInterval(test,500)
+        
+        
         
     </script>
     <div class ="Reponse_etudiant">
-        <p class ="Reponse_etudiant">{{Enonce}}</p>
+        <p class ="Reponse_etudiant">{{Enonce.enonce}}</p>
     </div>
     </div>
 

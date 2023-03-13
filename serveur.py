@@ -12,7 +12,11 @@ from bdd import *                                             #Importation de la
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fichier de la base de donnée
 db.init_app(app)
 
-# with app.app_context():
+# with app.app_context(): 
+    # idq = db.session.query(QCM.idQCM).first()
+    # envoyerTest = EnvoyerQCM(idQCM = idq,idU = "54545")
+    # db.session.add(envoyerTest)
+    # db.session.commit
 #     db.drop_all()
 #     db.create_all()
 # si le "with" n'est pas commenté:
@@ -454,18 +458,8 @@ def supprimer(id):
         return 'Erreur lors de la suppression de la question'
         #Renvoi message d'erreur si échec de la suppression de la question
 
-@app.route("/listeQCM",methods = ['POST','GET'])           #Route pour créer un qcm à partir des questions crée par l'utilisateur
-def qcm():
-    title='Création QCM'
-    if 'nomU' not in session:       #Sécurité connexion
-        flash("Connectez vous ou créer un compte pour accéder à cette page")
-        return redirect(url_for('index'))
-    LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()  #Récupération questions de la base de données
-    print(LQ)
-    return render_template("QCM.html",title=title,ListesQuestions=LQ,page="CréerQcm")
-
-@app.route("/generateQCM",methods = ['GET','POST'])      #Route qui genere le qcm
-def generate():
+@app.route("/listeQCM",methods = ['GET','POST'])      #Route qui genere le qcm
+def listeQCM():
     title='Vos QCM'
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
@@ -526,13 +520,18 @@ def RepondreQCM():
     if request.method == "POST":
         flash("yes")
     else:
+        ListeQuestionsQcm = db.session.query(Contient.RidQ).all()
         Enonce = []
+        for key in ListeQuestionsQcm:
+            add = db.session.query(Question).filter(Question.idQ == key.RidQ).all()
+            Enonce.append(add)
         # aux = db.session.query(EnvoyerQCM).first()
         # aux2 = db.session.query(Contient).filter(Contient.idQCM == aux.idQCM).all()
         # for key in aux2.idQ:
         #     Enonce.append(db.session.query(Question).filter(Question.idQ == key.idQ))
         #     for Rkey in 
-        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",test ="albaz",Enonce = Enonce)
+        print(Enonce)
+        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",test ="albaz",Enonce = Enonce,ListeQuestionsQcm = ListeQuestionsQcm)
 
 @app.route("/EnvoyerEnonce",methods = ["POST","GET"])
 def caster():
@@ -563,8 +562,8 @@ def majRepondre():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     
-    Enonce = db.session.query(EnvoyerQCM).all()
-    return Enonce
+    # Enonce = db.session.query(EnvoyerQCM).all()
+    # return Enonce
 
 @app.route("/modifierQCM/<string:id>", methods=['POST', 'GET'])
 def modifierQCM(id):
@@ -585,11 +584,24 @@ def modifierQCM(id):
             db.session.commit()
         except:
             return 'Erreur dans la modification du QCM'
+
         return redirect("http://127.0.0.1:5000/listeQCM")
     else:
         LQ = db.session.query(Question).filter(Question.idU == session['idU']).all()
         questions=Question.query.join(Contient).filter(Question.idU==session['idU'],Contient.RidQCM==id).all()
         return render_template("qcm/modifQCM.html",title=title,page="ListeQCM",QCMmodif=qcm_modif,ListesQuestions=LQ,questions=questions)
+
+@app.route("/supprimerQCM/<string:id>")
+def supprimerQCM(id):
+    title='supprimer QCM'
+    qcm_modif=QCM.query.get_or_404(id)
+    try :
+        Contient.query.filter_by(RidQCM=qcm_modif.idQCM).delete()
+        QCM.query.filter(QCM.idU==session['idU'], QCM.idQCM==qcm_modif.idQCM).delete()
+        db.session.commit()
+    except :
+        return "Erreur dans la suppréssion du QCM"
+    return redirect("http://127.0.0.1:5000/listeQCM")
 
 @app.route("/stats", methods=['GET'])
 def stats():
