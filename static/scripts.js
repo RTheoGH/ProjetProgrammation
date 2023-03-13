@@ -1,3 +1,5 @@
+const uwu = 3;
+
 function demandePlusReponse() {
     fetch('/plusDeReponse') /* Utilisation de l'API Fetch pour */
         .then(response => response.text()) /*envoyer une requête GET à /plusDeReponse */
