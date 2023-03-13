@@ -1,0 +1,13 @@
+{% extends 'partials/base.html' %}
+{% block main %}
+<div class="menu">
+    <h3>Code : {{idElement}}</h3>
+    <hr/>
+    {% for question in listeQuestions%}
+    <div class="affQuestion" id="{{question.idQ}}">{{question.enonce}}</div>
+    <script>                                            /* Conversion de l'énoncé avec showdown */
+        $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
+    </script>
+    {% endfor %}
+</div>
+{% endblock %}
