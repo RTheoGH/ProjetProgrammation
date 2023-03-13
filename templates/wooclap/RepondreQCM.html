@@ -8,7 +8,10 @@
         
     </script>
     <div class ="Reponse_etudiant">
-        <p class ="Reponse_etudiant">{{Enonce[0].enonce}}</p>
+        <p class ="Reponse_etudiant">{{ListeQuestionsQcm[0].idQ}}</p>
+        {%for key in ListeReponseQcm[1] %}
+        <p>{{key.reponse}}</p>
+        {%endfor%}
     </div>
     </div>
 

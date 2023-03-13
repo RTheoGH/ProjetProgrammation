@@ -13,12 +13,14 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fich
 db.init_app(app)
 
 # with app.app_context(): 
-    # idq = db.session.query(QCM.idQCM).first()
-    # envoyerTest = EnvoyerQCM(idQCM = idq,idU = "54545")
-    # db.session.add(envoyerTest)
-    # db.session.commit
-#     db.drop_all()
-#     db.create_all()
+#     idq = QCM.query.first()
+#     print("idq = " , idq.idU)
+#     envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
+#     print("envoyerTest = ",envoyerTest)
+#     db.session.add(envoyerTest)
+#     db.session.commit()
+    # db.drop_all()
+    # db.create_all()
 # si le "with" n'est pas commenté:
 #       si vous rechargez le serveur sans vous deconnecter, une erreur arrive au niveau de l'accueil,
 #          utilisez la route /deconnexion pour corriger le probleme
@@ -520,18 +522,14 @@ def RepondreQCM():
     if request.method == "POST":
         flash("yes")
     else:
-        ListeQuestionsQcm = db.session.query(Contient.RidQ).all()
-        Enonce = []
+        idq = EnvoyerQCM.query.first()
+        print("idq = ", idq.idQCM)
+        ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
+        ListeReponseQcm = []
         for key in ListeQuestionsQcm:
-            add = db.session.query(Question).filter(Question.idQ == key.RidQ).all()
-            Enonce.append(add)
-        # aux = db.session.query(EnvoyerQCM).first()
-        # aux2 = db.session.query(Contient).filter(Contient.idQCM == aux.idQCM).all()
-        # for key in aux2.idQ:
-        #     Enonce.append(db.session.query(Question).filter(Question.idQ == key.idQ))
-        #     for Rkey in 
-        print(Enonce)
-        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",test ="albaz",Enonce = Enonce,ListeQuestionsQcm = ListeQuestionsQcm)
+            add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
+            ListeReponseQcm.append(add)   
+        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm)
 
 @app.route("/EnvoyerEnonce",methods = ["POST","GET"])
 def caster():
