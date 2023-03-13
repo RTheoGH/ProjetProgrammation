@@ -293,7 +293,7 @@ def ajout():
         # except:
         #    return 'Erreur création de la question'
     else:
-        return render_template("question/ajoutQuestion.html",title=title,page="Question")
+        return render_template("question/ajoutQuestion.html",title=title,page="Créer")
 
 @app.route("/creationEtiquettes",methods=['GET','POST']) #Route pour créer une étiquette
 def creationEtiquettes():
@@ -368,7 +368,7 @@ def creerQ():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
-    return render_template('question/ajoutQuestion.html',title=title,etiquettes=etiquettes, page="Question")
+    return render_template('question/ajoutQuestion.html',title=title,etiquettes=etiquettes, page="Créer")
 
 @app.route("/plusDeReponse",methods = ['GET'])          #Route qui ajoute une réponse sur ajoutQuestion
 def plusDeReponse():
