@@ -516,13 +516,14 @@ def RepondreQCM():
     if request.method == "POST":
         flash("yes")
     else:
-        Enonce = []
+        ListeQuestionsQcm = db.session.query(Contient.RidQ).all()
+        Enonce
         # aux = db.session.query(EnvoyerQCM).first()
         # aux2 = db.session.query(Contient).filter(Contient.idQCM == aux.idQCM).all()
         # for key in aux2.idQ:
         #     Enonce.append(db.session.query(Question).filter(Question.idQ == key.idQ))
         #     for Rkey in 
-        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",test ="albaz",Enonce = Enonce)
+        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",test ="albaz",Enonce = Enonce,ListeQuestionsQcm = ListeQuestionsQcm)
 
 @app.route("/EnvoyerQCM",methods = ["POST","GET"])
 def wooclap():
