@@ -572,6 +572,18 @@ def modifierQCM(id):
         questions=Question.query.join(Contient).filter(Question.idU==session['idU'],Contient.RidQCM==id).all()
         return render_template("qcm/modifQCM.html",title=title,page="ListeQCM",QCMmodif=qcm_modif,ListesQuestions=LQ,questions=questions)
 
+@app.route("/supprimerQCM/<string:id>")
+def supprimerQCM(id):
+    title='supprimer QCM'
+    qcm_modif=QCM.query.get_or_404(id)
+    try :
+        Contient.query.filter_by(RidQCM=qcm_modif.idQCM).delete()
+        QCM.query.filter(QCM.idU==session['idU'], QCM.idQCM==qcm_modif.idQCM).delete()
+        db.session.commit()
+    except :
+        return "Erreur dans la suppréssion du QCM"
+    return redirect("http://127.0.0.1:5000/listeQCM")
+
 @app.route("/stats", methods=['GET'])
 def stats():
     return render_template("statistiques.html")

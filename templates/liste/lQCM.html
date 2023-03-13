@@ -14,8 +14,11 @@
                 <tr>
                     <td class="left" id="{{QCM.idQCM}}"> <a href="{{ url_for('afficheQCM', id=QCM.idQCM)}}">{{QCM.Nom}}</a> </td> 
                     <td style="border:none;width:2em">
-                        <a href="{{url_for('modifierQCM', id=QCM.idQCM)}}">         <!-- Bouton supprimer -->
+                        <a href="{{url_for('modifierQCM', id=QCM.idQCM)}}">
                             <input style="margin-top: 4px; margin-bottom:-3px;" class="imgTab" type="image" src="/static/image/edit.png">
+                        </a>
+                        <a href="{{url_for('supprimerQCM', id=QCM.idQCM)}}">
+                            <input style="margin-top: 4px; margin-bottom:-3px;" class="imgTab" type="image" src="/static/image/delete.png">
                         </a>
                     </td> 
                 </tr>
