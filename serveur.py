@@ -13,12 +13,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fich
 db.init_app(app)
 
 # with app.app_context(): 
-    # idq = QCM.query.first()
-    # print("idq = " , idq.idU)
-    # envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
-    # print("envoyerTest = ",envoyerTest)
-    # db.session.add(envoyerTest)
-    # db.session.commit()
+#     idq = QCM.query.first()
+#     print("idq = " , idq)
+#     envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
+#     print("envoyerTest = ",envoyerTest)
+#     db.session.add(envoyerTest)
+#     db.session.commit()
     # db.drop_all()
     # db.create_all()
 # si le "with" n'est pas commenté:

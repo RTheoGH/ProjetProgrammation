@@ -2,20 +2,21 @@
 
 
 <div class="menu">
-    <script>
-        
-        
-        
-    </script>
-    <div class ="Reponse_etudiant">
-        {%for i in range(lena)%}
-        <p class ="Reponse_etudiant">{{ListeQuestionsQcm[i].idQ}}</p>
-        {%for key in ListeReponseQcm[i] %}
-        <p>{{key.reponse}}</p>
-        {%endfor%}
-        {%endfor%}
-    </div>
-    </div>
+
+    <form action="POST">
+        <div class="Reponse_etudiant">
+            {%for i in range(lena)%}
+            <p class="Reponse_etudiant" id="{{ListeQuestionsQcm[i].idQ}}" name="question">{{ListeQuestionsQcm[i].enonce}}</p>
+            {%for key in ListeReponseQcm[i] %} {%if key.estNumerique%}
+            <p id="{{key.idR}}" name="reponse_num"><input type="text" pattern="\d*([.]\d{0,2})?"></p>
+            {%else%}
+            <p id="{{key.idR}}" name="reponse_choix"><input type="checkbox" /> {{key.reponse}}</p>
+            {%endif%} {%endfor%} {%endfor%}
+        </div>
+        <Button>Envoyer</Button>
+</div>
+
+</form>
 
 
-    {% endblock %}
+{% endblock %}

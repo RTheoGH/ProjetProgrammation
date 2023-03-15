@@ -1,6 +1,4 @@
-{% extends 'partials/base.html' %}
-
-{% block main %}
+{% extends 'partials/base.html' %} {% block main %}
 <div class="mid double">
     <div class="code">
         <!-- Partie écriture -->
@@ -39,12 +37,8 @@
             <p><button type="button" id="Quest_Num" onclick="Question_Numerique()">Passer en question numérique</button></p>
             <p><button type="button" id="Quest_QCM" onclick="Question_QCM()">Passer en question à choix multiple</button></p>
             <p><button type="button" id="demandereponse" onclick="demandePlusReponse()">Ajouter une réponse</button></p>
-            <!-- <p><input type="number" id="rep_num" name="rep_num"></p> -->
-            <!-- <label for="rep_num" class="label_rep_num"></label> -->
             <p id="rep_num">
                 <p><input type="text" pattern="\d*([.]\d{0,2})?" id="Rep_num" name="Rep_num" onkeyup="visualiser()"></p>
-                <!-- <input type="text" id="rep_num1" name="rep_num1" pattern="[0-9]*"><b>.</b>
-                <input type="text" id="rep_num2" name="rep_num2" pattern="\d{0,2}" value="00"> -->
             </p>
             <p><input class="button" type="submit" value="Ajouter la question" /></p>
         </form>
