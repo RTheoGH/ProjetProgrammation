@@ -3,7 +3,7 @@
 
 <div class="menu">
 
-    <form action="POST">
+    <form action="/RepondreQCM" method="POST">
         <div class="Reponse_etudiant">
             {%for i in range(lena)%}
             <p class="Reponse_etudiant" id="{{ListeQuestionsQcm[i].idQ}}" name="question">{{ListeQuestionsQcm[i].enonce}}</p>

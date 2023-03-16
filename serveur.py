@@ -13,12 +13,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fich
 db.init_app(app)
 
 # with app.app_context(): 
-#     idq = QCM.query.first()
-#     print("idq = " , idq)
-#     envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
-#     print("envoyerTest = ",envoyerTest)
-#     db.session.add(envoyerTest)
-#     db.session.commit()
+    # idq = QCM.query.first()
+    # print("idq = " , idq)
+    # envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
+    # print("envoyerTest = ",envoyerTest)
+    # db.session.add(envoyerTest)
+    # db.session.commit()
     # db.drop_all()
     # db.create_all()
 # si le "with" n'est pas commenté:
@@ -519,11 +519,13 @@ def RepondreQCM():
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
+    print("capybara")
     if request.method == "POST":
-        flash("yes")
+        reponse = request.form["reponse_choix"]
+        print("tu a activer ma carte piege yugi = ",reponse)
     else:
         idq = EnvoyerQCM.query.first()
-        print("idq = ", idq.idQCM)
+        # print("idq = ", idq.idQCM)
         ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
         ListeReponseQcm = []
         for key in ListeQuestionsQcm:
