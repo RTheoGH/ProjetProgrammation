@@ -165,7 +165,7 @@ h1 {
     overflow-y: scroll;
 }
 .listeCaster table{
-    width: 25vw;
+    width: 24vw;
 }
 
 /* Classe pour créer les questions dans ajoutQuestion (gauche) */
@@ -506,6 +506,17 @@ input:invalid {
         font-size: 0.6em;
         height: 30vh;
     }
+    .listeCaster{
+        height: 30vh;
+    }
+    .menuLQcm{
+        font-size: 0.7em;
+        margin-right: 2em;
+    }
+    .menuNQcm{
+        font-size: 0.7em;
+        margin-left: 2em;
+    }
 }
 
 @media screen and (min-width: 1025px) and (max-width: 1280px) {
@@ -541,6 +552,14 @@ input:invalid {
         font-size: 0.9em;
         height: 40vh;
     }
+    .menuLQcm{
+        font-size: 0.8em;
+        margin-right: 2em;
+    }
+    .menuNQcm{
+        font-size: 0.8em;
+        margin-left: 2em;
+    }
 }
 
 @media screen and (min-width: 1281px){
@@ -561,13 +580,19 @@ input:invalid {
     }
 }
 
-@media screen and (min-width: 1441px){
+@media screen and (min-width: 1440px){
     .menuAcc {
         font-size: 1.5em;
     }
     .gereEtiquette {
         width: 20vw;
         font-size: 1em;
+    }
+    .menuLQcm{
+        margin-right: 2em;
+    }
+    .menuNQcm{
+        margin-left: 2em;
     }
 }
 
