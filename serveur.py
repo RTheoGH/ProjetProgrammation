@@ -489,7 +489,7 @@ def listeQCM():
                     db.session.commit()
                 except :
                     return "Erreur de création du lien 'contient' entre Qcm et Question"
-        return redirect("http://127.0.0.1:5000/listeQCM")
+        return redirect("/listeQCM")
     else:
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
         LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()
@@ -514,12 +514,13 @@ def afficheQCM(id):                          #Rq: le [0] sert à isoler la chain
     return render_template("qcm/affichage.html",title=title,nomQcm=nomQcm,listeQuestions=checked_questions,\
         listeReponses=checked_reponses,len=len(checked_questions),page="ListeQCM")
 
-@app.route("/RepondreQCM/<int:i>",methods =["POST","GET"])
-def RepondreQCM(i):
+@app.route("/repondreQCM/<int:i>",methods =["POST","GET"])
+def repondreQCM(i):
     title='Repondez aux questions'
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
+    
     if request.method == "POST":
         reponse = request.form.getlist('reponse_choix')
         reponseN = request.form.getlist("reponse_num")
@@ -540,11 +541,11 @@ def RepondreQCM(i):
         idQbdd = idq.idQCM
         if i == lena:
             return redirect(url_for("index")) 
-        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i)
+        return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i)
     else:
         idq = EnvoyerQCM.query.first()
         if idq == None:
-            return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=0,ListeReponseQcm = [],ListeQuestionsQcm = [],i= 0)
+            return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=0,ListeReponseQcm = [],ListeQuestionsQcm = [],i= 0)
         i= 0
         idq = EnvoyerQCM.query.first()
         ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
@@ -553,7 +554,7 @@ def RepondreQCM(i):
             add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
             ListeReponseQcm.append(add)
         lena = len(ListeQuestionsQcm)  
-        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i)
+        return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i)
 
 @app.route("/envoyerEnonce",methods = ["POST","GET"])
 def caster():
@@ -597,9 +598,9 @@ def modifierQCM(id):
         questions=request.form.getlist("questions")
 
         try:
-            qcm_modif.Nom=nom_qcm                                   #Nouveau nom
+            qcm_modif.Nom=nom_qcm                                     #Nouveau nom
             Contient.query.filter_by(RidQCM=qcm_modif.idQCM).delete() #Suppression des anciennes relations
-            for key,value in request.form.items():                   #Nouvelles relations
+            for key,value in request.form.items():                    #Nouvelles relations
                 if value=='on':
                     new_contient=Contient(RidQCM=qcm_modif.idQCM,RidQ=key)
                     db.session.add(new_contient)
@@ -607,7 +608,7 @@ def modifierQCM(id):
         except:
             return 'Erreur dans la modification du QCM'
 
-        return redirect("http://127.0.0.1:5000/listeQCM")
+        return redirect("/listeQCM")
     else:
         LQ = db.session.query(Question).filter(Question.idU == session['idU']).all()
         questions=Question.query.join(Contient).filter(Question.idU==session['idU'],Contient.RidQCM==id).all()
@@ -623,7 +624,7 @@ def supprimerQCM(id):
         db.session.commit()
     except :
         return "Erreur dans la suppréssion du QCM"
-    return redirect("http://127.0.0.1:5000/listeQCM")
+    return redirect("/listeQCM")
 
 @app.route("/stats", methods=['GET'])
 def stats():

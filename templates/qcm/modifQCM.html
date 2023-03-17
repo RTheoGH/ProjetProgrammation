@@ -3,9 +3,7 @@
 {% block main %}
 <div class="menu">
     <form action="{{ url_for('modifierQCM', id=QCMmodif.idQCM)}}" method="POST">
-        <!-- <input type="hidden" name="QCMmodif" value="{{QCMmodif.idQCM}}">     -->
-        <!--ce form permet d'afficher la liste des question -->
-        <h1>Modifier votre qcm</h1>
+        <h1>Modifier votre qcm</h1>        <!-- Ce formulaire permet d'afficher la liste des question -->
         <p>Nouveau titre pour votre QCM : <input type="text" name="nomQcm" placeholder="Titre" value="{{QCMmodif.Nom}}"/></p>
         <div class="liste">
             <table>
