@@ -6,11 +6,11 @@
     <form action="/RepondreQCM" method="POST">
         <div class="Reponse_etudiant">
             {%for i in range(lena)%}
-            <p class="Reponse_etudiant" id="{{ListeQuestionsQcm[i].idQ}}" name="question">{{ListeQuestionsQcm[i].enonce}}</p>
-            {%for key in ListeReponseQcm[i] %} {%if key.estNumerique%}
-            <p id="{{key.idR}}" name="reponse_num"><input type="text" pattern="\d*([.]\d{0,2})?"></p>
+            <p class="Reponse_etudiant" id="{{ListeQuestionsQcm[i].idQ}}">{{ListeQuestionsQcm[i].enonce}}</p>
+            <input type="hidden" value={{ListeQuestionsQcm[i].enonce}} name="question"> {%for key in ListeReponseQcm[i] %} {%if key.estNumerique%}
+            <p><input type="text" pattern="\d*([.]\d{0,2})?" id="{{key.idR}}" name="reponse_num"></p>
             {%else%}
-            <p id="{{key.idR}}" name="reponse_choix"><input type="checkbox" /> {{key.reponse}}</p>
+            <p><input type="checkbox" id="{{key.idR}}" name="reponse_choix" /> {{key.reponse}}</p>
             {%endif%} {%endfor%} {%endfor%}
         </div>
         <Button>Envoyer</Button>
