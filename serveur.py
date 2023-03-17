@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 import random
 import string
 import csv
+from datetime import datetime
 
 app = Flask(__name__)                                         #Création de app, instance de Flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'                      #Clé de session (utilisateurs)
@@ -13,12 +14,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fich
 db.init_app(app)
 
 # with app.app_context(): 
-    # idq = QCM.query.first()
-    # print("idq = " , idq)
-    # envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
-    # print("envoyerTest = ",envoyerTest)
-    # db.session.add(envoyerTest)
-    # db.session.commit()
+#     idq = QCM.query.first()
+#     print("idq = " , idq)
+#     envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
+#     print("envoyerTest = ",envoyerTest)
+#     db.session.add(envoyerTest)
+#     db.session.commit()
     # db.drop_all()
     # db.create_all()
 # si le "with" n'est pas commenté:
@@ -513,32 +514,46 @@ def afficheQCM(id):                          #Rq: le [0] sert à isoler la chain
     return render_template("qcm/affichage.html",title=title,nomQcm=nomQcm,listeQuestions=checked_questions,\
         listeReponses=checked_reponses,len=len(checked_questions),page="ListeQCM")
 
-@app.route("/RepondreQCM",methods =["POST","GET"])
-def RepondreQCM():
+@app.route("/RepondreQCM/<int:i>",methods =["POST","GET"])
+def RepondreQCM(i):
     title='Repondez aux questions'
     if 'nomU' not in session:                   #Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    print("capybara")
     if request.method == "POST":
         reponse = request.form.getlist('reponse_choix')
         reponseN = request.form.getlist("reponse_num")
         question = request.form.getlist("question")
-    
-        print("tu a activer ma carte piege yugi = ",reponse)
-        print("tu a activer ma carte piege yugi = ",reponseN)
-        print("tu a activer ma carte piege yugi = ",question)
-        return reponse
+        i = i+1
+        idq = EnvoyerQCM.query.first()
+        ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
+        ListeReponseQcm = []
+        for key in ListeQuestionsQcm:
+            add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
+            ListeReponseQcm.append(add)
+        lena = len(ListeQuestionsQcm) 
+        # prepare la bdd
+        idE = session['idU']
+        preE = session['preU']
+        nomE = session['nomU'] 
+        dateA = str(datetime.now())
+        idQbdd = idq.idQCM
+        if i == lena:
+            return redirect(url_for("index")) 
+        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i)
     else:
         idq = EnvoyerQCM.query.first()
-        print("idq = ", idq.idQCM)
+        if idq == None:
+            return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=0,ListeReponseQcm = [],ListeQuestionsQcm = [],i= 0)
+        i= 0
+        idq = EnvoyerQCM.query.first()
         ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
         ListeReponseQcm = []
         for key in ListeQuestionsQcm:
             add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
             ListeReponseQcm.append(add)
         lena = len(ListeQuestionsQcm)  
-        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm)
+        return render_template("wooclap/RepondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i)
 
 @app.route("/envoyerEnonce",methods = ["POST","GET"])
 def caster():

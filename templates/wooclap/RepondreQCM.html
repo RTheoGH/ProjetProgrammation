@@ -3,20 +3,25 @@
 
 <div class="menu">
 
-    <form action="/RepondreQCM" method="POST">
+    <form action="{{ url_for('RepondreQCM', i=i)}}" method="POST">
         <div class="Reponse_etudiant">
-            {%for i in range(lena)%}
+            {%if lena != 0%}
             <p class="Reponse_etudiant" id="{{ListeQuestionsQcm[i].idQ}}">{{ListeQuestionsQcm[i].enonce}}</p>
             <input type="hidden" value={{ListeQuestionsQcm[i].enonce}} name="question"> {%for key in ListeReponseQcm[i] %} {%if key.estNumerique%}
             <p><input type="text" pattern="\d*([.]\d{0,2})?" id="{{key.idR}}" name="reponse_num"></p>
             {%else%}
             <p><input type="checkbox" id="{{key.idR}}" name="reponse_choix" value="{{key.idR}}" /> {{key.reponse}}</p>
-            {%endif%} {%endfor%} {%endfor%}
+            {%endif%} {%endfor%} {%if i== lena%}
+            <Button>Fin</Button> {%else%}
+            <Button>Prochain question</Button> {%endif%} {%else%}
+            <p>Il n'y a rien ici pour le moment</p>
+            {%endif%}
         </div>
-        <Button>Prochain question</Button>
+    </form>
+
 </div>
 
-</form>
+
 
 
 {% endblock %}

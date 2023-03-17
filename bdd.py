@@ -74,5 +74,8 @@ class ReponseQCM(db.Model):
     numeroEtu = db.Column(db.Integer,db.ForeignKey(Etudiant.numeroEtu),primary_key=True)
     idQCM = db.Column(db.String(50),db.ForeignKey(QCM.idQCM),primary_key=True)
     RidQ = db.Column(db.String(50),db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
+    nomEtu = db.Column(db.String(50),db.ForeignKey(Etudiant.nomEtu))                    #   nom de l'étudiant
+    prenomEtu = db.Column(db.String(50),db.ForeignKey(Etudiant.prenomEtu))                 #   prenom de l'étudiant
     date = db.Column(db.String(100),nullable = False)
+    estNumerique = db.Column(db.Boolean,default = False, nullable = False)
     Value = db.Column(db.Integer,nullable = False)
