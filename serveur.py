@@ -521,11 +521,13 @@ def RepondreQCM():
         return redirect(url_for('index'))
     print("capybara")
     if request.method == "POST":
-        reponse = request.form.getlist("reponse_choix")
-        reponseN = request.form["reponse_num"]
+        reponse = request.form.getlist('reponse_choix')
+        reponseN = request.form.getlist("reponse_num")
+        question = request.form.getlist("question")
     
         print("tu a activer ma carte piege yugi = ",reponse)
         print("tu a activer ma carte piege yugi = ",reponseN)
+        print("tu a activer ma carte piege yugi = ",question)
         return reponse
     else:
         idq = EnvoyerQCM.query.first()
