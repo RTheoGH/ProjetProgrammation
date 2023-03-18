@@ -1,7 +1,47 @@
 {% extends 'partials/base.html' %}
 
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    const socket = io();
+    socket.on('connect', function() {
+        socket.emit('testRQ', "Je suis dans repondre au question");
+    });
+    var code;
+    var questions;
+    var reponses;
+    socket.on('receptionDonnees',(dcode,dquestions,dreponses) => {
+        code=dcode;
+        questions=dquestions.slice(1,dquestions.length-1).split(", ");
+        reponses=dreponses.slice(1,dreponses.length-1).split(", ");
+    });
+    socket.on('afficheQuestion',(data) => {
+        console.log(data)
+        $("#enonce").text(questions[data]);
+        if (reponses[data]==undefined){
+            $("#reponse").append('<p><input type="text" pattern="\d*([.]\d{0,2})?"></p>');
+        }else{
+            reponses[data].forEach((r) => {
+                $("#reponse").append(r);
+            });
+        }
+    });
+</script>
+{% endblock %}
+
 {% block main %}
 <div class="menu">
+    <h1 id="enonce"></h1>
+    <form action="{{ url_for('repondreQCM', i=i)}}" method="POST">
+        <div id="reponses">
+
+        </div>
+    </form>
+</div>
+
+<!-- Le goat a dit : "c'est statique donc impossible (+arguments)" et le goat a toujours raison -->
+
+<!-- <div class="menu">
     <form action="{{ url_for('repondreQCM', i=i)}}" method="POST">
         <div class="Reponse_etudiant">
             {%if lena != 0%}
@@ -24,5 +64,5 @@
             {%endif%}
         </div>
     </form>
-</div>
+</div> -->
 {% endblock %}

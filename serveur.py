@@ -5,6 +5,7 @@ import random
 import string
 import csv
 from datetime import datetime
+from flask_socketio import SocketIO
 
 app = Flask(__name__)                                         #Création de app, instance de Flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'                      #Clé de session (utilisateurs)
@@ -12,6 +13,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'                      #Clé de session (
 from bdd import *                                             #Importation de la base de donnée depuis bdd.py
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' #Création du fichier de la base de donnée
 db.init_app(app)
+socket = SocketIO(app)
 
 # with app.app_context(): 
 #     idq = QCM.query.first()
@@ -565,28 +567,36 @@ def caster():
     if request.method == "POST":
         idElementCaste = request.form['radio']
         if 'question' in request.form:
-            questions = db.session.query(Question).filter(Question.idQ==idElementCaste).all()
+            checked_reponses=[]
+            questions = db.session.query(Question).filter(Question.idQ==idElementCaste).first()
+            listeReponse = db.session.query(Reponse).filter(Reponse.idQ==idElementCaste).all()
+            if (listeReponse[0].estNumerique):
+                checked_reponses.append([])
+            else:
+                checked_reponses.append(listeReponse)       #et les réponses correspondantes à cette question
         else:
             questions=[]
             liQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==idElementCaste).all()
             for quest in liQuestions:                
                 idQ = db.session.query(Question).filter(Question.idQ==quest[0]).all()
                 questions.append(idQ[0])
-        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions)
-
+        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,page = "EnvoyerEnonce")
     else:
         listeQuestions = db.session.query(Question).filter(Question.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
         return render_template("wooclap/envoyerEnonce.html",title=title,listeQCM=listeQCM,listeQuestions=listeQuestions,page = "EnvoyerEnonce")
 
-@app.route("/majRepondre",methods = ["POST","GET"])
-def majRepondre():
-    if 'nomU' not in session:                   #Sécurité connexion
-        flash("Connectez vous ou créer un compte pour accéder à cette page")
-        return redirect(url_for('index'))
-    
-    # Enonce = db.session.query(EnvoyerQCM).all()
-    # return Enonce
+@socket.on('envoieDonnees')
+def envoieDonnees(code,questions,reponses):
+    print(code)
+    print(questions)
+    print(reponses)
+    socket.emit('receptionDonnees',(code,questions,reponses))
+
+@socket.on('setQuestion')
+def setQuestion(data):
+    print(data)
+    socket.emit('afficheQuestion',data)
 
 @app.route("/modifierQCM/<string:id>", methods=['POST', 'GET'])
 def modifierQCM(id):
@@ -631,4 +641,4 @@ def stats():
     return render_template("statistiques.html")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    socket.run(app, host='0.0.0.0', port=5000, debug=True)

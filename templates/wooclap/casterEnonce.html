@@ -1,5 +1,22 @@
 {% extends 'partials/base.html' %}
 
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    const socket = io();
+    socket.on('connect', function(data) {
+        //socket.emit('testEQ', "Je suis dans envoyer question");
+        socket.emit('envoieDonnees','{{idElement}}','{{listeQuestions}}','{{listeReponses}}');
+    });
+    var q=0;
+    function nextQuestion(){
+        console.log("aaaaaaa")
+        socket.emit('setQuestion',q);
+        q++;
+    }
+</script>
+{% endblock %}
+
 {% block main %}
 <div class="menu">
     <h3>Code : {{idElement}}</h3>
