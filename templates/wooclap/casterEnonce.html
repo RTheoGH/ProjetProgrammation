@@ -20,12 +20,25 @@
 {% block main %}
 <div class="menu">
     <h3>Code : {{idElement}}</h3>
-    <hr/>
-    {% for question in listeQuestions%}
-    <div class="affQuestion" id="{{question.idQ}}">{{question.enonce}}</div>
-    <script>                                            /* Conversion de l'énoncé avec showdown */
-        $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
-    </script>
-    {% endfor %}
+
+    <div>
+        <button id="Q" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
+        <div id="hideDivQ">
+            {% for question in listeQuestions%}
+            <div class="affQuestion" id="{{question.idQ}}">{{question.enonce}}</div>
+            <script>                                            /* Conversion de l'énoncé avec showdown */
+                $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
+            </script>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div>
+        <button id="R" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
+
+        <div id="hideDivR">
+            <p>Les Reponses à faire en socket</p>
+        </div>
+    </div>
 </div>
 {% endblock %}
