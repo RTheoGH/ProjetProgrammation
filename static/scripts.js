@@ -24,10 +24,7 @@ function supprimerBouton(id) {
 }
 
 function visualiser() {
-    // 
-    let textAll = $("textarea, input:text")
-    //let textAll = $("textarea"); /*Variable textAll qui recupere le contenu de toutes les textarea*/
-    //textAll.append($("input"))
+    let textAll = $("textarea, input:text")  /*Variable textAll qui recupere le contenu de toutes les textarea*/
     console.log(textAll);
     let texte = "<h2>Enoncé :</h2>";
     textAll.each(function(index) { /* Pour chaque zone de texte */
@@ -64,4 +61,12 @@ function Question_QCM() {
     document.querySelector('#Quest_Num').hidden = true;
     document.querySelector('#Quest_QCM').disabled = true;
     document.querySelector('#Quest_QCM').hidden = true;
+}
+
+function hideAndShow(id){
+    let div = document.getElementById("hideDiv"+id);
+    if (div.style.display == 'none')
+        div.style.display = 'block';
+    else
+        div.style.display = 'none';
 }
