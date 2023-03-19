@@ -3,15 +3,14 @@
 {% block head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
-    const socket = io();
-    socket.on('connect', function(data) {
-        //socket.emit('testEQ', "Je suis dans envoyer question");
+    const socket = io();                   // Variable socket
+    socket.on('connect', function(data) {          // Quand on rejoint la page, envoie des données nécessaires pour l'affichage
         socket.emit('envoieDonnees','{{idElement}}','{{listeQuestions}}','{{listeReponses}}');
     });
     var q=0;
-    function nextQuestion(){
-        console.log("aaaaaaa")
-        socket.emit('setQuestion',q);
+    function nextQuestion(){                        // Fonction pour passer à la question suivante
+        console.log("Question :"+q)
+        socket.emit('setQuestion',q);               // Envoie du numéro de la question
         q++;
     }
 </script>

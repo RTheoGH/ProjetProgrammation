@@ -6,32 +6,33 @@
     <hr/>
     <div class="affQCM">
         {% for i in range(len) %}
-        <div class="affQuestion" id="{{listeQuestions[i].idQ}}">{{listeQuestions[i].enonce}}</div>
-        <script>                                            /* Conversion de l'énoncé avec showdown */
-            $('#{{listeQuestions[i].idQ}}').html(converter.makeHtml($('#{{listeQuestions[i].idQ}}').text()));
-        </script>
-            {% if listeReponses[i] == [] %}
-                <p><input type="text" pattern="\d*([.]\d{0,2})?"></p>
-            {% else %}
-                {% for reponse in listeReponses[i] %}
-                    <div class="affReponse"><input class="bigCheckbox" id="{{reponse.idR}}" type="checkbox"/> <label for="{{reponse.idR}}">{{reponse.reponse}}</label></div>
-                    <script>
-                        $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
-                    </script>
-                {% endfor %}
-            {% endif %}
-        <hr/>
+            <div class="affQuestion" id="{{listeQuestions[i].idQ}}">{{listeQuestions[i].enonce}}</div>
+            <script>                                            /* Conversion de l'énoncé avec showdown */
+                $('#{{listeQuestions[i].idQ}}').html(converter.makeHtml($('#{{listeQuestions[i].idQ}}').text()));
+            </script>
+                {% if listeReponses[i] == [] %}           <!-- Si c'est une question numérique -->
+                    <p><input type="text" pattern="\d*([.]\d{0,2})?"></p>
+                {% else %}
+                    {% for reponse in listeReponses[i] %}
+                        <div class="affReponse"><input class="bigCheckbox" id="{{reponse.idR}}" type="checkbox"/> <label for="{{reponse.idR}}">{{reponse.reponse}}</label></div>
+                        <script>
+                            $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
+                        </script>
+                    {% endfor %}
+                {% endif %}
+            <hr/>
         {% endfor %}
     </div>
     <hr/>
+    <!-- Partie pour le téléchargement d'un QCM -->
     <script src=" https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js "></script>
     <script>
         function telechargement(){
-            var html = document.getElementsByClassName("affQCM")[0].innerHTML;
+            var html = document.getElementsByClassName("affQCM")[0].innerHTML;    //Récupération du contenu de la div
             console.log(html)
-            var a = document.createElement('a');
-            a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
-            a.download = 'qcm.html';
+            var a = document.createElement('a');              //Création d'un objet "a"
+            a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(html); //Encodage en utf-8
+            a.download = 'qcm.html';             //Fichier
             a.click()
         }
     </script>
