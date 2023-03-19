@@ -16,6 +16,8 @@ db.init_app(app)
 socket = SocketIO(app)
 
 # with app.app_context(): 
+#     envoyerCheck = db.session.query(EnvoyerQCM).all()
+#     print(envoyerCheck)
 #     idq = QCM.query.first()
 #     print("idq = " , idq)
 #     envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
@@ -578,7 +580,7 @@ def caster():
             questions=[]
             liQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==idElementCaste).all()
             for quest in liQuestions:                
-                idQ = db.session.query(Question).filter(Question.idQ==quest[0]).all()
+                idQ = db.session.query(Question).filter(Question.idQ==quest[0]).all() 
                 questions.append(idQ[0])
         return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,page = "EnvoyerEnonce")
     else:
@@ -640,7 +642,7 @@ def supprimerQCM(id):
         db.session.commit()
     except :
         return "Erreur dans la suppréssion du QCM"
-    return redirect("/listeQCM")                 #  Redirection vers la liste des qcm
+    return redirect("/listeQCM")                 # Redirection vers la liste des qcm
 
 @app.route("/stats", methods=['GET'])            # Route pour les statistiques
 def stats():

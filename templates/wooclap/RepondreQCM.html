@@ -1,35 +1,31 @@
-{% extends 'partials/base.html' %}
-
-{% block head %}
+{% extends 'partials/base.html' %} {% block head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
-    const socket = io();                             // Variable socket
-    socket.on('connect', function() {                // Détection quand on arrive sur la page
+    const socket = io(); // Variable socket
+    socket.on('connect', function() { // Détection quand on arrive sur la page
         socket.emit('testRQ', "Je suis dans repondre au question");
     });
-    var code;                         // Récupération du code à afficher
-    var questions;                    // Les questions...
-    var reponses;                     // Et les réponses
-    socket.on('receptionDonnees',(dcode,dquestions,dreponses) => {         // Réceptions des données
-        code=dcode;                                                        // Attribution des données à des variables pour les stockées
-        questions=dquestions.slice(1,dquestions.length-1).split(", ");     // (Exemple) On slice pour récupérer correctement ce qu'on veut
-        reponses=dreponses.slice(1,dreponses.length-1).split(", ");        // A modifier selon ce qui faut afficher
+    var code; // Récupération du code à afficher
+    var questions; // Les questions...
+    var reponses; // Et les réponses
+    socket.on('receptionDonnees', (dcode, dquestions, dreponses) => { // Réceptions des données
+        code = dcode; // Attribution des données à des variables pour les stockées
+        questions = dquestions.slice(1, dquestions.length - 1).split(", "); // (Exemple) On slice pour récupérer correctement ce qu'on veut
+        reponses = dreponses.slice(1, dreponses.length - 1).split(", "); // A modifier selon ce qui faut afficher
     });
-    socket.on('afficheQuestion',(data) => {             // Reception de la question à afficher
-        console.log(data)                               // A faire
-        $("#enonce").text(questions[data]);             // Son énoncé
-        if (reponses[data]==undefined){                 // Si c'est numérique si j'ai bien compris
-            $("#reponse").append('<p><input type="text" pattern="\d*([.]\d{0,2})?"></p>');
-        }else{
-            reponses[data].forEach((r) => {             // Marche pas mais supposé afficher les réponses
-                $("#reponse").append(r);
+    socket.on('afficheQuestion', (data) => { // Reception de la question à afficher
+        console.log(data) // A faire
+        $("#enonce").text(questions[data]); // Son énoncé
+        if (reponses[data].estNumerique) { // Si c'est numérique si j'ai bien compris
+            $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?"></p>');
+        } else {
+            reponses[data].forEach((r) => { // Marche pas mais supposé afficher les réponses
+                $("#reponses").append('<p><input type="checkbox" id="{{' + r + '.idR}}" name="reponse_choix" value="{{' + r + '.idR}}" /> {{' + r + '.reponse}}</p>');
             });
         }
     });
 </script>
-{% endblock %}
-
-{% block main %}
+{% endblock %} {% block main %}
 <div class="menu">
     <h1 id="enonce"></h1>
     <form action="{{ url_for('repondreQCM', i=i)}}" method="POST">
