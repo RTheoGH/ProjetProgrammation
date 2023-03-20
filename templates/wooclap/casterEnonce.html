@@ -3,16 +3,27 @@
 {% block head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
+
+    var q=0;
+
     const socket = io();
     socket.on('connect', function(data) {
         //socket.emit('testEQ', "Je suis dans envoyer question");
-        socket.emit('envoieDonnees','{{idElement}}','{{listeQuestions}}','{{listeReponses}}');
+        listeQuestions = '{{listeQuestions}}'.replaceAll('(&#39;','').replaceAll('[','').replaceAll(']','').replaceAll('&#39;,)','').replace(' ','').split(',')
+        listeReponses = '{{listeReponses}}'.replaceAll('(','').replaceAll(',)','').replaceAll(' ','').replaceAll('[','').replaceAll('],',';').replaceAll(']]','').split(';')
+        console.log(listeReponses)
+        socket.emit('oneByOne',q,listeQuestions,listeReponses);
     });
-    var q=0;
+    
+    socket.on('emitOneByOne', function(questionCastee,reponsesAssociees){
+        $("#question").text(questionCastee);
+        console.log(questionCastee,reponsesAssociees)
+    });
+
     function nextQuestion(){
         console.log("aaaaaaa")
-        socket.emit('setQuestion',q);
         q++;
+        socket.emit('oneByOne',q,listeQuestions,listeReponses);
     }
 </script>
 {% endblock %}
@@ -24,12 +35,16 @@
     <div>
         <button id="Q" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
         <div id="hideDivQ">
-            {% for question in listeQuestions%}
+            <!-- {% for question in listeQuestions%}
             <div class="affQuestion" id="{{question.idQ}}">{{question.enonce}}</div>
             <script>                                            /* Conversion de l'énoncé avec showdown */
                 $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
             </script>
-            {% endfor %}
+            {% endfor %} -->
+            <div class="affQuestion" id="question"></div>
+            <script>                                            /* Conversion de l'énoncé avec showdown */
+                $('#{{question}}').html(converter.makeHtml($('#{{question}}').text()));
+            </script>
         </div>
     </div>
 

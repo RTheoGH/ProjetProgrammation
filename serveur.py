@@ -566,25 +566,44 @@ def caster():
         return redirect(url_for('index'))
     if request.method == "POST":
         idElementCaste = request.form['radio']
+        checked_reponses=[]
+        questions=[]
         if 'question' in request.form:
-            checked_reponses=[]
-            questions = db.session.query(Question).filter(Question.idQ==idElementCaste).first()
-            listeReponse = db.session.query(Reponse).filter(Reponse.idQ==idElementCaste).all()
+            questions = db.session.query(Question.idQ).filter(Question.idQ==idElementCaste).all()
+            listeReponse = db.session.query(Reponse.idR).filter(Reponse.idQ==idElementCaste).all()
             if (listeReponse[0].estNumerique):
                 checked_reponses.append([])
             else:
-                checked_reponses.append(listeReponse)       #et les réponses correspondantes à cette question
+                checked_reponses.append(listeReponse)
+            typeElement = "question"
         else:
-            questions=[]
-            liQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==idElementCaste).all()
-            for quest in liQuestions:                
-                idQ = db.session.query(Question).filter(Question.idQ==quest[0]).all()
-                questions.append(idQ[0])
-        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,page = "EnvoyerEnonce")
+            questions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==idElementCaste).all()
+            print("questions=",questions)
+            # for quest in liQuestions:                
+            #     ojetQuestion = db.session.query(Question).filter(Question.idQ==quest[0]).all()
+            #     questions.append(ojetQuestion[0])
+            for quest in questions:
+                checked_reponses.append(db.session.query(Reponse.idR).filter(Reponse.idQ==quest[0]).all())
+                # if (listeReponse[0].estNumerique):
+                #     checked_reponses.append([])
+                # else:
+                #     checked_reponses.append(listeReponse)    
+            typeElement = "sequence"
+        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,listeReponses=checked_reponses,typeElement=typeElement,page = "EnvoyerEnonce")
     else:
         listeQuestions = db.session.query(Question).filter(Question.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
         return render_template("wooclap/envoyerEnonce.html",title=title,listeQCM=listeQCM,listeQuestions=listeQuestions,page = "EnvoyerEnonce")
+
+@socket.on('oneByOne')
+def oneByOne(q,questions,reponses):
+    print(q)
+    questionCastee = str(db.session.query(Question.enonce).filter(Question.idQ==questions[q]).all())
+    print(questionCastee)
+    reponsesAssociees = reponses[q].split(',')
+    print(reponsesAssociees)
+    socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
+
 
 @socket.on('envoieDonnees')
 def envoieDonnees(code,questions,reponses):
