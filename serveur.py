@@ -542,8 +542,6 @@ def repondreQCM():
         nomE = session['nomU'] 
         dateA = str(datetime.now())
         idQbdd = idq.idQCM
-        if i == lena:
-            return redirect(url_for("index")) 
         return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i)
     else:
         idq = EnvoyerQCM.query.first()
@@ -603,6 +601,11 @@ def envoieDonnees(code,questions,reponses):
 def setQuestion(data):
     print(data)
     socket.emit('afficheQuestion',data) # Renvoie le numéro de la question à afficher
+
+# Socket réception des reponses des éléves et les mettres dans la bdd
+@socket.on('reponseE')
+def reponseE(data):
+    print(data)
 
 ##########################################################
 

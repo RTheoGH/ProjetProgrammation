@@ -17,21 +17,28 @@
         console.log(data) // A faire
         $("#enonce").text(questions[data].replace(/&#39;/g,"").replace('(','').replace(')','').slice(0,-1)); // Son énoncé
         if (reponses[data].estNumerique) { // Si c'est numérique si j'ai bien compris
-            $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?"></p>');
+            $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?" name="reponse_num"></p>');
         } else {
             reponses[data].forEach((r) => { // Marche pas mais supposé afficher les réponses
                 $("#reponses").append('<p><input type="checkbox" id="{{' + r + '.idR}}" name="reponse_choix" value="{{' + r + '.idR}}" /> {{' + r + '.reponse}}</p>');
             });
         }
     });
+    function reponseE(){
+        reponse_choix = document.getElementsByName("reponse_choix");
+        reponse_num = document.getElementsByName("reponse_num");
+        enonce = document.getElementsByName("enonce");
+        socket.emit('',enonce,reponse_choix,reponse_num)
+    };
 </script>
 {% endblock %} {% block main %}
 <div class="menu">
-    <h1 id="enonce"></h1>
-    <form action="{{ url_for('repondreQCM')}}" method="POST">
+    <h1 id="enonce" name="enonce"></h1>
+    <form method="POST">
         <div id="reponses">
 
         </div>
+        <button onclick = "reponseE">Soumettre</button>
     </form>
 </div>
 
