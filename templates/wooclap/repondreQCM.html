@@ -25,10 +25,11 @@
         }
     });
     function reponseE(){
+        
         reponse_choix = document.getElementsByName("reponse_choix");
         reponse_num = document.getElementsByName("reponse_num");
         enonce = document.getElementsByName("enonce");
-        socket.emit('',enonce,reponse_choix,reponse_num)
+        socket.emit('reponseE',enonce,reponse_choix,reponse_num)
     };
 </script>
 {% endblock %} {% block main %}
