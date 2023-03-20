@@ -650,10 +650,10 @@ def setQuestion(data):
 # Socket réception des reponses des éléves et les mettres dans la bdd
 @socket.on('reponseE')
 def reponseE(enonce,reponse_choix,reponse_num):
-    #     idE = session['idU']
-    # add = ReponseQCM(numeroEtu=idE,idQCM=,RidQ=,date=str(datetime.now()),estNumerique=,Value=)
-    # db.session.add(add)
-    # db.session.commit()
+#         idE = session['idU']
+#     add = ReponseQCM(numeroEtu=idE,idQCM=,RidQ=,date=str(datetime.now()),estNumerique=,Value=)
+#     db.session.add(add)
+#     db.session.commit()
     print(data)
 
 ##########################################################
