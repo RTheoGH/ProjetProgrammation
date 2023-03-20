@@ -18,18 +18,14 @@
                     <td>Séquence</td>               <!-- Pourcentage de questions bien répondus -->
                 </tr>
                 <!-- un for ici -->
-                <tr>
-                    <td>09/03/2023</td>
-                    <td>Reynier Théo</td>
-                    <td>Réussi</td>                 <!-- if question seule then id question + reussi/raté else vide -->
-                    <td>-</td>                      <!-- if séquence then id séquence + pourcentage question réussi else vide -->
-                </tr>
-                <tr>
-                    <td>10/03/2023</td>
-                    <td>Hernandez Roberto</td>
-                    <td>-</td>
-                    <td>83%</td>
-                </tr>
+                {% for reponse in Reponses %}
+                    <tr>
+                        <td>{{reponse.date}}</td>
+                        <td>{{reponse.numeroEtu}}</td>
+                        <td>{{reponse.Value}}</td>      <!-- if question seule then id question + reussi/raté else vide -->
+                        <td>-</td>                      <!-- if séquence then id séquence + pourcentage question réussi else vide -->
+                    </tr>
+                {% endfor %}
                 <!-- effacer les réponses des étudiants ? -->
             </table>
         </div>

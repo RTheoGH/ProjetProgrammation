@@ -23,9 +23,8 @@
                     <fieldset>
                         <legend>Étiquettes</legend>
                         <ul>
-                            {% for etiquette in etiquettes %}
-                            <!-- Pour chaque etiquette parmi les etiquettes -->
-                            <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
+                            {% for etiquette in etiquettes %} <!-- Pour chaque etiquette parmi les etiquettes -->
+                                <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
                             {% endfor %}
                         </ul>
                     </fieldset>
