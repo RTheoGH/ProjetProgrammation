@@ -70,6 +70,15 @@ class ReponseEtudiant(db.Model):
     numeroEtu = db.Column(db.Integer,db.ForeignKey(Etudiant.numeroEtu),primary_key=True)
     idQCM = db.Column(db.String(50),db.ForeignKey(QCM.idQCM),primary_key=True)
     RidQ = db.Column(db.String(50),db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
+<<<<<<< HEAD
+=======
+    date = db.Column(db.String(100),nullable = False)
+    estNumerique = db.Column(db.Boolean,default = False, nullable = False)
+    Value = db.Column(db.Integer,nullable = False)
+
+class Test(db.Model):
+    numeroEtu = db.Column(db.Integer,db.ForeignKey(Etudiant.numeroEtu),primary_key=True)
+>>>>>>> 2f9731967fbcaf48572f5adfff213f45278cf7b4
     date = db.Column(db.String(100),nullable = False)
     estNumerique = db.Column(db.Boolean,default = False, nullable = False)
     Value = db.Column(db.Integer,nullable = False)

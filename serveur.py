@@ -15,7 +15,32 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' # Création du fic
 db.init_app(app)
 socket = SocketIO(app)
 
-# with app.app_context(): 
+#with app.app_context(): 
+    # db.session.query(ReponseQCM).all().delete()
+    # db.session.commit()
+    # rQCM = QCM.query.first()
+    # premiere_question = db.session.query(Question)\
+    #                 .join(Contient, Question.idQ == Contient.RidQ)\
+    #                 .join(QCM, QCM.idQCM == Contient.RidQCM)\
+    #                 .order_by(QCM.idQCM, Contient.RidQ)\
+    #                 .first()
+    # RidQ = Question.idQ
+    # idQCM = rQCM.idQCM
+    #db.drop_all()
+    #db.create_all()
+    #date=str(datetime.now())
+    #exemple0 = Test(numeroEtu=33184650, date=date, estNumerique=False, Value=0)
+    #exemple1 = Test(numeroEtu=33184651, date=date, estNumerique=False, Value=0)    
+    #exemple2 = Test(numeroEtu=33184652, date=date, estNumerique=False, Value=0)
+    #exemple3 = Test(numeroEtu=33184653, date=date, estNumerique=False, Value=0)    
+    #exemple4 = Test(numeroEtu=33184654, date=date, estNumerique=False, Value=0)    
+    #exemple5 = Test(numeroEtu=33184655, date=date, estNumerique=False, Value=0)    
+    #exemple6 = Test(numeroEtu=33184656, date=date, estNumerique=False, Value=0) 
+    #exemple7 = Test(numeroEtu=33184657, date=date, estNumerique=False, Value=0)  
+    #exemple8 = Test(numeroEtu=33184658, date=date, estNumerique=False, Value=0)
+    #exemple9 = Test(numeroEtu=33184659, date=date, estNumerique=False, Value=0)
+    #db.session.add_all([exemple0,exemple1,exemple2,exemple3,exemple4,exemple5,exemple6,exemple7,exemple9,exemple8])
+    #db.session.commit()
 #     envoyerCheck = db.session.query(EnvoyerQCM).all()
 #     print(envoyerCheck)
 #     idq = QCM.query.first()
@@ -653,7 +678,8 @@ def supprimerQCM(id):
 
 @app.route("/stats", methods=['GET'])            # Route pour les statistiques
 def stats():
-    return render_template("statistiques.html")
+    Reponses = Test.query.all()
+    return render_template("statistiques.html", Reponses = Reponses)
 
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)
