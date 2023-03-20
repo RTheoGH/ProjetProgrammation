@@ -518,8 +518,8 @@ def afficheQCM(id):                    # Remarque : le [0] sert à isoler la cha
     return render_template("qcm/affichage.html",title=title,nomQcm=nomQcm,listeQuestions=checked_questions,\
         listeReponses=checked_reponses,len=len(checked_questions),page="ListeQCM")
 
-@app.route("/repondreQCM/<int:i>",methods =["POST","GET"])
-def repondreQCM(i):
+@app.route("/repondreQCM",methods =["POST","GET"])
+def repondreQCM():
     title='Repondez aux questions'
     if 'nomU' not in session:                   # Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
@@ -529,7 +529,6 @@ def repondreQCM(i):
         reponse = request.form.getlist('reponse_choix')
         reponseN = request.form.getlist("reponse_num")
         question = request.form.getlist("question")
-        i = i+1
         idq = EnvoyerQCM.query.first()
         ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
         ListeReponseQcm = []
@@ -567,9 +566,10 @@ def caster():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     if request.method == "POST":
+        
+        checked_reponses=[]
         idElementCaste = request.form['radio']
         if 'question' in request.form:
-            checked_reponses=[]
             questions = db.session.query(Question).filter(Question.idQ==idElementCaste).first()
             listeReponse = db.session.query(Reponse).filter(Reponse.idQ==idElementCaste).all()
             if (listeReponse[0].estNumerique):
@@ -580,9 +580,9 @@ def caster():
             questions=[]
             liQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==idElementCaste).all()
             for quest in liQuestions:                
-                idQ = db.session.query(Question).filter(Question.idQ==quest[0]).all() 
+                idQ = db.session.query(Question.enonce).filter(Question.idQ==quest[0]).all() 
                 questions.append(idQ[0])
-        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,page = "EnvoyerEnonce")
+        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,listeReponses = checked_reponses,page = "EnvoyerEnonce")
     else:
         listeQuestions = db.session.query(Question).filter(Question.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
@@ -593,9 +593,9 @@ def caster():
 # Socket réception des données envoyés depuis casterEnonce.html
 @socket.on('envoieDonnees')
 def envoieDonnees(code,questions,reponses):
-    print(code)
-    print(questions)
-    print(reponses)
+    print("code = ",code)
+    print("question = ",questions)
+    print("reponse = ",reponses)
     socket.emit('receptionDonnees',(code,questions,reponses)) # Renvoie des données sur la page repondreQCM.html
 
 # Socket réception du numéro de la question actuelle
