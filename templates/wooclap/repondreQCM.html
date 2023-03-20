@@ -25,7 +25,7 @@
         }
     });
     function reponseE(){
-        
+
         reponse_choix = document.getElementsByName("reponse_choix");
         reponse_num = document.getElementsByName("reponse_num");
         enonce = document.getElementsByName("enonce");
@@ -43,30 +43,5 @@
     </form>
 </div>
 
-<!-- Le goat a dit : "c'est statique donc impossible (+arguments)" du coup j'ai quand même gardé si tu veux edit -->
 
-<!-- <div class="menu">
-    <form action="{{ url_for('repondreQCM', i=i)}}" method="POST">
-        <div class="Reponse_etudiant">
-            {%if lena != 0%}
-                <p class="Reponse_etudiant" id="{{ListeQuestionsQcm[i].idQ}}">{{ListeQuestionsQcm[i].enonce}}</p>
-                <input type="hidden" value={{ListeQuestionsQcm[i].enonce}} name="question">
-                {%for key in ListeReponseQcm[i] %} 
-                    {%if key.estNumerique%}
-                        <p><input type="text" pattern="\d*([.]\d{0,2})?" id="{{key.idR}}" name="reponse_num"></p>
-                    {%else%}
-                        <p><input type="checkbox" id="{{key.idR}}" name="reponse_choix" value="{{key.idR}}" /> {{key.reponse}}</p>
-                    {%endif%} 
-                {%endfor%} 
-                {%if i== lena%}
-                    <button>Fin</button> 
-                {%else%}
-                    <button>Prochain question</button> 
-                {%endif%} 
-            {%else%}
-                <p>Il n'y a rien ici pour le moment</p>
-            {%endif%}
-        </div>
-    </form>
-</div> -->
 {% endblock %}
