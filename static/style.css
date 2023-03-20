@@ -566,6 +566,9 @@ input:invalid {
         font-size: 0.8em;
         margin-left: 2em;
     }
+    .listeCaster{
+        height: 30vh;
+    }
 }
 
 /* Pour les écrans de longueur supérieur à 1280px (moyen) */
@@ -601,6 +604,13 @@ input:invalid {
     }
     .menuNQcm{
         margin-left: 2em;
+    }
+}
+
+/* Modification taille liste pour la plus part des écrans */
+@media screen and (min-width:1024px) and (max-width:1600px){
+    .listeCaster{
+        height: 30vh;
     }
 }
 
