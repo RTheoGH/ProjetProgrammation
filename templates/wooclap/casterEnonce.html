@@ -1,14 +1,43 @@
-{% extends 'partials/base.html' %}
+{% extends 'partials/base.html' %} {% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    const socket = io(); // Variable socket
+    socket.on('connect', function(data) { // Quand on rejoint la page, envoie des données nécessaires pour l'affichage
+        socket.emit('envoieDonnees', '{{idElement}}', '{{listeQuestions}}', '{{listeReponses}}');
+    });
+    var q = 0;
+    socket.emit('setQuestion', q);
 
-{% block main %}
+    function nextQuestion() { // Fonction pour passer à la question suivante
+        console.log("Question :" + q)
+        q++;
+        socket.emit('setQuestion', q); // Envoie du numéro de la question
+
+    }
+</script>
+{% endblock %} {% block main %}
 <div class="menu">
     <h3>Code : {{idElement}}</h3>
-    <hr/>
-    {% for question in listeQuestions%}
-    <div class="affQuestion" id="{{question.idQ}}">{{question.enonce}}</div>
-    <script>                                            /* Conversion de l'énoncé avec showdown */
-        $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
-    </script>
-    {% endfor %}
+    <button onclick="nextQuestion()">Question suivante</button>
+    <div>
+        <button id="Q" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
+        <div id="hideDivQ">
+            {% for question in listeQuestions%}
+            <div class="affQuestion" id="{{question.idQ}}">{{question.enonce}}</div>
+            <script>
+                /* Conversion de l'énoncé avec showdown */
+                $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
+            </script>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div>
+        <button id="R" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
+
+        <div id="hideDivR">
+            <p>Les Reponses à faire en socket</p>
+        </div>
+    </div>
 </div>
 {% endblock %}

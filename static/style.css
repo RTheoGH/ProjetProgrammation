@@ -63,12 +63,14 @@ h1 {
     overflow-y: scroll;
 }
 
+/* Classe soeur de liste mais pour les questions */
 .listeQuestions{
     height: 40vh;
     border: 2px solid black;
     overflow-y: scroll;
 }
 
+/* Classe menu pour la liste de QCM */
 .menuLQcm{
     border: 0.5em solid black;
     border-radius: 10px;
@@ -80,6 +82,7 @@ h1 {
     margin-right: 5em;
 }
 
+/* Classe menu pour un nouveau QCM */
 .menuNQcm {
     border: 0.5em solid black;
     border-radius: 10px;
@@ -91,27 +94,26 @@ h1 {
     margin-left: 5em;
 }
 
+/* Modification dans menuNQcm */
 .menuNQcm .liste{
     font-size: 1em;
     height: 30vh;
 }
-
 .menuNQcm .liste table{
     width: 44em;
 }
 
+/* Modification dans listeQCM */
 .listeQCM{
     height: 40vh;
     width: 25em;
     border: 2px solid black;
     overflow-y: scroll;
 }
-
 .listeQCM table{
     width: 23.5em;
     text-align: center;
 }
-
 .listeQCM table td{
     text-align: center;
 }
@@ -147,6 +149,7 @@ h1 {
     display: flex;
 }
 
+/* Classe pour caster une question/QCM */
 .caster{
     border: 0.5em solid black;
     border-radius: 10px;
@@ -158,6 +161,7 @@ h1 {
     margin-right: 5em;
 }
 
+/* Classe liste dans caster */
 .listeCaster{
     border: 1px solid black;
     width: 25vw;
@@ -470,10 +474,11 @@ input:invalid {
     background-color: lightpink;
 } */
 
-/* ------------------------------------------------------------------------ */
-/* Responsivité */
-/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* Responsivité *//* Responsivité *//* Responsivité *//* Responsivité */
+/* ------------------------------------------------------------------ */
 
+/* Pour les écrans de longueur 1024px (petit) */
 @media screen and (min-width: 801px) and (max-width: 1024px) {
     body{
         background-size:auto;
@@ -519,6 +524,7 @@ input:invalid {
     }
 }
 
+/* Pour les écrans de longueur 1280px (petit-moyen) */
 @media screen and (min-width: 1025px) and (max-width: 1280px) {
     .menu{
         font-size: 0.9em;
@@ -562,6 +568,7 @@ input:invalid {
     }
 }
 
+/* Pour les écrans de longueur supérieur à 1280px (moyen) */
 @media screen and (min-width: 1281px){
     .menu{
         font-size: 0.9em;
@@ -580,6 +587,7 @@ input:invalid {
     }
 }
 
+/* Pour les écrans de longueur supérieur à 1440px (grand) */
 @media screen and (min-width: 1440px){
     .menuAcc {
         font-size: 1.5em;
@@ -596,9 +604,9 @@ input:invalid {
     }
 }
 
-/* ------------------------------------------------------------------------ */
-/* VERSION MOBILE */
-/* ------------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* VERSION MOBILE *//* VERSION MOBILE *//* VERSION MOBILE *//* VERSION MOBILE */
+/* -------------------------------------------------------------------------- */
 
 @media screen and (min-width: 1px) and (max-width:800px) {
     .menu{

@@ -9,19 +9,19 @@
                 <td>Question</td>
             </tr>
             {% for questions in lquestion %}
-            <tr>
-                <td class="left" id="{{questions.idQ}}">{{questions.enonce}}</td>
-                <script>              /* Convertisseur */
-                    $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
-                    hljs.highlightAll();
-                </script>
-                <td style="border:none;width:2em">
-                    <a href="{{ url_for('modifier', id=questions.idQ)}}">
-                        <input style="margin-top: 4px; margin-bottom:-3px;" class="imgTab" type="image" src="/static/image/edit.png"></a>
-                    <a href="{{ url_for('supprimer', id=questions.idQ)}}">
-                        <input style="margin-top: 4px; margin-bottom:-3px;" class="imgTab" type="image" src="/static/image/delete.png"></a>
-                </td> 
-            </tr>
+                <tr>
+                    <td class="left" id="{{questions.idQ}}">{{questions.enonce}}</td>
+                    <script>              /* Convertisseur */
+                        $('#{{questions.idQ}}').html(converter.makeHtml($('#{{questions.idQ}}').text()));
+                        hljs.highlightAll();
+                    </script>
+                    <td style="border:none;width:2em">
+                        <a href="{{ url_for('modifier', id=questions.idQ)}}"> <!-- Bouton modifier -->
+                            <input style="margin-top: 4px; margin-bottom:-3px;" class="imgTab" type="image" src="/static/image/edit.png"></a>
+                        <a href="{{ url_for('supprimer', id=questions.idQ)}}"> <!-- Bouton Supprimer -->
+                            <input style="margin-top: 4px; margin-bottom:-3px;" class="imgTab" type="image" src="/static/image/delete.png"></a>
+                    </td> 
+                </tr>
             {% endfor %}
         </table>
     </div>
