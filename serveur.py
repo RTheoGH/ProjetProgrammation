@@ -623,11 +623,12 @@ def caster():
 # Socket réception des données envoyés depuis casterEnonce.html
 @socket.on('oneByOne')
 def oneByOne(q,questions,reponses):
-    print(questions[q])
     questionCastee = str(db.session.query(Question.enonce).filter(Question.idQ==questions[q]).all())
-    print(questionCastee)
-    reponsesAssociees = reponses[q].split(',')
-    print(reponsesAssociees)
+    idReponsesAssociees = reponses[q].split(',')
+    reponsesAssociees = []
+    if idReponsesAssociees != []:
+        for id in idReponsesAssociees:
+            reponsesAssociees.append(str(db.session.query(Reponse.reponse).filter(Reponse.idR==id)))
     socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
 
 

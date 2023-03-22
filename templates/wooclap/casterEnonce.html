@@ -6,13 +6,16 @@
     socket.on('connect', function(data) {
         socket.emit('testEQ', "Je suis dans envoyer question");
         listeQuestions = '{{listeQuestions}}'.replaceAll('Question ', '').replaceAll('&#39;', '').replaceAll('[', '').replaceAll(']', '').replaceAll('&#39;,)', '').replaceAll(' ', '').split(',')
-        listeReponses = '{{listeReponses}}'.replaceAll('(', '').replaceAll(',)', '').replaceAll(' ', '').replaceAll('[', '').replaceAll('],', ';').replaceAll(']]', '').split(';')
-        console.log(listeQuestions)
+        listeReponses = '{{listeReponses}}'.replaceAll('Reponse','').replaceAll('(', '').replaceAll(',)', '').replaceAll(' ', '').replaceAll('[', '').replaceAll('],', ';').replaceAll(']]', '').split(';')
+        console.log(listeReponses)
         socket.emit('oneByOne', q, listeQuestions, listeReponses);
     });
 
     socket.on('emitOneByOne', function(questionCastee, reponsesAssociees) {
         $("#question").text(questionCastee);
+        for (reponse of reponsesAssociees){
+            $("reponse").append(reponse)
+        }
         console.log(questionCastee, reponsesAssociees)
         socket.emit('recupDataForRep', questionCastee, reponsesAssociees)
     })
@@ -34,28 +37,19 @@
     <div>
         <button id="Q" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
         <div id="hideDivQ">
-            <!-- {% for question in listeQuestions%}
-                <div class="affQuestion" id="{{question.idQ}}">{{question.enonce}}</div>
+            <div class="affQuestion" id="question"></div>
                 <script>
                     /* Conversion de l'énoncé avec showdown */
-                    $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
+                    $('#question').html(converter.makeHtml($('#question.idQ').text()));
                 </script>
-                <hr/>
-            {% endfor %} -->
-            <div class="affQuestion" id="question"></div>
-            <script>
-                /* Conversion de l'énoncé avec showdown */
-                $('#question').html(converter.makeHtml($('#question.idQ').text()));
-            </script>
+            </div>
         </div>
     </div>
-
-    <!-- <div>
+    <div>
         <button id="R" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
-
         <div id="hideDivR">
-            <!-- <p>Les Reponses à faire en socket</p> -->
-</div>
-</div> -->
+            <div id="reponses"></div>
+        </div>
+    </div>
 </div>
 {% endblock %}
