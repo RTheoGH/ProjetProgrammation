@@ -5,26 +5,26 @@
     const socket = io();
     socket.on('connect', function(data) {
         socket.emit('testEQ', "Je suis dans envoyer question");
-        listeQuestions = '{{listeQuestions}}'.replaceAll('Question ','').replaceAll('&#39;','').replaceAll('[','').replaceAll(']','').replaceAll('&#39;,)','').replaceAll(' ','').split(',')
-        listeReponses = '{{listeReponses}}'.replaceAll('(','').replaceAll(',)','').replaceAll(' ','').replaceAll('[','').replaceAll('],',';').replaceAll(']]','').split(';')
+        listeQuestions = '{{listeQuestions}}'.replaceAll('Question ', '').replaceAll('&#39;', '').replaceAll('[', '').replaceAll(']', '').replaceAll('&#39;,)', '').replaceAll(' ', '').split(',')
+        listeReponses = '{{listeReponses}}'.replaceAll('(', '').replaceAll(',)', '').replaceAll(' ', '').replaceAll('[', '').replaceAll('],', ';').replaceAll(']]', '').split(';')
         console.log(listeQuestions)
         socket.emit('oneByOne', q, listeQuestions, listeReponses);
     });
 
     socket.on('emitOneByOne', function(questionCastee, reponsesAssociees) {
         $("#question").text(questionCastee);
-        console.log(questionCastee,reponsesAssociees)
+        console.log(questionCastee, reponsesAssociees)
+        socket.emit('recupDataForRep', questionCastee, reponsesAssociees)
     })
 
-    function nextQuestion(){
+    function nextQuestion() {
         q++;
         /*let divQuestion = document.getElementById('hideDivQ');
         console.log(divQuestion);
         document.divQuestion.innerHTML = document.divQuestion.innerHTML.replace(/0/g,"1")
         */
-        socket.emit('oneByOne',q,listeQuestions,listeReponses);
+        socket.emit('oneByOne', q, listeQuestions, listeReponses);
     }
-    
 </script>
 {% endblock %} {% block main %}
 <div class="menu">
@@ -55,7 +55,7 @@
 
         <div id="hideDivR">
             <!-- <p>Les Reponses à faire en socket</p> -->
-        </div>
-    </div> -->
+</div>
+</div> -->
 </div>
 {% endblock %}
