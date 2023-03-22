@@ -621,14 +621,14 @@ def caster():
 ##################### Partie Socket #####################
 
 # Socket réception des données envoyés depuis casterEnonce.html
-# @socket.on('oneByOne')
-# def oneByOne(q,questions,reponses):
-#     print(q)
-#     questionCastee = str(db.session.query(Question.enonce).filter(Question.idQ==questions[q]).all())
-#     print(questionCastee)
-#     reponsesAssociees = reponses[q].split(',')
-#     print(reponsesAssociees)
-#     socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
+@socket.on('oneByOne')
+def oneByOne(q,questions,reponses):
+    print(questions[q])
+    questionCastee = str(db.session.query(Question.enonce).filter(Question.idQ==questions[q]).all())
+    print(questionCastee)
+    reponsesAssociees = reponses[q].split(',')
+    print(reponsesAssociees)
+    socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
 
 
 @socket.on('envoieDonnees')
