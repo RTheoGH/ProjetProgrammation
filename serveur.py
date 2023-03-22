@@ -628,7 +628,7 @@ def oneByOne(q,questions,reponses):
     reponsesAssociees = []
     if idReponsesAssociees != []:
         for id in idReponsesAssociees:
-            reponsesAssociees.append(str(db.session.query(Reponse.reponse).filter(Reponse.idR==id)))
+            reponsesAssociees.append(str(db.session.query(Reponse.reponse).filter(Reponse.idR==id).all()))
     socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
 
 

@@ -7,16 +7,20 @@
         socket.emit('testEQ', "Je suis dans envoyer question");
         listeQuestions = '{{listeQuestions}}'.replaceAll('Question ', '').replaceAll('&#39;', '').replaceAll('[', '').replaceAll(']', '').replaceAll('&#39;,)', '').replaceAll(' ', '').split(',')
         listeReponses = '{{listeReponses}}'.replaceAll('Reponse', '').replaceAll('(', '').replaceAll(',)', '').replaceAll(' ', '').replaceAll('[', '').replaceAll('],', ';').replaceAll(']]', '').split(';')
-        console.log(listeReponses)
         socket.emit('oneByOne', q, listeQuestions, listeReponses);
     });
 
     socket.on('emitOneByOne', function(questionCastee, reponsesAssociees) {
         $("#question").text(questionCastee);
         for (reponse of reponsesAssociees) {
-            $("reponse").append(reponse)
+            if (reponse == "[]"){
+                $("#reponse").append('<input type="number"><br/>')
+            }
+            else{
+                $("#reponse").append(reponse+"<br/>")
+            }
         }
-        console.log(questionCastee, reponsesAssociees)
+
         socket.emit('recupDataForRep', questionCastee, reponsesAssociees)
     })
 
@@ -27,6 +31,7 @@
         document.divQuestion.innerHTML = document.divQuestion.innerHTML.replace(/0/g,"1")
         */
         socket.emit('oneByOne', q, listeQuestions, listeReponses);
+        document.getElementById("reponse").innerHTML = "";
     }
 </script>
 {% endblock %} {% block main %}
@@ -48,9 +53,8 @@
     <div>
         <button id="R" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
         <div id="hideDivR">
-            <div id="reponses"></div>
+            <div id="reponse"></div>
         </div>
     </div>
-</div>
 </div>
 {% endblock %}
