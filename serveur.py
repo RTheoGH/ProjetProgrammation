@@ -655,8 +655,12 @@ def reponseE(enonce,reponse_choix,reponse_num):
 #     add = ReponseQCM(numeroEtu=idE,idQCM=,RidQ=,date=str(datetime.now()),estNumerique=,Value=)
 #     db.session.add(add)
 #     db.session.commit()
-    print(data)
+    print(enonce)
 
+@socket.on('recupDataForRep')
+def recupDataForRep( questionCastee, reponsesAssociees):
+    print( "QC = ",questionCastee," Reponse associer = ", reponsesAssociees)
+    socket.emit('afficheQuestion',(questionCastee, reponsesAssociees))
 ##########################################################
 
 @app.route("/modifierQCM/<string:id>", methods=['POST', 'GET'])       # Route pour modifier un qcm
