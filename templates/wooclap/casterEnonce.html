@@ -14,7 +14,7 @@
 
     //réception de la question et des réponses numéro q
     socket.on('emitOneByOne', function(questionCastee, reponsesAssociees) {
-        questionCastee = questionCastee.replaceAll("[('","").replaceAll("',)]","").replaceAll("\\r\\n","<br/>")
+        questionCastee = questionCastee.replaceAll("[(","").replaceAll(",)]","").replaceAll('"',"").replaceAll("'","").replaceAll("\\r\\n","<br/>")
         $("#question").html(questionCastee)     //affichage de la question
         for (reponse of reponsesAssociees) {    //affichage des réponses
             reponse = reponse.replaceAll("[('","").replaceAll("',)]","")
