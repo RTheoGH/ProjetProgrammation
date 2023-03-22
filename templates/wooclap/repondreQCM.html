@@ -13,23 +13,24 @@
         questions = dquestions.slice(1, dquestions.length - 1).split(", "); // (Exemple) On slice pour récupérer correctement ce qu'on veut
         reponses = dreponses.slice(1, dreponses.length - 1).split(", "); // A modifier selon ce qui faut afficher
     });
-    socket.on('afficheQuestion', (data) => { // Reception de la question à afficher
-        console.log(data) // A faire
-        $("#enonce").text(questions[data].replace(/&#39;/g,"").replace('(','').replace(')','').slice(0,-1)); // Son énoncé
-        if (reponses[data].estNumerique) { // Si c'est numérique si j'ai bien compris
-            $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?" name="reponse_num"></p>');
-        } else {
-            reponses[data].forEach((r) => { // Marche pas mais supposé afficher les réponses
-                $("#reponses").append('<p><input type="checkbox" id="{{' + r + '.idR}}" name="reponse_choix" value="{{' + r + '.idR}}" /> {{' + r + '.reponse}}</p>');
-            });
-        }
+    socket.on('afficheQuestion', (questionCastee, reponsesAssociees) => { // Reception de la question à afficher
+        console.log(questionCastee, reponsesAssociees) // A faire
+        $("#enonce").text(questionCastee.replace(/&#39;/g, "").replace('(', '').replace(')', '').slice(0, -1)); // Son énoncé
+        //if (reponses[data].estNumerique) { // Si c'est numérique si j'ai bien compris
+        //  $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?" name="reponse_num"></p>');
+        //} else {
+        //  reponses[data].forEach((r) => { // Marche pas mais supposé afficher les réponses
+        //$("#reponses").append('<p><input type="checkbox" id="{{' + r + '.idR}}" name="reponse_choix" value="{{' + r + '.idR}}" /> {{' + r + '.reponse}}</p>');
+        //});
+        //}
     });
-    function reponseE(){
-        
+
+    function reponseE() {
+
         reponse_choix = document.getElementsByName("reponse_choix");
         reponse_num = document.getElementsByName("reponse_num");
         enonce = document.getElementsByName("enonce");
-        socket.emit('reponseE',enonce,reponse_choix,reponse_num)
+        socket.emit('reponseE', enonce, reponse_choix, reponse_num)
     };
 </script>
 {% endblock %} {% block main %}
@@ -39,34 +40,9 @@
         <div id="reponses">
 
         </div>
-        <button onclick = "reponseE">Soumettre</button>
+        <button onclick="reponseE">Soumettre</button>
     </form>
 </div>
 
-<!-- Le goat a dit : "c'est statique donc impossible (+arguments)" du coup j'ai quand même gardé si tu veux edit -->
 
-<!-- <div class="menu">
-    <form action="{{ url_for('repondreQCM', i=i)}}" method="POST">
-        <div class="Reponse_etudiant">
-            {%if lena != 0%}
-                <p class="Reponse_etudiant" id="{{ListeQuestionsQcm[i].idQ}}">{{ListeQuestionsQcm[i].enonce}}</p>
-                <input type="hidden" value={{ListeQuestionsQcm[i].enonce}} name="question">
-                {%for key in ListeReponseQcm[i] %} 
-                    {%if key.estNumerique%}
-                        <p><input type="text" pattern="\d*([.]\d{0,2})?" id="{{key.idR}}" name="reponse_num"></p>
-                    {%else%}
-                        <p><input type="checkbox" id="{{key.idR}}" name="reponse_choix" value="{{key.idR}}" /> {{key.reponse}}</p>
-                    {%endif%} 
-                {%endfor%} 
-                {%if i== lena%}
-                    <button>Fin</button> 
-                {%else%}
-                    <button>Prochain question</button> 
-                {%endif%} 
-            {%else%}
-                <p>Il n'y a rien ici pour le moment</p>
-            {%endif%}
-        </div>
-    </form>
-</div> -->
 {% endblock %}

@@ -1,6 +1,7 @@
 {% extends 'partials/base.html' %} {% block head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
+    var q = 0;
 
     var q=0;
 
@@ -10,10 +11,10 @@
         /*listeQuestions = '{{listeQuestions}}'.replaceAll('(&#39;','').replaceAll('[','').replaceAll(']','').replaceAll('&#39;,)','').replace(' ','').split(',')
         listeReponses = '{{listeReponses}}'.replaceAll('(','').replaceAll(',)','').replaceAll(' ','').replaceAll('[','').replaceAll('],',';').replaceAll(']]','').split(';')
         console.log(listeReponses)
-        socket.emit('oneByOne',q,listeQuestions,listeReponses);
+        socket.emit('oneByOne', q, listeQuestions, listeReponses);
     });
-    
-    socket.on('emitOneByOne', function(questionCastee,reponsesAssociees){
+
+    socket.on('emitOneByOne', function(questionCastee, reponsesAssociees) {
         $("#question").text(questionCastee);
         console.log(questionCastee,reponsesAssociees)
 
