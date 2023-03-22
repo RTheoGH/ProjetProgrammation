@@ -589,33 +589,29 @@ def caster():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     if request.method == "POST":
-        
-        checked_reponses=[]
         idElementCaste = request.form['radio']
-        checked_reponses=[]
+        reponses=[]
         questions=[]
         if 'question' in request.form:
-            questions = db.session.query(Question.idQ).filter(Question.idQ==idElementCaste).all()
-            listeReponse = db.session.query(Reponse.idR).filter(Reponse.idQ==idElementCaste).all()
+            questions = db.session.query(Question).filter(Question.idQ==idElementCaste).all()
+            listeReponse = db.session.query(Reponse).filter(Reponse.idQ==idElementCaste).all()
             if (listeReponse[0].estNumerique):
-                checked_reponses.append([])
+                reponses.append([])
             else:
-                checked_reponses.append(listeReponse)
+                reponses.append(listeReponse)
             typeElement = "question"
         else:
-            questions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==idElementCaste).all()
-            print("questions=",questions)
-            # for quest in liQuestions:                
-            #     ojetQuestion = db.session.query(Question).filter(Question.idQ==quest[0]).all()
-            #     questions.append(ojetQuestion[0])
-            for quest in questions:
-                checked_reponses.append(db.session.query(Reponse.idR).filter(Reponse.idQ==quest[0]).all())
-                # if (listeReponse[0].estNumerique):
-                #     checked_reponses.append([])
-                # else:
-                #     checked_reponses.append(listeReponse)    
+            idQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==idElementCaste).all()
+            for quest in idQuestions:                
+                objetsQuestion = db.session.query(Question).filter(Question.idQ==quest[0]).first()
+                questions.append(objetsQuestion)
+                listeReponse = db.session.query(Reponse).filter(Reponse.idQ==quest[0]).all()
+                if (listeReponse[0].estNumerique):
+                    reponses.append([])
+                else:
+                    reponses.append(listeReponse)    
             typeElement = "sequence"
-        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,listeReponses=checked_reponses,typeElement=typeElement,page = "EnvoyerEnonce")
+        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,listeReponses=reponses,typeElement=typeElement,page = "EnvoyerEnonce")
     else:
         listeQuestions = db.session.query(Question).filter(Question.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
@@ -624,14 +620,14 @@ def caster():
 ##################### Partie Socket #####################
 
 # Socket réception des données envoyés depuis casterEnonce.html
-@socket.on('oneByOne')
-def oneByOne(q,questions,reponses):
-    print(q)
-    questionCastee = str(db.session.query(Question.enonce).filter(Question.idQ==questions[q]).all())
-    print(questionCastee)
-    reponsesAssociees = reponses[q].split(',')
-    print(reponsesAssociees)
-    socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
+# @socket.on('oneByOne')
+# def oneByOne(q,questions,reponses):
+#     print(q)
+#     questionCastee = str(db.session.query(Question.enonce).filter(Question.idQ==questions[q]).all())
+#     print(questionCastee)
+#     reponsesAssociees = reponses[q].split(',')
+#     print(reponsesAssociees)
+#     socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
 
 
 @socket.on('envoieDonnees')
