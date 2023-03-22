@@ -7,14 +7,14 @@
     });
 
     socket.on('afficheQuestion', (questionCastee, reponsesAssociees) => { // Reception de la question à afficher
-        //document.getElementById(reponses).innerHTML = "";
-        $("#enonce").text(questionCastee.replace(/&#39;/g, "").replace('(', '').replace(')', '').slice(0, -1)); // Son énoncé
+        document.getElementById('reponses').innerHTML = "";
+        $("#enonce").text(questionCastee); // Son énoncé
 
         if (reponsesAssociees == "[]") { //si numérique 
             $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?" name="reponse_num"></p>'); //ajoute un input avec la limitation 
         } else {
             reponsesAssociees.forEach((r) => { //affiche toute les reponse possible avec leur checkbox
-                $("#reponses").append('<p><input type="checkbox" id="' + r + '.idR" name="reponse_choix" value="' + r + '.idR" /> ' + r + '</p>');
+                $("#reponses").append('<p><input type="checkbox" id="' + r + '.idR" name="reponse_choix" value="' + r + '.idR" /> ' + r.replaceAll("[('", "").replaceAll("',)]", "") + '</p>');
             });
         }
     });
