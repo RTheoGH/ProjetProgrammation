@@ -1,28 +1,30 @@
 {% extends 'partials/base.html' %} {% block head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
+    var q = 0;
 
     var q=0;
 
-    const socket = io();
-    socket.on('connect', function(data) {
+    //const socket = io();
+    //socket.on('connect', function(data) {
         //socket.emit('testEQ', "Je suis dans envoyer question");
-        listeQuestions = '{{listeQuestions}}'.replaceAll('(&#39;','').replaceAll('[','').replaceAll(']','').replaceAll('&#39;,)','').replace(' ','').split(',')
+        /*listeQuestions = '{{listeQuestions}}'.replaceAll('(&#39;','').replaceAll('[','').replaceAll(']','').replaceAll('&#39;,)','').replace(' ','').split(',')
         listeReponses = '{{listeReponses}}'.replaceAll('(','').replaceAll(',)','').replaceAll(' ','').replaceAll('[','').replaceAll('],',';').replaceAll(']]','').split(';')
         console.log(listeReponses)
-        socket.emit('oneByOne',q,listeQuestions,listeReponses);
-    });
-    
-    socket.on('emitOneByOne', function(questionCastee,reponsesAssociees){
-        $("#question").text(questionCastee);
-        console.log(questionCastee,reponsesAssociees)
+        socket.emit('oneByOne', q, listeQuestions, listeReponses);
     });
 
-    function nextQuestion(){
-        console.log("aaaaaaa")
-        q++;
-        socket.emit('oneByOne',q,listeQuestions,listeReponses);
-    }
+    socket.on('emitOneByOne', function(questionCastee, reponsesAssociees) {
+        $("#question").text(questionCastee);
+        console.log(questionCastee,reponsesAssociees)
+
+                //
+
+    });*/
+
+    
+        //socket.emit('oneByOne',q,listeQuestions,listeReponses);
+    
 </script>
 {% endblock %} {% block main %}
 <div class="menu">
@@ -31,17 +33,11 @@
     <div>
         <button id="Q" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
         <div id="hideDivQ">
-            <!-- {% for question in listeQuestions%}
-            <div class="affQuestion" id="{{question.idQ}}">{{question.enonce}}</div>
-            <script>
-                /* Conversion de l'énoncé avec showdown */
-                $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
-            </script>
-            {% endfor %} -->
-            <div class="affQuestion" id="question"></div>
-            <script>                                            /* Conversion de l'énoncé avec showdown */
-                $('#{{question}}').html(converter.makeHtml($('#{{question}}').text()));
-            </script>
+            <div class="affQuestion" id="{{listeQuestions[0].idQ}}">{{listeQuestions[0].enonce}}</div>
+                <script>
+                    /* Conversion de l'énoncé avec showdown */
+                    $('#{{listeQuestions[0].idQ}}').html(converter.makeHtml($('#{{listeQuestions[0].idQ}}').text()));
+                </script>
         </div>
     </div>
 
@@ -53,4 +49,13 @@
         </div>
     </div>
 </div>
+<script>
+    function nextQuestion(){
+        console.log("aaaaaaa")
+        q++;
+        let divQuestion = document.getElementById("affQuestion").innerHTML;
+        console.log(divQuestion);
+        divQuestion.innerHTML.replace(/0/g,"1")
+    }
+</script>
 {% endblock %}
