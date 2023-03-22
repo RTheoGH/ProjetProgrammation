@@ -5,43 +5,46 @@
     socket.on('connect', function() { // Détection quand on arrive sur la page
         socket.emit('testRQ', "Je suis dans repondre au question");
     });
-    var code; // Récupération du code à afficher
-    var questions; // Les questions...
-    var reponses; // Et les réponses
-    socket.on('receptionDonnees', (dcode, dquestions, dreponses) => { // Réceptions des données
-        code = dcode; // Attribution des données à des variables pour les stockées
-        questions = dquestions.slice(1, dquestions.length - 1).split(", "); // (Exemple) On slice pour récupérer correctement ce qu'on veut
-        reponses = dreponses.slice(1, dreponses.length - 1).split(", "); // A modifier selon ce qui faut afficher
-    });
+
     socket.on('afficheQuestion', (questionCastee, reponsesAssociees) => { // Reception de la question à afficher
-        console.log(questionCastee, reponsesAssociees) // A faire
+        //document.getElementById(reponses).innerHTML = "";
         $("#enonce").text(questionCastee.replace(/&#39;/g, "").replace('(', '').replace(')', '').slice(0, -1)); // Son énoncé
-        //if (reponses[data].estNumerique) { // Si c'est numérique si j'ai bien compris
-        //  $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?" name="reponse_num"></p>');
-        //} else {
-        //  reponses[data].forEach((r) => { // Marche pas mais supposé afficher les réponses
-        //$("#reponses").append('<p><input type="checkbox" id="{{' + r + '.idR}}" name="reponse_choix" value="{{' + r + '.idR}}" /> {{' + r + '.reponse}}</p>');
-        //});
-        //}
+
+        if (reponsesAssociees == "[]") { //si numérique 
+            $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?" name="reponse_num"></p>'); //ajoute un input avec la limitation 
+        } else {
+            reponsesAssociees.forEach((r) => { //affiche toute les reponse possible avec leur checkbox
+                $("#reponses").append('<p><input type="checkbox" id="' + r + '.idR" name="reponse_choix" value="' + r + '.idR" /> ' + r + '</p>');
+            });
+        }
     });
 
     function reponseE() {
 
-        reponse_choix = document.getElementsByName("reponse_choix");
-        reponse_num = document.getElementsByName("reponse_num");
-        enonce = document.getElementsByName("enonce");
+        var reponse_choix = document.getElementsByClassName("reponse_choix");
+        var reponse_num = document.getElementsByName("reponse_num");
+        var enonce = document.getElementById("enonce");
+        console.log(reponse_choix)
+        console.log(reponse_num)
+        console.log(enonce)
         socket.emit('reponseE', enonce, reponse_choix, reponse_num)
     };
 </script>
 {% endblock %} {% block main %}
 <div class="menu">
-    <h1 id="enonce" name="enonce"></h1>
-    <form method="POST">
+    <form>
+        <h1 id="enonce" name="enonce"></h1>
+
         <div id="reponses">
 
         </div>
-        <button onclick="reponseE">Soumettre</button>
+
     </form>
+    <button onclick="reponseE()">Soumettre</button>
+
+
+
+
 </div>
 
 

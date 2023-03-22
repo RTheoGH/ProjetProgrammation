@@ -632,13 +632,6 @@ def oneByOne(q,questions,reponses):
     socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
 
 
-@socket.on('envoieDonnees')
-def envoieDonnees(code,questions,reponses):
-    print("code = ",code)
-    print("question = ",questions)
-    print("reponse = ",reponses)
-    socket.emit('receptionDonnees',(code,questions,reponses)) # Renvoie des données sur la page repondreQCM.html
-
 # Socket réception du numéro de la question actuelle
 @socket.on('setQuestion')
 def setQuestion(data):
@@ -652,7 +645,7 @@ def reponseE(enonce,reponse_choix,reponse_num):
 #     add = ReponseQCM(numeroEtu=idE,idQCM=,RidQ=,date=str(datetime.now()),estNumerique=,Value=)
 #     db.session.add(add)
 #     db.session.commit()
-    print(enonce)
+    print("enonce = ",enonce," reponse choix = ",reponse_choix," reponse num = ",reponse_num)
 
 @socket.on('recupDataForRep')
 def recupDataForRep( questionCastee, reponsesAssociees):
