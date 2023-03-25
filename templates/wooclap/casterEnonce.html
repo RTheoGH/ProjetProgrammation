@@ -1,42 +1,64 @@
 {% extends 'partials/base.html' %} {% block head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
-    const socket = io(); // Variable socket
-    socket.on('connect', function(data) { // Quand on rejoint la page, envoie des données nécessaires pour l'affichage
-        socket.emit('envoieDonnees', '{{idElement}}', '{{listeQuestions}}', '{{listeReponses}}');
-    });
+    //q est le rang de la question à afficher à un moment M
     var q = 0;
-    socket.emit('setQuestion', q);
+    const socket = io();
+    socket.on('connect', function(data) {
+        //formatage des IDsreçus du serveur
+        listeQuestions = '{{listeQuestions}}'.replaceAll('Question ', '').replaceAll('&#39;', '').replaceAll('[', '').replaceAll(']', '').replaceAll('&#39;,)', '').replaceAll(' ', '').split(',')
+        listeReponses = '{{listeReponses}}'.replaceAll('Reponse', '').replaceAll('(', '').replaceAll(',)', '').replaceAll(' ', '').replaceAll('[', '').replaceAll('],', ';').replaceAll(']]', '').split(';')
+        //envoi au serveur des IDs formaté et du rang
+        socket.emit('oneByOne', q, listeQuestions, listeReponses);
+    });
 
-    function nextQuestion() { // Fonction pour passer à la question suivante
-        console.log("Question :" + q)
-        q++;
-        socket.emit('setQuestion', q); // Envoie du numéro de la question
+    //réception de la question et des réponses numéro q
+    socket.on('emitOneByOne', function(questionCastee, reponsesAssociees) {
+        questionCastee = questionCastee.replaceAll("[(","").replaceAll(",)]","").replaceAll('"',"").replaceAll("'","").replaceAll("\\r\\n","<br/>")
+        $("#question").html(questionCastee)     //affichage de la question
+        for (reponse of reponsesAssociees) {    //affichage des réponses
+            reponse = reponse.replaceAll("[('","").replaceAll("',)]","")
+            if (reponse == "[]"){
+                $("#reponse").append('<input type="number"><br/>') //réponse numérique
+            }
+            else{
+                $("#reponse").append(reponse+"<br/>")
+            }
+        }
 
+        socket.emit('recupDataForRep', questionCastee, reponsesAssociees)
+    })
+
+    function nextQuestion() {
+        if (q < listeQuestions.length-1){  //interdit d'incrémenter q s'il n'y a plus de questions
+            q++;
+            socket.emit('oneByOne', q, listeQuestions, listeReponses);
+            document.getElementById("reponse").innerHTML = "";
+        }
     }
 </script>
 {% endblock %} {% block main %}
 <div class="menu">
     <h3>Code : {{idElement}}</h3>
     <button onclick="nextQuestion()">Question suivante</button>
+    <hr/>
     <div>
         <button id="Q" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
         <div id="hideDivQ">
-            {% for question in listeQuestions%}
-            <div class="affQuestion" id="{{question.idQ}}">{{question.enonce}}</div>
+            <div class="affQuestion" id="question"></div>
             <script>
-                /* Conversion de l'énoncé avec showdown */
-                $('#{{question.idQ}}').html(converter.makeHtml($('#{{question.idQ}}').text()));
+                $('#question').html(converter.makeHtml($('#question').text()));
             </script>
-            {% endfor %}
         </div>
     </div>
 
     <div>
         <button id="R" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
-
         <div id="hideDivR">
-            <p>Les Reponses à faire en socket</p>
+            <div id="reponse"></div>
+            <script>
+                $('#reponse').html(converter.makeHtml($('#reponse').text()));
+            </script>
         </div>
     </div>
 </div>

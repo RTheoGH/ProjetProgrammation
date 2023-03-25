@@ -15,7 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projet.db' # Création du fic
 db.init_app(app)
 socket = SocketIO(app)
 
-#with app.app_context(): 
+# with app.app_context(): 
     # db.session.query(ReponseQCM).all().delete()
     # db.session.commit()
     # rQCM = QCM.query.first()
@@ -26,8 +26,8 @@ socket = SocketIO(app)
     #                 .first()
     # RidQ = Question.idQ
     # idQCM = rQCM.idQCM
-    #db.drop_all()
-    #db.create_all()
+    # db.drop_all()
+    # db.create_all()
     #date=str(datetime.now())
     #exemple0 = Test(numeroEtu=33184650, date=date, estNumerique=False, Value=0)
     #exemple1 = Test(numeroEtu=33184651, date=date, estNumerique=False, Value=0)    
@@ -551,36 +551,37 @@ def repondreQCM():
         return redirect(url_for('index'))
     
     if request.method == "POST":
-        reponse = request.form.getlist('reponse_choix')
-        reponseN = request.form.getlist("reponse_num")
-        question = request.form.getlist("question")
-        idq = EnvoyerQCM.query.first()
-        ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
-        ListeReponseQcm = []
-        for key in ListeQuestionsQcm:
-            add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
-            ListeReponseQcm.append(add)
-        lena = len(ListeQuestionsQcm) 
-        # prepare la bdd
-        idE = session['idU']
-        preE = session['preU']
-        nomE = session['nomU'] 
-        dateA = str(datetime.now())
-        idQbdd = idq.idQCM
+        # reponse = request.form.getlist('reponse_choix')
+        # reponseN = request.form.getlist("reponse_num")
+        # question = request.form.getlist("question")
+        # idq = EnvoyerQCM.query.first()
+        # ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
+        # ListeReponseQcm = []
+        # for key in ListeQuestionsQcm:
+        #     add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
+        #     ListeReponseQcm.append(add)
+        # lena = len(ListeQuestionsQcm) 
+        # # prepare la bdd
+        # idE = session['idU']
+        # preE = session['preU']
+        # nomE = session['nomU'] 
+        # dateA = str(datetime.now())
+        # idQbdd = idq.idQCM
         return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i)
     else:
-        idq = EnvoyerQCM.query.first()
-        if idq == None:
-            return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=0,ListeReponseQcm = [],ListeQuestionsQcm = [],i= 0)
-        i= 0
-        idq = EnvoyerQCM.query.first()
-        ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
-        ListeReponseQcm = []
-        for key in ListeQuestionsQcm:
-            add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
-            ListeReponseQcm.append(add)
-        lena = len(ListeQuestionsQcm)  
-        return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i)
+        # idq = EnvoyerQCM.query.first()
+        # if idq == None:
+        #     return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=0,ListeReponseQcm = [],ListeQuestionsQcm = [],i= 0)
+        # i= 0
+        # idq = EnvoyerQCM.query.first()
+        # ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
+        # ListeReponseQcm = []
+        # for key in ListeQuestionsQcm:
+        #     add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
+        #     ListeReponseQcm.append(add)
+        # lena = len(ListeQuestionsQcm)  
+        #lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i
+        return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test")
 
 @app.route("/envoyerEnonce",methods = ["POST","GET"])
 def caster():
@@ -589,23 +590,29 @@ def caster():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     if request.method == "POST":
-        
-        checked_reponses=[]
         idElementCaste = request.form['radio']
+        reponses=[]
+        questions=[]
         if 'question' in request.form:
-            questions = db.session.query(Question).filter(Question.idQ==idElementCaste).first()
+            questions = db.session.query(Question).filter(Question.idQ==idElementCaste).all()
             listeReponse = db.session.query(Reponse).filter(Reponse.idQ==idElementCaste).all()
             if (listeReponse[0].estNumerique):
-                checked_reponses.append([])
+                reponses.append([])
             else:
-                checked_reponses.append(listeReponse)       # Et les réponses correspondantes à cette question
+                reponses.append(listeReponse)
+            typeElement = "question"
         else:
-            questions=[]
-            liQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==idElementCaste).all()
-            for quest in liQuestions:                
-                idQ = db.session.query(Question.enonce).filter(Question.idQ==quest[0]).all() 
-                questions.append(idQ[0])
-        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,listeReponses = checked_reponses,page = "EnvoyerEnonce")
+            idQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==idElementCaste).all()
+            for quest in idQuestions:                
+                objetsQuestion = db.session.query(Question).filter(Question.idQ==quest[0]).first()
+                questions.append(objetsQuestion)
+                listeReponse = db.session.query(Reponse).filter(Reponse.idQ==quest[0]).all()
+                if (listeReponse[0].estNumerique):
+                    reponses.append([])
+                else:
+                    reponses.append(listeReponse)    
+            typeElement = "sequence"
+        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,listeReponses=reponses,typeElement=typeElement,page = "EnvoyerEnonce")
     else:
         listeQuestions = db.session.query(Question).filter(Question.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
@@ -614,12 +621,16 @@ def caster():
 ##################### Partie Socket #####################
 
 # Socket réception des données envoyés depuis casterEnonce.html
-@socket.on('envoieDonnees')
-def envoieDonnees(code,questions,reponses):
-    print("code = ",code)
-    print("question = ",questions)
-    print("reponse = ",reponses)
-    socket.emit('receptionDonnees',(code,questions,reponses)) # Renvoie des données sur la page repondreQCM.html
+@socket.on('oneByOne')
+def oneByOne(q,questions,reponses):
+    questionCastee = str(db.session.query(Question.enonce).filter(Question.idQ==questions[q]).all())
+    idReponsesAssociees = reponses[q].split(',')
+    reponsesAssociees = []
+    if idReponsesAssociees != []:
+        for id in idReponsesAssociees:
+            reponsesAssociees.append(str(db.session.query(Reponse.reponse).filter(Reponse.idR==id).all()))
+    socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
+
 
 # Socket réception du numéro de la question actuelle
 @socket.on('setQuestion')
@@ -629,9 +640,17 @@ def setQuestion(data):
 
 # Socket réception des reponses des éléves et les mettres dans la bdd
 @socket.on('reponseE')
-def reponseE(data):
-    print(data)
+def reponseE(enonce,reponse_choix,reponse_num):
+#         idE = session['idU']
+#     add = ReponseQCM(numeroEtu=idE,idQCM=,RidQ=,date=str(datetime.now()),estNumerique=,Value=)
+#     db.session.add(add)
+#     db.session.commit()
+    print("enonce = ",enonce," reponse choix = ",reponse_choix," reponse num = ",reponse_num)
 
+@socket.on('recupDataForRep')
+def recupDataForRep( questionCastee, reponsesAssociees):
+    print( "QC = ",questionCastee," Reponse associer = ", reponsesAssociees)
+    socket.emit('afficheQuestion',(questionCastee, reponsesAssociees))
 ##########################################################
 
 @app.route("/modifierQCM/<string:id>", methods=['POST', 'GET'])       # Route pour modifier un qcm
