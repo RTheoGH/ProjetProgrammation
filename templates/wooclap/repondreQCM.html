@@ -15,29 +15,37 @@
 
         if (reponsesAssociees == "[]") { //si numérique 
             $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?" name="reponse_num"></p>'); //ajoute un input avec la limitation 
+            ReponseAssJS = reponsesAssociees;
         } else {
+            ReponseChoixJS = [];
             reponsesAssociees.forEach((r) => { //affiche toute les reponse possible avec leur checkbox
-                ReponseChoixJS.push(r.replaceAll("[('", "").replaceAll("',)]", "") + '</p>');
+                ReponseChoixJS.push(r.replaceAll("[('", "").replaceAll("',)]", ""));
                 $("#reponses").append('<p><input type="checkbox" id="' + r + '.idR" name="reponse_choix" value="' + r + '.idR" /> ' + r.replaceAll("[('", "").replaceAll("',)]", "") + '</p>');
+                ReponseAssJS = reponsesAssociees;
             });
         }
     });
 
     function reponseE() {
         console.log("RA = ", ReponseAssJS)
-        if (ReponseAssJS == '[]') {
+        if (ReponseAssJS == "[]") {
             reponse_num = document.getElementsByName('reponse_num')[0].value;
             console.log(reponse_num)
-            socket.emit('reponseE', enonce, reponse_choix, reponse_num)
+                //socket.emit('reponseE', enonce, reponse_choix, reponse_num)
         } else {
+            reponse_choix = [];
             console.log("RCJS = ", ReponseChoixJS);
-            reponse_choix = document.getElementsByName("reponse_choix")[0].checked; //piste mais on devra recup des info de la socket 
+            for (i = 0; i < ReponseChoixJS.length; i++) {
+                reponse_choix.push(document.getElementsByName("reponse_choix")[i].checked);
+            }
+
             console.log(reponse_choix)
+
         }
         reponse_div = document.getElementById('reponses').value;
         enonce = document.getElementById('enonce').value;
         console.log("reponse div = ", reponse_div)
-        console.log(enonce)
+        console.log("finish")
             //socket.emit('reponseE', enonce, reponse_choix, reponse_num)
     };
 </script>
