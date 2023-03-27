@@ -4,6 +4,7 @@
 <div class="mid double">
     <div class="menuLQcm">   <!-- Partie liste de QCM -->
         <h1>Liste des QCM</h1>
+        {% include 'partials/flash.html' %}
         <div class="listeQCM">
             <table>
                 <tr class="top">
@@ -48,14 +49,19 @@
             <p><input class="button" type="submit" value="Confirmer" /></p>
         </form>
         <form action="/createRandom" method="POST">
-            <input type="number" name="num_qcm" min="1" placeholder="Nombre de QCMs" required>
-            <input type="text" name="nom_qcm" placeholder="Nom des QCMs" required><br><br>
-            {% for etiquette in etiquettes %}
-            <label>{{ etiquette.nom }}</label>
-            <input type="hidden" name="etiquette_id[]" value="{{ etiquette.idE }}">
-            <input type="number" name="nb_question[{{ etiquette.idE }}]" min="1" max="{{ etiquette.questions }}" placeholder="Nombre de questions pour {{ etiquette.nom }}" required><br>
-            {% endfor %}
-            <input class="button" type="submit" value="Confirmer">
+            <h1>Nouveau Controle</h1>
+            <input type="number" name="num_qcm" min="1" placeholder="Nombre de contrôles" required>
+            <input type="text" name="nom_qcm" placeholder="Nom des contrôles" required><br><br>
+            <fieldset><legend>Choisir étiquettes</legend>
+                <ul style="list-style-type: none;">
+                    {% for etiquette in etiquettes %}
+                    <li style="float: left;width: 25%;"><label>{{ etiquette.nom }}</label>
+                        <input type="hidden" name="etiquette_id[]" value="{{ etiquette.idE }}">
+                        <input style="width:49.3px" type="number" name="nb_question[{{ etiquette.idE }}]" value="0" min="0" max="{{ etiquette.questions }}" required></li>  
+                    {% endfor %}
+                </ul>
+            </fieldset>
+            <p><input class="button" type="submit" value="Confirmer"></p>
         </form>        
     </div>
 </div>

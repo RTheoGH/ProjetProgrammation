@@ -526,8 +526,10 @@ def listeQCM():
         return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM,ListesQuestions=LQ,page="ListeQCM",etiquettes=etiquettes)
 
 def is_same_qcm(questions_qcm, previous_qcms):
-    # Prend une liste de questions et une liste de qcm en paramètres, et vérifie si l'un des qcm possède
-    # déjà exactement les questions données, rend True si l'un des qcm les possèdent False sinon
+    """
+    Prend une liste de questions et une liste de qcm en paramètres, et vérifie si l'un des qcm possède
+    déjà exactement les questions données, rend True si l'un des qcm les possèdent False sinon
+    """
     if previous_qcms:
         for qcm in previous_qcms:
             listeIdQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==qcm.idQCM).all()
@@ -538,8 +540,7 @@ def is_same_qcm(questions_qcm, previous_qcms):
                     if question.idQ != IdQuestion:
                         quest_diff += 1
                 if quest_diff == nbQuest:
-                    return False
-                    
+                    return False            
         return True
     else :
         return False
@@ -554,7 +555,7 @@ def create_qcm():
     # Si la méthode est POST, l'utilisateur a soumis un formulaire
     if request.method == 'POST':
         # Récupérer les données du formulaire
-        num_qcm = int(request.form['num_qcm'])                 # nombre de QCM à créer
+        num_qcm = int(request.form['num_qcm'])                  # nombre de QCM à créer
         nom_qcm = request.form['nom_qcm']                       # nom du QCM
         etiquettes_id = request.form.getlist('etiquette_id[]')  # étiquettes des questions
         nb_questions = {}
@@ -621,8 +622,6 @@ def create_qcm():
     else:
         flash(f"Vos QCM(s) n'ont pas pu être créé(s)... ")
         return redirect(url_for('listeQCM'))
-
-
 
 @app.route("/afficheQCM/<string:id>")  # Affichage des questions du Qcm avec leurs réponses
 def afficheQCM(id):                    # Remarque : le [0] sert à isoler la chaine de char, puisque la requête renvoie un objet 
