@@ -554,26 +554,36 @@ def create_qcm():
     # Si la méthode est POST, l'utilisateur a soumis un formulaire
     if request.method == 'POST':
         # Récupérer les données du formulaire
-        num_qcm = int(request.form['num_qcm'])        # nombre de QCM à créer
-        etiquette_id = request.form['etiquette_id']   # étiquette de la question
-        nom_qcm = request.form['nom_qcm']             # nom du QCM
-        nb_question = int(request.form['nb_question'])# nombre de question par QCM
+        num_qcm = int(request.form['num_qcm'])                 # nombre de QCM à créer
+        nom_qcm = request.form['nom_qcm']                       # nom du QCM
+        etiquettes_id = request.form.getlist('etiquette_id[]')  # étiquettes des questions
+        nb_questions = {}
+        for etiquette_id in etiquettes_id:                      # nombre de question par étiquette
+            nb_questions[etiquette_id] = int(request.form['nb_question[{}]'.format(etiquette_id)])
+
+        qcms_crees = []                                         # Liste pour stocker les QCMs créés
+        questions = {}                                          # Liste pour stocker les Questions des étiquettes
 
         # Trouver toutes les questions avec l'étiquette spécifiée dans la base de données
-        questions = Question.query.join(Associe).filter(Associe.RidE == etiquette_id).all()
+        for etiquette_id in etiquettes_id:
+            questions[etiquette_id] = Question.query.join(Associe).filter(Associe.RidE == etiquette_id).all()
 
-        # Vérifier si des questions ont été trouvées pour l'étiquette spécifiée
-        if not questions:
-            flash("Aucune question trouvée pour l'étiquette spécifiée")
-            return redirect(url_for('lQuestion'))
+            # Vérifier si des questions ont été trouvées pour l'étiquette spécifiée
+            if not questions[etiquette_id]:
+                flash(f"Aucune question trouvée pour l'étiquette {etiquette_id}")
+                return redirect(url_for('lQuestion'))
 
-        # Liste pour stocker les QCMs créés
-        qcms_crees = []
+            if len(questions[etiquette_id]) < nb_questions[etiquette_id]:
+                flash(f"Pas assez de question trouvée pour l'étiquette {etiquette_id}")
+                return redirect(url_for('lQuestion'))
 
         # Créer num_qcm QCMs avec des questions aléatoires sélectionnées à partir de la liste de questions trouvées
         for i in range(num_qcm):
-            # Sélectionner nb_question questions aléatoires parmi les questions récupérées
-            selected_questions = random.sample(questions, nb_question)
+            selected_questions = []   # Liste pour stocker les questions sélectionnées pour le QCM
+
+            # Sélectionner nb_question questions aléatoires parmi les questions récupérées pour chaque étiquette
+            for etiquette_id in etiquettes_id:
+                selected_questions += random.sample(questions[etiquette_id], nb_questions[etiquette_id])
 
             # Vérifier si un QCM avec les mêmes questions a déjà été créé
             if is_same_qcm(selected_questions, qcms_crees):
@@ -591,26 +601,22 @@ def create_qcm():
 
             # Ajouter les questions sélectionnées au QCM
             for question in selected_questions:
+                print(question.idQ)
                 new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ)
                 db.session.add(new_contient)
-
-            # Enregistrer les modifications dans la base de données
-            db.session.commit()
 
             # Ajouter le nouveau QCM à la liste des QCMs créés
             qcms_crees.append(new_qcm)
 
+        # Enregistrer les modifications dans la base de données
+        db.session.commit()
+
         # Afficher un message de confirmation et rediriger vers la liste des QCMs
         flash(f"{num_qcm} QCM(s) ont été créé(s) avec succès!", 'success')
         return redirect(url_for('listeQCM'))
-
-    # Si la méthode est GET, afficher le formulaire pour créer un QCM aléatoire
     else:
         flash(f"Vos QCM(s) n'ont pas pu être créé(s)... ")
-        return redirect(url_for('/listeQCM'))
-
-
-
+        return redirect(url_for('listeQCM'))
 
 
 
