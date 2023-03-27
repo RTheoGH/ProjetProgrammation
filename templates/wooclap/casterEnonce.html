@@ -4,6 +4,7 @@
     //q est le rang de la question à afficher à un moment M
     var q = 0;
     const socket = io();
+    var progressBlock = 0;
     socket.on('connect', function(data) {
         //formatage des IDsreçus du serveur
         listeQuestions = '{{listeQuestions}}'.replaceAll('Question ', '').replaceAll('&#39;', '').replaceAll('[', '').replaceAll(']', '').replaceAll('&#39;,)', '').replaceAll(' ', '').split(',')
@@ -20,9 +21,10 @@
             reponse = reponse.replaceAll("[('","").replaceAll("',)]","")
             if (reponse == "[]"){
                 $("#reponse").append('<input type="number"><br/>') //réponse numérique
+
             }
             else{
-                $("#reponse").append(reponse+"<br/>")
+                $("#reponse").append(reponse + '<br/><progress value="0" max="0" id="'+reponse+'"></progress> <br/></div>')
             }
         }
 
@@ -32,10 +34,32 @@
     function nextQuestion() {
         if (q < listeQuestions.length-1){  //interdit d'incrémenter q s'il n'y a plus de questions
             q++;
+            progressBlock = 0;
             socket.emit('oneByOne', q, listeQuestions, listeReponses);
             document.getElementById("reponse").innerHTML = "";
         }
     }
+    socket.on('retourReponseEtudiant',function(reponse_choix,ReponseChoixJS){
+        
+        if(progressBlock == 0){
+            progressBlock = 1;
+        }
+        else{
+            ReponseChoixJS.forEach((r)=>{
+                console.log(r)
+                console.log("avant max = ",document.getElementById(r).max)
+                document.getElementById(r).setAttribute("max",document.getElementById(r).max+1)
+                console.log("apres max = ",document.getElementById(r).max)
+            })
+        }
+        reponse_choix.forEach((r)=>{
+            console.log(r)
+            console.log("avant value = ",document.getElementById(r).max)
+            document.getElementById(r).setAttribute("value",document.getElementById(r).value+1)
+            console.log("apres value = ",document.getElementById(r).max)
+        })
+     
+    })
 </script>
 {% endblock %} {% block main %}
 <div class="menu">
@@ -51,6 +75,7 @@
             </script>
         </div>
     </div>
+    
 
     <div>
         <button id="R" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>

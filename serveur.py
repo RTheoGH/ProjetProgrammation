@@ -651,6 +651,12 @@ def reponseE(enonce,reponse_choix,reponse_num):
 def recupDataForRep( questionCastee, reponsesAssociees):
     print( "QC = ",questionCastee," Reponse associer = ", reponsesAssociees)
     socket.emit('afficheQuestion',(questionCastee, reponsesAssociees))
+
+@socket.on('reponseEtuChoixmultiple')
+def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS):
+    print(reponse_choix)
+    socket.emit("retourReponseEtudiant",(reponse_choix,ReponseChoixJS))
+
 ##########################################################
 
 @app.route("/modifierQCM/<string:id>", methods=['POST', 'GET'])       # Route pour modifier un qcm
