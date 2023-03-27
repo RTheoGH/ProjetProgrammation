@@ -7,12 +7,22 @@
 <div class="menu">
     <h1>Question Ouverte</h1>
     <h2>Répondez à cette question !</h2>
-    <h3>(Si vous le souhaitez bien entendu...)</h3>
+    {% if question_ouverte %}
+        <h3>{{question_ouverte}}</h3>
+    {% else %}
+        <h3>(Si vous le souhaitez bien entendu...)</h3>
+    {% endif %}
     <hr/>
-    <form action="/question-ouverte" method="POST">
-        <p><input id="question" type="text" placeholder="Entrez votre question ici"/></p>
-        <p><input class="button" type="submit" value="Voir les réponses !"/></p>
-    </form>
+    {% if not question_ouverte %}
+        <form name="envoie-question" action="/question-ouverte" method="POST">
+            <textarea name="question-ouverte" rows="4" cols="40" placeholder="Entrez votre question ici"></textarea>
+            <p><input class="button" type="submit" value="Envoie"/></p>
+        </form>
+    {% else %}
+        <form name="affichage-réponses" action="/question-ouverte" method="POST">
+            <input class="button" type="submit" value="Voir les réponses !"/>
+        </form>
+    {% endif %}
 </div>
 
 {% endblock %}

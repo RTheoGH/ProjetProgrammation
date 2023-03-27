@@ -801,31 +801,52 @@ def stats():
     Reponses = Test.query.all()
     return render_template("statistiques.html", Reponses = Reponses)
 
-@app.route("/question-ouverte", methods=['POST', 'GET'])
-def question_ouverte():
+reponses_ouvertes = []                  # Variable globale contenant les réponses des étudiants
+question_ouverte_nom = ""               # Variable globale contenant le titre de la question ouverte
 
+@app.route("/question-ouverte", methods=['POST', 'GET'])    # Route pour lancer une question ouverte
+def question_ouverte():
+    global question_ouverte_nom
     if request.method == 'POST':
-        return render_template("ouverte/nuage.html",title='Nuage de réponses',page="QuestionOuverte")
+        if 'question-ouverte' in  request.form:             # Envoie du titre de la question
+            question_ouverte_nom = request.form['question-ouverte']
+            return render_template("ouverte/questionOuverte.html",title='Question ouverte',page="QuestionOuverte",question_ouverte=question_ouverte_nom)
+        else:                                               # Affichage des réponses
+            return render_template("ouverte/nuage.html",title='Nuage de réponses',page="QuestionOuverte")
     else:
+        global reponses_ouvertes 
+        reponses_ouvertes = []              # Reset des données pour une nouvelle question
+        print("on reset !")
         return render_template("ouverte/questionOuverte.html",title='Question ouverte',page="QuestionOuverte")
 
-@app.route("/reponse-ouverte", methods=['POST', 'GET'])
+@app.route("/reponse-ouverte", methods=['POST', 'GET'])    # Route pour répondre à la question ouverte
 def reponse_ouverte():
 
     if request.method == 'POST':
-        reponses = {}
         ma_reponse = request.form['reponse']
-        liste_reponses = ma_reponse.split("\n")
 
-        for reponse in liste_reponses:
-            if reponse in reponses:
-                reponses[reponse] += 1
-            else:
-                reponses[reponse] = 1
-        print(reponses)
+        dejaLa = False                        # Si le mot est déja la
+        for r in reponses_ouvertes:           # Pour chaque réponse
+            if ma_reponse in r.keys():        # Si on voit que le mot est déja la
+                r[ma_reponse] += 1            # On augmente 
+                dejaLa = True
+        if not dejaLa:                        # Si c'est un nouveau mot
+            reponses_ouvertes.append({ma_reponse:1})
+        print(reponses_ouvertes)
         return redirect("/")
     else:
         return render_template("ouverte/reponseOuverte.html",title='Réponse ouverte',page="ReponseOuverte")
+
+@app.route("/donnees-reponses",methods=['GET'])  # Route des données
+def donnees_reponses():
+    reponses_ouvertes_2 = {"mots": [],"titre":question_ouverte_nom}  
+
+    for r in reponses_ouvertes:         # Création de l'object adapté pour le nuage de mots
+        for cle, valeur in r.items():
+            ajustement = {"x": cle, "value": valeur}
+            reponses_ouvertes_2["mots"].append(ajustement)
+
+    return reponses_ouvertes_2
 
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)

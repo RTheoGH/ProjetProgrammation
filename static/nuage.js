@@ -1,16 +1,13 @@
-anychart.onDocumentReady(function() {
-    var data = [
-        {"x": "Java", "value": 12},
-        {"x": "Python", "value": 56},
-        {"x": "JavaScript", "value": 31},
-        {"x": "C", "value": 8},
-        {"x": "C++", "value": 3},
-        {"x": "C#", "value": 1},
-        {"x": "Ocaml", "value": 2},
-    ];
+anychart.onDocumentReady(async function() {
+    var response = await fetch('http://127.0.0.1:5000/donnees-reponses'); // Récupération des données des réponses
+    console.log(response);
+    var data = await response.json();
+    console.log(data.mots);
 
-    var nuage = anychart.tagCloud(data);     // Initialise le nuage de mots=
-    nuage.title('Votre langage préféré ?')   // Titre du nuage
+    var mots = data.mots;     // Récupération des mots
+    var titre = data.titre;   // Récupération du titre
+    var nuage = anychart.tagCloud(mots);     // Initialise le nuage de mots
+    nuage.title(titre)   // Titre du nuage
     nuage.angles([0])                        // Angle des mots
 
     nuage.colorRange(true);
