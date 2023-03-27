@@ -590,15 +590,6 @@ def create_qcm():
                         selected_questions.append(question)
                         selected_question_ids.add(question.idQ)
 
-
-                # for question1 in selected_questions:
-                #     verif = 0
-                #     for question2 in selected_questions:
-                #         if question1==question2:
-                #             verif+=1
-                #     if verif>1:
-                #         continue
-
             # Vérifier si un QCM avec les mêmes questions a déjà été créé
             if is_same_qcm(selected_questions, qcms_crees):
                 # Si c'est le cas, essayer avec une autre sélection de questions
