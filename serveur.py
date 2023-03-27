@@ -601,7 +601,6 @@ def create_qcm():
 
             # Ajouter les questions sélectionnées au QCM
             for question in selected_questions:
-                print(question.idQ)
                 new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ)
                 db.session.add(new_contient)
 
