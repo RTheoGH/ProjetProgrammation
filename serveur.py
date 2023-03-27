@@ -580,10 +580,24 @@ def create_qcm():
         # Créer num_qcm QCMs avec des questions aléatoires sélectionnées à partir de la liste de questions trouvées
         for i in range(num_qcm):
             selected_questions = []   # Liste pour stocker les questions sélectionnées pour le QCM
+            selected_question_ids = set()
 
             # Sélectionner nb_question questions aléatoires parmi les questions récupérées pour chaque étiquette
             for etiquette_id in etiquettes_id:
-                selected_questions += random.sample(questions[etiquette_id], nb_questions[etiquette_id])
+                questions_subset = random.sample(questions[etiquette_id], nb_questions[etiquette_id])
+                for question in questions_subset:
+                    if question.idQ not in selected_question_ids:
+                        selected_questions.append(question)
+                        selected_question_ids.add(question.idQ)
+
+
+                # for question1 in selected_questions:
+                #     verif = 0
+                #     for question2 in selected_questions:
+                #         if question1==question2:
+                #             verif+=1
+                #     if verif>1:
+                #         continue
 
             # Vérifier si un QCM avec les mêmes questions a déjà été créé
             if is_same_qcm(selected_questions, qcms_crees):
