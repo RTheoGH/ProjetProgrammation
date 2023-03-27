@@ -10,7 +10,6 @@
 
     socket.on('afficheQuestion', (questionCastee, reponsesAssociees) => { // Reception de la question à afficher
         document.getElementById('reponses').innerHTML = "";
-        RA = reponsesAssociees
         $("#enonce").text(questionCastee); // Son énoncé
 
         if (reponsesAssociees == "[]") { //si numérique 
@@ -18,7 +17,7 @@
             ReponseAssJS = reponsesAssociees;
         } else {
             ReponseChoixJS = [];
-            reponsesAssociees.forEach((r) => { //affiche toute les reponse possible avec leur checkbox
+            reponsesAssociees.forEach((r) => { //affiche toutes les reponses possibles avec leurs checkbox
                 ReponseChoixJS.push(r.replaceAll("[('", "").replaceAll("',)]", ""));
                 $("#reponses").append('<p><input type="checkbox" id="' + r + '.idR" name="reponse_choix" value="' + r + '.idR" /> ' + r.replaceAll("[('", "").replaceAll("',)]", "") + '</p>');
                 ReponseAssJS = reponsesAssociees;
@@ -36,10 +35,12 @@
             reponse_choix = [];
             console.log("RCJS = ", ReponseChoixJS);
             for (i = 0; i < ReponseChoixJS.length; i++) {
-                reponse_choix.push(document.getElementsByName("reponse_choix")[i].checked);
+                if(document.getElementsByName("reponse_choix")[i].checked== true){
+                    reponse_choix.push(ReponseChoixJS[i]);
+                }
             }
-
-            console.log(reponse_choix)
+            console.log("reponse_choix = ",reponse_choix)
+            socket.emit('reponseEtuChoixmultiple',reponse_choix,ReponseChoixJS)
 
         }
         reponse_div = document.getElementById('reponses').value;
