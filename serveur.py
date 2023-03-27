@@ -520,9 +520,99 @@ def listeQCM():
                     return "Erreur de création du lien 'contient' entre Qcm et Question"
         return redirect("/listeQCM")                  # Retour vers la liste des QCM
     else:
+        etiquettes = db.session.query(Etiquette).filter(Etiquette.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()         # Affichage de tous les QCM
         LQ = db.session.query(Question).filter(Question.idU==session['idU']).all()
-        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM,ListesQuestions=LQ,page="ListeQCM")
+        return render_template("liste/lQCM.html",title=title,listeQCM=listeQCM,ListesQuestions=LQ,page="ListeQCM",etiquettes=etiquettes)
+
+def is_same_qcm(questions_qcm, previous_qcms):
+    # Prend une liste de questions et une liste de qcm en paramètres, et vérifie si l'un des qcm possède
+    # déjà exactement les questions données, rend True si l'un des qcm les possèdent False sinon
+    if previous_qcms:
+        for qcm in previous_qcms:
+            listeIdQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==qcm.idQCM).all()
+            nbQuest = len(listeIdQuestions)
+            for IdQuestion in listeIdQuestions:
+                quest_diff = 0
+                for question in questions_qcm:
+                    if question.idQ != IdQuestion:
+                        quest_diff += 1
+                if quest_diff == nbQuest:
+                    return False
+                    
+        return True
+    else :
+        return False
+
+@app.route('/createRandom', methods=['GET', 'POST'])
+def create_qcm():
+    # Vérifier si l'utilisateur est connecté
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+
+    # Si la méthode est POST, l'utilisateur a soumis un formulaire
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        num_qcm = int(request.form['num_qcm'])        # nombre de QCM à créer
+        etiquette_id = request.form['etiquette_id']   # étiquette de la question
+        nom_qcm = request.form['nom_qcm']             # nom du QCM
+        nb_question = int(request.form['nb_question'])# nombre de question par QCM
+
+        # Trouver toutes les questions avec l'étiquette spécifiée dans la base de données
+        questions = Question.query.join(Associe).filter(Associe.RidE == etiquette_id).all()
+
+        # Vérifier si des questions ont été trouvées pour l'étiquette spécifiée
+        if not questions:
+            flash("Aucune question trouvée pour l'étiquette spécifiée")
+            return redirect(url_for('lQuestion'))
+
+        # Liste pour stocker les QCMs créés
+        qcms_crees = []
+
+        # Créer num_qcm QCMs avec des questions aléatoires sélectionnées à partir de la liste de questions trouvées
+        for i in range(num_qcm):
+            # Sélectionner nb_question questions aléatoires parmi les questions récupérées
+            selected_questions = random.sample(questions, nb_question)
+
+            # Vérifier si un QCM avec les mêmes questions a déjà été créé
+            if is_same_qcm(selected_questions, qcms_crees):
+                # Si c'est le cas, essayer avec une autre sélection de questions
+                continue
+
+            # Générer un ID unique pour le QCM
+            qcm_id = createId()
+            while QCM.query.get(qcm_id):
+                qcm_id = createId()
+
+            # Créer un nouveau QCM
+            new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
+            db.session.add(new_qcm)
+
+            # Ajouter les questions sélectionnées au QCM
+            for question in selected_questions:
+                new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ)
+                db.session.add(new_contient)
+
+            # Enregistrer les modifications dans la base de données
+            db.session.commit()
+
+            # Ajouter le nouveau QCM à la liste des QCMs créés
+            qcms_crees.append(new_qcm)
+
+        # Afficher un message de confirmation et rediriger vers la liste des QCMs
+        flash(f"{num_qcm} QCM(s) ont été créé(s) avec succès!", 'success')
+        return redirect(url_for('listeQCM'))
+
+    # Si la méthode est GET, afficher le formulaire pour créer un QCM aléatoire
+    else:
+        flash(f"Vos QCM(s) n'ont pas pu être créé(s)... ")
+        return redirect(url_for('/listeQCM'))
+
+
+
+
+
 
 @app.route("/afficheQCM/<string:id>")  # Affichage des questions du Qcm avec leurs réponses
 def afficheQCM(id):                    # Remarque : le [0] sert à isoler la chaine de char, puisque la requête renvoie un objet 
