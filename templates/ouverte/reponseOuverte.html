@@ -1,0 +1,17 @@
+{% extends 'partials/base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block main %}
+<div class="menu">
+    <h1>Votre réponse</h1>
+    <h3>(Répondez ce qui vous passe par la tête...)</h3>
+    <hr/>
+    <form action="/reponse-ouverte" method="POST">
+        <p><input name="reponse" type="text" placeholder="Entrez votre réponse ici"/></p>
+        <p><input class="button" type="submit" value="J'envoie !"/></p>
+    </form>
+</div>
+
+{% endblock %}
