@@ -47,6 +47,15 @@
             </div>
             <p><input class="button" type="submit" value="Confirmer" /></p>
         </form>
+        <form action="/createRandom" method="POST">
+            <input type="number" name="num_qcm">nombre de QCM
+            <input type="text" name ="nom_qcm">Nom des QCM
+            {% for etiquette in etiquettes %} <!-- Pour chaque etiquette parmi les etiquettes -->
+            <input type="checkbox" name="etiquette_id" value="{{ etiquette.idE }}"> {{ etiquette.nom }}
+            {% endfor %}
+            <input type="number" name="nb_question">nombre de Questions
+            <input class="button" type="submit" value="Confirmer" />
+        </form>
     </div>
 </div>
 {% endblock %}
