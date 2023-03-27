@@ -1,0 +1,18 @@
+{% extends 'partials/base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block main %}
+<div class="menu">
+    <h1>Question Ouverte</h1>
+    <h2>Répondez à cette question !</h2>
+    <h3>(Si vous le souhaitez bien entendu...)</h3>
+    <hr/>
+    <form action="/question-ouverte" method="POST">
+        <p><input id="question" type="text" placeholder="Entrez votre question ici"/></p>
+        <p><input class="button" type="submit" value="Voir les réponses !"/></p>
+    </form>
+</div>
+
+{% endblock %}

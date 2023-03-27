@@ -681,7 +681,6 @@ def modifierQCM(id):
 
 @app.route("/supprimerQCM/<string:id>")          # Route pour supprimer un qcm
 def supprimerQCM(id):
-    title='supprimer QCM'
     qcm_modif=QCM.query.get_or_404(id)           # Récupération du qcm à supprimer selon l'id selectioné 
     try :
         Contient.query.filter_by(RidQCM=qcm_modif.idQCM).delete()    # Suppression des relations liées au qcm
@@ -695,6 +694,32 @@ def supprimerQCM(id):
 def stats():
     Reponses = Test.query.all()
     return render_template("statistiques.html", Reponses = Reponses)
+
+@app.route("/question-ouverte", methods=['POST', 'GET'])
+def question_ouverte():
+
+    if request.method == 'POST':
+        return render_template("ouverte/nuage.html",title='Nuage de réponses',page="QuestionOuverte")
+    else:
+        return render_template("ouverte/questionOuverte.html",title='Question ouverte',page="QuestionOuverte")
+
+@app.route("/reponse-ouverte", methods=['POST', 'GET'])
+def reponse_ouverte():
+
+    if request.method == 'POST':
+        reponses = {}
+        ma_reponse = request.form['reponse']
+        liste_reponses = ma_reponse.split("\n")
+
+        for reponse in liste_reponses:
+            if reponse in reponses:
+                reponses[reponse] += 1
+            else:
+                reponses[reponse] = 1
+        print(reponses)
+        return redirect("/")
+    else:
+        return render_template("ouverte/reponseOuverte.html",title='Réponse ouverte',page="ReponseOuverte")
 
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)
