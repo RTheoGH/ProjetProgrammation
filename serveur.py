@@ -818,19 +818,31 @@ def question_ouverte():
         print("on reset !")
         return render_template("ouverte/questionOuverte.html",title='Question ouverte',page="QuestionOuverte")
 
+import language_tool_python
+import spacy
+
+tool = language_tool_python.LanguageTool('fr')
+nlp = spacy.load('fr_core_news_sm')
+
 @app.route("/reponse-ouverte", methods=['POST', 'GET'])    # Route pour répondre à la question ouverte
 def reponse_ouverte():
 
     if request.method == 'POST':
-        ma_reponse = request.form['reponse']
+        proposition = request.form['reponse']    # Mot écrit par un étudiant
+        correcteur = tool.correct(proposition)   # Correction grammaticale du mot
+        minuscule = correcteur.lower()           # Mise en minuscule du mot
+        mot = nlp(minuscule)                     # Mise au singulier du mot
 
-        dejaLa = False                        # Si le mot est déja la
-        for r in reponses_ouvertes:           # Pour chaque réponse
-            if ma_reponse in r.keys():        # Si on voit que le mot est déja la
-                r[ma_reponse] += 1            # On augmente 
+        for token in mot:                        # Sélection du dernier mot
+            mot = token.lemma_
+
+        dejaLa = False                           # Si le mot est déja la
+        for r in reponses_ouvertes:              # Pour chaque réponse
+            if mot in r.keys():                  # Si on voit que le mot est déja la
+                r[mot] += 1                      # On augmente 
                 dejaLa = True
-        if not dejaLa:                        # Si c'est un nouveau mot
-            reponses_ouvertes.append({ma_reponse:1})
+        if not dejaLa:                           # Si c'est un nouveau mot
+            reponses_ouvertes.append({mot:1})
         print(reponses_ouvertes)
         return redirect("/")
     else:

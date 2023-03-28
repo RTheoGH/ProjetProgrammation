@@ -1,6 +1,7 @@
 {% extends 'partials/base.html' %}
 
 {% block head %}
+<link href="/static/loader.css" rel="stylesheet">
 {% endblock %}
 
 {% block main %}
@@ -10,8 +11,18 @@
     <hr/>
     <form action="/reponse-ouverte" method="POST">
         <p><input name="reponse" type="text" placeholder="Entrez votre réponse ici"/></p>
-        <p><input class="button" type="submit" value="J'envoie !"/></p>
+        <p><input class="button" type="submit" value="J'envoie !" onClick="loading()"/></p>
     </form>
+    <div id="preloader">                    
+        <div id="loader"></div>           <!-- Voir loader.css -->
+    </div>
+    <script>
+        function loading(){
+            $("#preloader").show();
+            $("#menu").hide();
+        }
+        $("#preloader").hide();
+    </script>
 </div>
 
 {% endblock %}
