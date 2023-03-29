@@ -1,6 +1,13 @@
 {% extends 'partials/base.html' %}
 
 {% block main %}
+<script>
+    function supp() {
+        socket.emit('testQP');
+      }
+      
+      window.addEventListener('unload', supp());
+</script>
 <div class="menu">
     <h1>Statistiques</h1>
     <div class="stats">
