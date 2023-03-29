@@ -845,5 +845,10 @@ def donnees_reponses():
 
     return reponses_ouvertes_2
 
+
+@socket.on('testQP')
+def testQP():
+    print("success mon frere")
+
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)
