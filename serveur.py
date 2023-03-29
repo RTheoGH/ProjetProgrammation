@@ -532,6 +532,8 @@ def create_qcm():
         for etiquette_id in etiquettes_id:
             nb_questions_min[etiquette_id] = int(request.form['nb_questions_min[{}]'.format(etiquette_id)])
             nb_questions_max[etiquette_id] = int(request.form['nb_questions_max[{}]'.format(etiquette_id)])
+            if nb_questions_min[etiquette_id]>nb_questions_max[etiquette_id]:
+                nb_questions_min[etiquette_id],nb_questions_max[etiquette_id]=nb_questions_max[etiquette_id],nb_questions_min[etiquette_id]
 
 
         qcms_crees = []                                         # Liste pour stocker les QCMs créés
