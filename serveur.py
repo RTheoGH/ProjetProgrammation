@@ -536,7 +536,6 @@ def create_qcm():
             if nb_questions_min[etiquette_id]>nb_questions_max[etiquette_id]:
                 nb_questions_min[etiquette_id],nb_questions_max[etiquette_id]=nb_questions_max[etiquette_id],nb_questions_min[etiquette_id]
 
-
         qcms_crees = []                                         # Liste pour stocker les QCMs créés
         questions = {}                                          # Liste pour stocker les Questions des étiquettes
 
@@ -702,7 +701,6 @@ def oneByOne(q,questions,reponses):
             reponsesAssociees.append(str(db.session.query(Reponse.reponse).filter(Reponse.idR==id).all()))
     socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
 
-
 # Socket réception du numéro de la question actuelle
 @socket.on('setQuestion')
 def setQuestion(data):
@@ -773,6 +771,7 @@ def supprimerQCM(id):
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     qcm_modif=QCM.query.get_or_404(id)           # Récupération du qcm à supprimer selon l'id selectioné 
+
     try :
         Contient.query.filter_by(RidQCM=qcm_modif.idQCM).delete()    # Suppression des relations liées au qcm
         QCM.query.filter(QCM.idU==session['idU'], QCM.idQCM==qcm_modif.idQCM).delete() #Suppression du qcm
@@ -790,6 +789,7 @@ def question_ouverte():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     global question_ouverte_nom
+    
     if request.method == 'POST':
         if 'question-ouverte' in  request.form:             # Envoie du titre de la question
             question_ouverte_nom = request.form['question-ouverte']
@@ -843,13 +843,11 @@ def donnees_reponses():
 
     reponses_ouvertes_2 = {"mots": [],"titre":question_ouverte_nom}  
 
-    for r in reponses_ouvertes:         # Création de l'object adapté pour le nuage de mots
+    for r in reponses_ouvertes:         # Création de l'objet adapté pour le nuage de mots
         for cle, valeur in r.items():
             ajustement = {"x": cle, "value": valeur}
             reponses_ouvertes_2["mots"].append(ajustement)
-
     return reponses_ouvertes_2
-
 
 @socket.on('testQP')
 def testQP():
