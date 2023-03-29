@@ -1,0 +1,12 @@
+{% extends 'partials/base.html' %}
+{% block main %}
+    <div class="menu">
+        {% include 'partials/flash.html' %}
+        <h1>Repondre aux questions</h1>
+        <form action="/entrerCodeEtu" method="POST">
+            <p>Entrez le code affiché par l'enseignant :</p>
+            <p><input type="text" name="code" placeholder="Code"></p>
+            <button>Entrer</button>
+        </form>
+    </div>
+{% endblock %}

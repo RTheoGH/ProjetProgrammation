@@ -5,7 +5,7 @@
     var ReponseChoixJS = [];
     const socket = io(); // Variable socket
     socket.on('connect', function() { // Détection quand on arrive sur la page
-        socket.emit('testRQ', "Je suis dans repondre au question");
+        console.log("Je suis dans repondre au question");
     });
     socket.on('afficheQuestion', (questionCastee, reponsesAssociees) => { // Reception de la question à afficher
         $("#rien").hide();
@@ -23,7 +23,7 @@
                 ReponseAssJS = reponsesAssociees;
             });
         }
-        $("#soumettre").show();
+        $("#soumettre").show(); 
     });
 
     function reponseE() {
@@ -36,12 +36,12 @@
             reponse_choix = [];
             console.log("RCJS = ", ReponseChoixJS);
             for (i = 0; i < ReponseChoixJS.length; i++) {
-                if(document.getElementsByName("reponse_choix")[i].checked== true){
+                if (document.getElementsByName("reponse_choix")[i].checked == true) {
                     reponse_choix.push(ReponseChoixJS[i]);
                 }
             }
-            console.log("reponse_choix = ",reponse_choix)
-            socket.emit('reponseEtuChoixmultiple',reponse_choix,ReponseChoixJS)
+            console.log("reponse_choix = ", reponse_choix)
+            socket.emit('reponseEtuChoixmultiple', reponse_choix, ReponseChoixJS)
 
         }
         reponse_div = document.getElementById('reponses').value;
@@ -49,12 +49,13 @@
         console.log("reponse div = ", reponse_div)
         console.log("finish")
         $("#soumettre").hide();
-            //socket.emit('reponseE', enonce, reponse_choix, reponse_num)
+        //socket.emit('reponseE', enonce, reponse_choix, reponse_num)
     };
+    socket.on('profDeco', (data) => {
+        //data egale au qcm en cours
+    })
 </script>
-{% endblock %} 
-
-{% block main %}
+{% endblock %} {% block main %}
 <div class="menu">
     <p id="rien">Il n'y a rien ici pour le moment</p>
     <form>
@@ -68,7 +69,7 @@
     <button id="soumettre" onclick="reponseE()" onclick="repondre()">Soumettre</button>
 
     <script>
-        function repondre(){
+        function repondre() {
             $("#soumettre").hide();
         }
         $("#soumettre").hide();
