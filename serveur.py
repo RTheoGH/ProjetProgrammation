@@ -558,7 +558,6 @@ def create_qcm():
                             etiquettes_id_form_triees.append(cle)
 
             etiquettes_id = etiquettes_id_form_triees
-            print(etiquettes_id)
 
         # Trouver toutes les questions avec l'étiquette spécifiée dans la base de données
         for etiquette_id in etiquettes_id:
@@ -575,7 +574,6 @@ def create_qcm():
 
         # Créer num_qcm QCMs avec des questions aléatoires sélectionnées à partir de la liste de questions trouvées
         for i in range(num_qcm):
-            print(i)
             selected_questions = []   # Liste pour stocker les questions sélectionnées pour le QCM
             selected_question_ids = set()
 
@@ -587,9 +585,8 @@ def create_qcm():
 
             questions_subset = []
 
-            print('etiquettes_id_form_triees : ',etiquettes_id_form_triees )
             # Sélectionner un nombre aléatoire de questions entre la fourchette spécifiée pour chaque étiquette
-            for etiquette_id in etiquettes_id_form_triees:
+            for etiquette_id in etiquettes_id:
                 print('Question choisi pour etiquette : ',etiquette_id)
                 nb_questions_subset = random.randint(nb_questions_min[etiquette_id], nb_questions_max[etiquette_id])
                 questions_subset += random.sample(questions[etiquette_id], nb_questions_subset)
@@ -602,11 +599,9 @@ def create_qcm():
                     return redirect(url_for('lQuestion'))
                 
                 for question in questions_subset:
-                    print('question : ',question.enonce)
                     selected_questions.append(question)
                     selected_question_ids.add(question.idQ)
 
-            print(i)
             # Générer un ID unique pour le QCM
             qcm_id = createId()
             while db.session.query(QCM).filter_by(idQCM=qcm_id).first() is not None:
@@ -618,7 +613,6 @@ def create_qcm():
             new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
             db.session.add(new_qcm)
 
-            print(i)
             Position = 0
             # Ajouter les questions sélectionnées au QCM
             for question in selected_questions:
