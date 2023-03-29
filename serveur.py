@@ -16,39 +16,6 @@ db.init_app(app)
 socket = SocketIO(app)
 
 # with app.app_context(): 
-    # db.session.query(ReponseQCM).all().delete()
-    # db.session.commit()
-    # rQCM = QCM.query.first()
-    # premiere_question = db.session.query(Question)\
-    #                 .join(Contient, Question.idQ == Contient.RidQ)\
-    #                 .join(QCM, QCM.idQCM == Contient.RidQCM)\
-    #                 .order_by(QCM.idQCM, Contient.RidQ)\
-    #                 .first()
-    # RidQ = Question.idQ
-    # idQCM = rQCM.idQCM
-    # db.drop_all()
-    # db.create_all()
-    #date=str(datetime.now())
-    #exemple0 = Test(numeroEtu=33184650, date=date, estNumerique=False, Value=0)
-    #exemple1 = Test(numeroEtu=33184651, date=date, estNumerique=False, Value=0)    
-    #exemple2 = Test(numeroEtu=33184652, date=date, estNumerique=False, Value=0)
-    #exemple3 = Test(numeroEtu=33184653, date=date, estNumerique=False, Value=0)    
-    #exemple4 = Test(numeroEtu=33184654, date=date, estNumerique=False, Value=0)    
-    #exemple5 = Test(numeroEtu=33184655, date=date, estNumerique=False, Value=0)    
-    #exemple6 = Test(numeroEtu=33184656, date=date, estNumerique=False, Value=0) 
-    #exemple7 = Test(numeroEtu=33184657, date=date, estNumerique=False, Value=0)  
-    #exemple8 = Test(numeroEtu=33184658, date=date, estNumerique=False, Value=0)
-    #exemple9 = Test(numeroEtu=33184659, date=date, estNumerique=False, Value=0)
-    #db.session.add_all([exemple0,exemple1,exemple2,exemple3,exemple4,exemple5,exemple6,exemple7,exemple9,exemple8])
-    #db.session.commit()
-#     envoyerCheck = db.session.query(EnvoyerQCM).all()
-#     print(envoyerCheck)
-#     idq = QCM.query.first()
-#     print("idq = " , idq)
-#     envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
-#     print("envoyerTest = ",envoyerTest)
-#     db.session.add(envoyerTest)
-#     db.session.commit()
     # db.drop_all()
     # db.create_all()
 # si le "with" n'est pas commenté:
@@ -758,9 +725,20 @@ def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS):
 
 ##########################################################
 
+@app.route("/stats", methods=['GET'])            # Route pour les statistiques
+def stats():
+    title="Statistiques"
+    if 'nomU' not in session:                   # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+    return render_template("statistiques.html",title=title,page="Stats")
+
 @app.route("/modifierQCM/<string:id>", methods=['POST', 'GET'])       # Route pour modifier un qcm
 def modifierQCM(id):
     title='Modification QCM'
+    if 'nomU' not in session:                   # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     qcm_modif=QCM.query.get_or_404(id)                                # Récupération du qcm à modifier selon l'id selectioné 
 
     if request.method == 'POST':
@@ -786,6 +764,9 @@ def modifierQCM(id):
 
 @app.route("/supprimerQCM/<string:id>")          # Route pour supprimer un qcm
 def supprimerQCM(id):
+    if 'nomU' not in session:                    # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     qcm_modif=QCM.query.get_or_404(id)           # Récupération du qcm à supprimer selon l'id selectioné 
     try :
         Contient.query.filter_by(RidQCM=qcm_modif.idQCM).delete()    # Suppression des relations liées au qcm
@@ -795,16 +776,14 @@ def supprimerQCM(id):
         return "Erreur dans la suppréssion du QCM"
     return redirect("/listeQCM")                 # Redirection vers la liste des qcm
 
-@app.route("/stats", methods=['GET'])            # Route pour les statistiques
-def stats():
-    Reponses = Test.query.all()
-    return render_template("statistiques.html", Reponses = Reponses)
-
 reponses_ouvertes = []                  # Variable globale contenant les réponses des étudiants
 question_ouverte_nom = ""               # Variable globale contenant le titre de la question ouverte
 
 @app.route("/question-ouverte", methods=['POST', 'GET'])    # Route pour lancer une question ouverte
 def question_ouverte():
+    if 'nomU' not in session:                   # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     global question_ouverte_nom
     if request.method == 'POST':
         if 'question-ouverte' in  request.form:             # Envoie du titre de la question
@@ -826,6 +805,9 @@ nlp = spacy.load('fr_core_news_sm')
 
 @app.route("/reponse-ouverte", methods=['POST', 'GET'])    # Route pour répondre à la question ouverte
 def reponse_ouverte():
+    if 'nomU' not in session:                   # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
 
     if request.method == 'POST':
         proposition = request.form['reponse']    # Mot écrit par un étudiant
@@ -850,6 +832,10 @@ def reponse_ouverte():
 
 @app.route("/donnees-reponses",methods=['GET'])  # Route des données
 def donnees_reponses():
+    if 'nomU' not in session:                   # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+
     reponses_ouvertes_2 = {"mots": [],"titre":question_ouverte_nom}  
 
     for r in reponses_ouvertes:         # Création de l'object adapté pour le nuage de mots
