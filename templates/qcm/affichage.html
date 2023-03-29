@@ -75,7 +75,7 @@
             }else{
                 doc.rect(5,pivot+6,100,20);
                 pivot+=30
-                if (pivot >= 250) {
+                if (pivot >= 270) {
                     doc.addPage();
                     pivot = 30;
                 }
@@ -83,6 +83,11 @@
             doc.line(0, pivot+5, 220, pivot+5);
             pivot+=15;
         });
+        var nombreDePages = doc.internal.getNumberOfPages();
+        for(var i=1;i<=nombreDePages;i++){
+            doc.setPage(i);
+            doc.text(106,290,String(i));
+        }
         doc.save("Controle.pdf");
     }
 </script>
