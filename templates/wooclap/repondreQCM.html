@@ -7,8 +7,8 @@
     socket.on('connect', function() { // Détection quand on arrive sur la page
         socket.emit('testRQ', "Je suis dans repondre au question");
     });
-
     socket.on('afficheQuestion', (questionCastee, reponsesAssociees) => { // Reception de la question à afficher
+        $("#rien").hide();
         document.getElementById('reponses').innerHTML = "";
         $("#enonce").text(questionCastee); // Son énoncé
 
@@ -23,6 +23,7 @@
                 ReponseAssJS = reponsesAssociees;
             });
         }
+        $("#soumettre").show();
     });
 
     function reponseE() {
@@ -47,11 +48,15 @@
         enonce = document.getElementById('enonce').value;
         console.log("reponse div = ", reponse_div)
         console.log("finish")
+        $("#soumettre").hide();
             //socket.emit('reponseE', enonce, reponse_choix, reponse_num)
     };
 </script>
-{% endblock %} {% block main %}
+{% endblock %} 
+
+{% block main %}
 <div class="menu">
+    <p id="rien">Il n'y a rien ici pour le moment</p>
     <form>
         <h1 id="enonce" name="enonce"></h1>
 
@@ -60,8 +65,14 @@
         </div>
 
     </form>
-    <button onclick="reponseE()">Soumettre</button>
+    <button id="soumettre" onclick="reponseE()" onclick="repondre()">Soumettre</button>
 
+    <script>
+        function repondre(){
+            $("#soumettre").hide();
+        }
+        $("#soumettre").hide();
+    </script>
 
 
 
