@@ -29,6 +29,29 @@ h1 {
     padding: 0.5em;
 }
 
+/* Progress bar pour tous les navigateurs*/
+progress {
+    background-color: grey;
+    border-radius: 25px;
+}
+progress::-webkit-progress-bar {
+    background-color: grey;
+    border-radius: 25px;
+}
+
+progress::-webkit-progress-value {
+    border-radius: 25px;
+    background-color: rgb(65, 65, 255) !important;
+}
+progress::-moz-progress-bar {
+    border-radius: 25px;
+    background-color: rgb(65, 65, 255) !important;
+}
+progress{
+    border-radius: 25px;
+    color: rgb(65, 65, 255);
+}
+
 /* Classe basique affichage du menu au centre */
 .menu {
     border: 0.5em solid black;
@@ -102,7 +125,6 @@ h1 {
 .menuNQcm .liste table{
     width: 44em;
 }
-
 .menuNQcm h1{
     padding:0em;
     margin: 0;
@@ -281,13 +303,10 @@ footer {
     text-decoration: none;
 }
 
-.nav-list li a:hover{
-    transform: scale(1.5);
-}
-
 /* Lorsqu'on passe le curseur dessus */
 .nav-list li a:hover {
     background-color: #111;
+    transform: scale(1.5);
 }
 
 /* Colore en rouge, le bouton de la page actuelle */
@@ -295,10 +314,32 @@ footer {
     background-color: darkred;
 }
 
-/* taille de l'icone pour supprimer une réponse */
+/* Taille de l'icone pour modifier/supprimer une réponse */
 .imgTab {
     width: 1.5vw;
     height: 1.5vw;
+}
+
+/* Animation "secouage" des icones */
+.imgTab:hover{
+    animation: shake 0.75s;
+}
+@keyframes shake{
+    0%{
+        transform: rotate(0deg);
+    }
+    25%{
+        transform: rotate(-25deg);
+    }
+    50%{
+        transform: rotate(25deg);
+    }
+    75%{
+        transform: rotate(-10deg);
+    }
+    100%{
+        transform: rotate(0deg);
+    }
 }
 
 /* CSS de checkbox réponse (voir références) */
@@ -475,6 +516,7 @@ fieldset {
     font-style: italic;
 }
 
+/* Classe menu pour les questions ouvertes */
 .ouverte {
     border: 0.5em solid black;
     border-radius: 10px;
@@ -488,21 +530,6 @@ fieldset {
     text-align: center;
     background-color: whitesmoke;
 }
-
-/* test
-
-label {
-    display: block;
-    margin-top: 1em;
-}
-
-input:valid {
-    background-color: palegreen;
-}
-
-input:invalid {
-    background-color: lightpink;
-} */
 
 /* ------------------------------------------------------------------ */
 /* Responsivité *//* Responsivité *//* Responsivité *//* Responsivité */
@@ -634,6 +661,7 @@ input:invalid {
     }
     .menuNQcm{
         margin-left: 2em;
+        font-size: 0.8em;
     }
 }
 

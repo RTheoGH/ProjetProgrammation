@@ -15,56 +15,54 @@
 
     //réception de la question et des réponses numéro q
     socket.on('emitOneByOne', function(questionCastee, reponsesAssociees) {
-        questionCastee = questionCastee.replaceAll("[(","").replaceAll(",)]","").replaceAll('"',"").replaceAll("'","").replaceAll("\\r\\n","<br/>")
-        $("#question").html(questionCastee)     //affichage de la question
-        for (reponse of reponsesAssociees) {    //affichage des réponses
-            reponse = reponse.replaceAll("[('","").replaceAll("',)]","")
-            if (reponse == "[]"){
+        questionCastee = questionCastee.replaceAll("[(", "").replaceAll(",)]", "").replaceAll('"', "").replaceAll("'", "").replaceAll("\\r\\n", "<br/>")
+        $("#question").html(questionCastee) //affichage de la question
+        for (reponse of reponsesAssociees) { //affichage des réponses
+            reponse = reponse.replaceAll("[('", "").replaceAll("',)]", "")
+            if (reponse == "[]") {
                 $("#reponse").append('<input type="number"><br/>') //réponse numérique
 
-            }
-            else{
-                $("#reponse").append(reponse + '<br/><progress value="0" max="0" id="'+reponse+'"></progress> <br/></div>')
+            } else {
+                $("#reponse").append(reponse + '<br/><progress value="0" max="0" id="' + reponse + '"></progress> <br/></div>')
             }
         }
 
-        socket.emit('recupDataForRep', questionCastee, reponsesAssociees)
+        socket.emit('recupDataForRep', questionCastee, reponsesAssociees,'{{idElement}}')
     })
 
     function nextQuestion() {
-        if (q < listeQuestions.length-1){  //interdit d'incrémenter q s'il n'y a plus de questions
+        if (q < listeQuestions.length - 1) { //interdit d'incrémenter q s'il n'y a plus de questions
             q++;
             progressBlock = 0;
             socket.emit('oneByOne', q, listeQuestions, listeReponses);
             document.getElementById("reponse").innerHTML = "";
         }
     }
-    socket.on('retourReponseEtudiant',function(reponse_choix,ReponseChoixJS){
-        
-        if(progressBlock == 0){
+    socket.on('retourReponseEtudiant', function(reponse_choix, ReponseChoixJS) {
+        if (progressBlock == 0) {
             progressBlock = 1;
-        }
-        else{
-            ReponseChoixJS.forEach((r)=>{
-                console.log(r)
-                console.log("avant max = ",document.getElementById(r).max)
-                document.getElementById(r).setAttribute("max",document.getElementById(r).max+1)
-                console.log("apres max = ",document.getElementById(r).max)
+        } else {
+            ReponseChoixJS.forEach((r) => {
+                document.getElementById(r).setAttribute("max", document.getElementById(r).max + 1)
             })
         }
         reponse_choix.forEach((r)=>{
-            console.log(r)
-            console.log("avant value = ",document.getElementById(r).max)
             document.getElementById(r).setAttribute("value",document.getElementById(r).value+1)
-            console.log("apres value = ",document.getElementById(r).max)
         })
-    
+
     })
 </script>
 {% endblock %} {% block main %}
 <div class="menu">
-    <h3>Code : {{idElement}}</h3>
-    <button onclick="nextQuestion()">Question suivante</button>
+
+    <h3>Code : <span id='code'>{{idElement}}</span></h3>
+    <button id="nextQuestion" onclick="nextQuestion()">Question suivante</button>
+    <script>
+        //cacher le bouton nextQuestion s'il n'y en a qu'une
+        if ('{{typeElement}}' == 'question'){
+            document.querySelector('#nextQuestion').hidden = true;
+        }
+    </script>
     <hr/>
     <div>
         <button id="Q" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
@@ -75,7 +73,7 @@
             </script>
         </div>
     </div>
-    
+
 
     <div>
         <button id="R" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
@@ -87,4 +85,10 @@
         </div>
     </div>
 </div>
+
+<script>
+    var codeQcm = document.getElementById('code').textContent;
+    console.log(codeQcm)
+    socket.emit('recupCodeQCM', codeQcm)
+</script>
 {% endblock %}

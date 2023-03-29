@@ -26,6 +26,7 @@ socket = SocketIO(app)
 nombreIdQuestion=0               # Variables utilisés pour 
 nombreIdCheck=0                  # La génération de réponses
 nombreIdQCM=0
+checkCodeQcmProf = {}
 
 def createId():                  # Fonction appelée à chaque fois qu'on a besoin de générer un nouvel id
     id=""
@@ -538,7 +539,6 @@ def create_qcm():
             if nb_questions_min[etiquette_id]>nb_questions_max[etiquette_id]:
                 nb_questions_min[etiquette_id],nb_questions_max[etiquette_id]=nb_questions_max[etiquette_id],nb_questions_min[etiquette_id]
 
-
         qcms_crees = []                                         # Liste pour stocker les QCMs créés
         questions = {}                                          # Liste pour stocker les Questions des étiquettes
         toutes_les_valeurs_sont_zero = True
@@ -659,45 +659,23 @@ def afficheQCM(id):                    # Remarque : le [0] sert à isoler la cha
     return render_template("qcm/affichage.html",title=title,nomQcm=nomQcm,listeQuestions=checked_questions,\
         listeReponses=checked_reponses,len=len(checked_questions),page="ListeQCM")
 
-@app.route("/repondreQCM",methods =["POST","GET"])
-def repondreQCM():
+@app.route("/entrerCodeEtu",methods =["POST","GET"])
+def entrerCodeEtu():
     title='Repondez aux questions'
     if 'nomU' not in session:                   # Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     
     if request.method == "POST":
-        # reponse = request.form.getlist('reponse_choix')
-        # reponseN = request.form.getlist("reponse_num")
-        # question = request.form.getlist("question")
-        # idq = EnvoyerQCM.query.first()
-        # ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
-        # ListeReponseQcm = []
-        # for key in ListeQuestionsQcm:
-        #     add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
-        #     ListeReponseQcm.append(add)
-        # lena = len(ListeQuestionsQcm) 
-        # # prepare la bdd
-        # idE = session['idU']
-        # preE = session['preU']
-        # nomE = session['nomU'] 
-        # dateA = str(datetime.now())
-        # idQbdd = idq.idQCM
-        return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i)
+        code = request.form["code"]
+        if (db.session.query(Question.idQ).filter(Question.idQ==code).all() != []) or (db.session.query(QCM.idQCM).filter(QCM.idQCM==code).all() != []):
+            print("le code existe")
+            return render_template("wooclap/repondreQCM.html",page="RepondreQCM",title=title,code=code)
+        else:
+            flash(f"Le code entré n'existe pas!")
+            return render_template("wooclap/entrerCodeEtu.html",page="RepondreQCM",title=title)
     else:
-        # idq = EnvoyerQCM.query.first()
-        # if idq == None:
-        #     return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=0,ListeReponseQcm = [],ListeQuestionsQcm = [],i= 0)
-        # i= 0
-        # idq = EnvoyerQCM.query.first()
-        # ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
-        # ListeReponseQcm = []
-        # for key in ListeQuestionsQcm:
-        #     add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
-        #     ListeReponseQcm.append(add)
-        # lena = len(ListeQuestionsQcm)  
-        #lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i
-        return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test")
+        return render_template("wooclap/entrerCodeEtu.html",page="RepondreQCM",title=title)
 
 @app.route("/envoyerEnonce",methods = ["POST","GET"])
 def caster():
@@ -736,17 +714,30 @@ def caster():
 
 ##################### Partie Socket #####################
 
+@socket.on('connect')
+def test_disconnect():
+    print('Client connected') 
+@socket.on('disconnect')
+def test_disconnect():
+    idProf = session['idU']
+    if idProf in checkCodeQcmProf.keys():
+        socket.emit('profDeco', checkCodeQcmProf[idProf])
+        checkCodeQcmProf.pop(idProf)
+    print("Client disconnect")
+
+
+
 # Socket réception des données envoyés depuis casterEnonce.html
 @socket.on('oneByOne')
 def oneByOne(q,questions,reponses):
+    idClient = request.sid
     questionCastee = str(db.session.query(Question.enonce).filter(Question.idQ==questions[q]).all())
     idReponsesAssociees = reponses[q].split(',')
     reponsesAssociees = []
     if idReponsesAssociees != []:
         for id in idReponsesAssociees:
             reponsesAssociees.append(str(db.session.query(Reponse.reponse).filter(Reponse.idR==id).all()))
-    socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
-
+    socket.emit('emitOneByOne',(questionCastee,reponsesAssociees),room=idClient)
 
 # Socket réception du numéro de la question actuelle
 @socket.on('setQuestion')
@@ -764,14 +755,21 @@ def reponseE(enonce,reponse_choix,reponse_num):
     print("enonce = ",enonce," reponse choix = ",reponse_choix," reponse num = ",reponse_num)
 
 @socket.on('recupDataForRep')
-def recupDataForRep( questionCastee, reponsesAssociees):
-    print( "QC = ",questionCastee," Reponse associer = ", reponsesAssociees)
-    socket.emit('afficheQuestion',(questionCastee, reponsesAssociees))
+def recupDataForRep(questionCastee, reponsesAssociees,idElement):
+    socket.emit('afficheQuestion',(questionCastee, reponsesAssociees,idElement))
 
 @socket.on('reponseEtuChoixmultiple')
 def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS):
-    print(reponse_choix)
     socket.emit("retourReponseEtudiant",(reponse_choix,ReponseChoixJS))
+@socket.on('testQP')
+def testQP():
+    print("sucess !!!!")
+@socket.on('recupCodeQCM')
+def recupCodeQCM(code):
+    idProf = session['idU']
+    checkCodeQcmProf[idProf] = code
+
+
 
 ##########################################################
 
@@ -818,6 +816,7 @@ def supprimerQCM(id):
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     qcm_modif=QCM.query.get_or_404(id)           # Récupération du qcm à supprimer selon l'id selectioné 
+
     try :
         Contient.query.filter_by(RidQCM=qcm_modif.idQCM).delete()    # Suppression des relations liées au qcm
         QCM.query.filter(QCM.idU==session['idU'], QCM.idQCM==qcm_modif.idQCM).delete() #Suppression du qcm
@@ -835,6 +834,7 @@ def question_ouverte():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     global question_ouverte_nom
+    
     if request.method == 'POST':
         if 'question-ouverte' in  request.form:             # Envoie du titre de la question
             question_ouverte_nom = request.form['question-ouverte']
@@ -888,12 +888,15 @@ def donnees_reponses():
 
     reponses_ouvertes_2 = {"mots": [],"titre":question_ouverte_nom}  
 
-    for r in reponses_ouvertes:         # Création de l'object adapté pour le nuage de mots
+    for r in reponses_ouvertes:         # Création de l'objet adapté pour le nuage de mots
         for cle, valeur in r.items():
             ajustement = {"x": cle, "value": valeur}
             reponses_ouvertes_2["mots"].append(ajustement)
-
     return reponses_ouvertes_2
+
+@socket.on('testQP')
+def testQP():
+    print("success mon frere")
 
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)
