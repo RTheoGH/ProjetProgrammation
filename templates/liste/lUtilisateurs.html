@@ -7,12 +7,10 @@
         <table>
             <tr class="top">
                 <td>Nom d'utilisateur</td>
-                <td>Mot de passe</td>
             </tr>
-            {% for utilisateurs in lUtilisateurs %}             <!-- Affiche chaque utilisateur avec son mot de passe -->
+            {% for utilisateurs in lUtilisateurs %}             <!-- Affiche chaque utilisateur -->
                 <tr>                                            <!-- Rappel : cette page est uniquement accessible si -->
                     <td>{{utilisateurs.nomU}}</td>              <!-- l'utilisateur est 'ADMIN' -->
-                    <td>{{utilisateurs.passU}}</td>
                 </tr>
             {% endfor %}
         </table>

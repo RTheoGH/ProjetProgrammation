@@ -59,7 +59,7 @@
             let enonce = question.getElementsByClassName('affEnonce')[0];
             doc.setFontSize(18);
             doc.text(5,pivot,enonce.textContent);
-            pivot+=5;
+            pivot+=10;
             let reponses = question.getElementsByClassName('affReponse');
             if(reponses.length>1){
                 Array.from(reponses).forEach((reponse) => {
@@ -67,14 +67,27 @@
                     doc.text(10,pivot+10,reponse.textContent)
                     doc.rect(5,pivot+6,5,5);
                     pivot+=10
+                    if (pivot >= 250) {
+                        doc.addPage();
+                        pivot = 30;
+                    }
                 });
             }else{
-                doc.rect(5,pivot+6,150,30);
-                pivot+=35
+                doc.rect(5,pivot+6,100,20);
+                pivot+=30
+                if (pivot >= 270) {
+                    doc.addPage();
+                    pivot = 30;
+                }
             }
-            doc.line(0, pivot+10, 220, pivot+10);
-            pivot+=20;
+            doc.line(0, pivot+5, 220, pivot+5);
+            pivot+=15;
         });
+        var nombreDePages = doc.internal.getNumberOfPages();
+        for(var i=1;i<=nombreDePages;i++){
+            doc.setPage(i);
+            doc.text(106,290,String(i));
+        }
         doc.save("Controle.pdf");
     }
 </script>

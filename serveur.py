@@ -16,41 +16,8 @@ db.init_app(app)
 socket = SocketIO(app)
 
 # with app.app_context(): 
-    # db.session.query(ReponseQCM).all().delete()
-    # db.session.commit()
-    # rQCM = QCM.query.first()
-    # premiere_question = db.session.query(Question)\
-    #                 .join(Contient, Question.idQ == Contient.RidQ)\
-    #                 .join(QCM, QCM.idQCM == Contient.RidQCM)\
-    #                 .order_by(QCM.idQCM, Contient.RidQ)\
-    #                 .first()
-    # RidQ = Question.idQ
-    # idQCM = rQCM.idQCM
-    # db.drop_all()
-    # db.create_all()
-    #date=str(datetime.now())
-    #exemple0 = Test(numeroEtu=33184650, date=date, estNumerique=False, Value=0)
-    #exemple1 = Test(numeroEtu=33184651, date=date, estNumerique=False, Value=0)    
-    #exemple2 = Test(numeroEtu=33184652, date=date, estNumerique=False, Value=0)
-    #exemple3 = Test(numeroEtu=33184653, date=date, estNumerique=False, Value=0)    
-    #exemple4 = Test(numeroEtu=33184654, date=date, estNumerique=False, Value=0)    
-    #exemple5 = Test(numeroEtu=33184655, date=date, estNumerique=False, Value=0)    
-    #exemple6 = Test(numeroEtu=33184656, date=date, estNumerique=False, Value=0) 
-    #exemple7 = Test(numeroEtu=33184657, date=date, estNumerique=False, Value=0)  
-    #exemple8 = Test(numeroEtu=33184658, date=date, estNumerique=False, Value=0)
-    #exemple9 = Test(numeroEtu=33184659, date=date, estNumerique=False, Value=0)
-    #db.session.add_all([exemple0,exemple1,exemple2,exemple3,exemple4,exemple5,exemple6,exemple7,exemple9,exemple8])
-    #db.session.commit()
-#     envoyerCheck = db.session.query(EnvoyerQCM).all()
-#     print(envoyerCheck)
-#     idq = QCM.query.first()
-#     print("idq = " , idq)
-#     envoyerTest = EnvoyerQCM(idQCM = idq.idQCM,idU = idq.idU)
-#     print("envoyerTest = ",envoyerTest)
-#     db.session.add(envoyerTest)
-#     db.session.commit()
-    # db.drop_all()
-    # db.create_all()
+#     db.drop_all()
+#     db.create_all()
 # si le "with" n'est pas commenté:
 #       si vous rechargez le serveur sans vous deconnecter, une erreur arrive au niveau de l'accueil,
 #          utilisez la route /deconnexion pour corriger le probleme
@@ -58,6 +25,7 @@ socket = SocketIO(app)
 nombreIdQuestion=0               # Variables utilisés pour 
 nombreIdCheck=0                  # La génération de réponses
 nombreIdQCM=0
+checkCodeQcmProf = {}
 
 def createId():                  # Fonction appelée à chaque fois qu'on a besoin de générer un nouvel id
     id=""
@@ -530,6 +498,8 @@ def is_same_qcm(questions_qcm, previous_qcms):
     Prend une liste de questions et une liste de qcm en paramètres, et vérifie si l'un des qcm possède
     déjà exactement les questions données, rend True si l'un des qcm les possèdent False sinon
     """
+    if not questions_qcm:
+        return True
     if previous_qcms:
         for qcm in previous_qcms:
             listeIdQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==qcm.idQCM).all()
@@ -555,12 +525,18 @@ def create_qcm():
     # Si la méthode est POST, l'utilisateur a soumis un formulaire
     if request.method == 'POST':
         # Récupérer les données du formulaire
-        num_qcm = int(request.form['num_qcm'])                  # nombre de QCM à créer
-        nom_qcm = request.form['nom_qcm']                       # nom du QCM
-        etiquettes_id = request.form.getlist('etiquette_id[]')  # étiquettes des questions
-        nb_questions = {}
-        for etiquette_id in etiquettes_id:                      # nombre de question par étiquette
-            nb_questions[etiquette_id] = int(request.form['nb_question[{}]'.format(etiquette_id)])
+        num_qcm = int(request.form['num_qcm'])                      # nombre de QCM à créer
+        nom_qcm = request.form['nom_qcm']                           # nom du QCM
+        etiquettes_id = request.form.getlist('etiquette_id[]')      # étiquettes des questions
+        etiquettes_ordre = request.form.getlist('etiquette_ordre[]')# Ordre des étiquettes 
+        nb_questions_min = {}
+        nb_questions_max = {}
+        for etiquette_id in etiquettes_id:
+            nb_questions_min[etiquette_id] = int(request.form['nb_questions_min[{}]'.format(etiquette_id)])
+            nb_questions_max[etiquette_id] = int(request.form['nb_questions_max[{}]'.format(etiquette_id)])
+            if nb_questions_min[etiquette_id]>nb_questions_max[etiquette_id]:
+                nb_questions_min[etiquette_id],nb_questions_max[etiquette_id]=nb_questions_max[etiquette_id],nb_questions_min[etiquette_id]
+
 
         qcms_crees = []                                         # Liste pour stocker les QCMs créés
         questions = {}                                          # Liste pour stocker les Questions des étiquettes
@@ -568,14 +544,14 @@ def create_qcm():
         # Trouver toutes les questions avec l'étiquette spécifiée dans la base de données
         for etiquette_id in etiquettes_id:
             questions[etiquette_id] = Question.query.join(Associe).filter(Associe.RidE == etiquette_id).all()
-
+            etiq = db.session.query(Etiquette.nom).filter(Etiquette.idE==etiquette_id,Etiquette.idU==session['idU']).first()
             # Vérifier si des questions ont été trouvées pour l'étiquette spécifiée
             if not questions[etiquette_id]:
-                flash(f"Aucune question trouvée pour l'étiquette {etiquette_id}")
+                flash(f"Aucune question trouvée pour l'étiquette {etiq.nom}")
                 return redirect(url_for('lQuestion'))
 
-            if len(questions[etiquette_id]) < nb_questions[etiquette_id]:
-                flash(f"Pas assez de question trouvée pour l'étiquette {etiquette_id}")
+            if len(questions[etiquette_id]) < nb_questions_min[etiquette_id]:
+                flash(f"Pas assez de question trouvée pour l'étiquette {etiq.nom}")
                 return redirect(url_for('lQuestion'))
 
         # Créer num_qcm QCMs avec des questions aléatoires sélectionnées à partir de la liste de questions trouvées
@@ -583,31 +559,28 @@ def create_qcm():
             selected_questions = []   # Liste pour stocker les questions sélectionnées pour le QCM
             selected_question_ids = set()
 
-            # Sélectionner nb_question questions aléatoires parmi les questions récupérées pour chaque étiquette
+            # Sélectionner un nombre aléatoire de questions entre la fourchette spécifiée pour chaque étiquette
             for etiquette_id in etiquettes_id:
-                questions_subset = random.sample(questions[etiquette_id], nb_questions[etiquette_id])
-                for question in questions_subset:
-                    if question.idQ not in selected_question_ids:
-                        selected_questions.append(question)
-                        selected_question_ids.add(question.idQ)
-
-            # Vérifier si un QCM avec les mêmes questions a déjà été créé
-            if is_same_qcm(selected_questions, qcms_crees):
-                # Si c'est le cas, essayer avec une autre sélection de questions
-                continue
+                nb_questions_subset = random.randint(nb_questions_min[etiquette_id], nb_questions_max[etiquette_id])
+                questions_subset = random.sample(questions[etiquette_id], nb_questions_subset)
+                while is_same_qcm(selected_questions, qcms_crees):
+                    for question in questions_subset:
+                        if question.idQ not in selected_question_ids:
+                            selected_questions.append(question)
+                            selected_question_ids.add(question.idQ)
 
             # Générer un ID unique pour le QCM
             qcm_id = createId()
             while QCM.query.get(qcm_id):
                 qcm_id = createId()
 
-            # Créer un nouveau QCM
+            #Créer un nouveau QCM
             new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
             db.session.add(new_qcm)
 
             # Ajouter les questions sélectionnées au QCM
             for question in selected_questions:
-                new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ)
+                new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ, Position=i)
                 db.session.add(new_contient)
 
             # Ajouter le nouveau QCM à la liste des QCMs créés
@@ -697,6 +670,19 @@ def caster():
 
 ##################### Partie Socket #####################
 
+@socket.on('connect')
+def test_disconnect():
+    print('Client connected') 
+@socket.on('disconnect')
+def test_disconnect():
+    idProf = session['idU']
+    if idProf in checkCodeQcmProf.keys():
+        socket.emit('profDeco', checkCodeQcmProf[idProf])
+        checkCodeQcmProf.pop(idProf)
+    print("Client disconnect")
+
+
+
 # Socket réception des données envoyés depuis casterEnonce.html
 @socket.on('oneByOne')
 def oneByOne(q,questions,reponses):
@@ -717,12 +703,32 @@ def recupDataForRep(questionCastee, reponsesAssociees,idElement):
 @socket.on('reponseEtuChoixmultiple')
 def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS):
     socket.emit("retourReponseEtudiant",(reponse_choix,ReponseChoixJS))
+@socket.on('testQP')
+def testQP():
+    print("sucess !!!!")
+@socket.on('recupCodeQCM')
+def recupCodeQCM(code):
+    idProf = session['idU']
+    checkCodeQcmProf[idProf] = code
+
+
 
 ##########################################################
+
+@app.route("/stats", methods=['GET'])            # Route pour les statistiques
+def stats():
+    title="Statistiques"
+    if 'nomU' not in session:                   # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+    return render_template("statistiques.html",title=title,page="Stats")
 
 @app.route("/modifierQCM/<string:id>", methods=['POST', 'GET'])       # Route pour modifier un qcm
 def modifierQCM(id):
     title='Modification QCM'
+    if 'nomU' not in session:                   # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     qcm_modif=QCM.query.get_or_404(id)                                # Récupération du qcm à modifier selon l'id selectioné 
 
     if request.method == 'POST':
@@ -748,6 +754,9 @@ def modifierQCM(id):
 
 @app.route("/supprimerQCM/<string:id>")          # Route pour supprimer un qcm
 def supprimerQCM(id):
+    if 'nomU' not in session:                    # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     qcm_modif=QCM.query.get_or_404(id)           # Récupération du qcm à supprimer selon l'id selectioné 
     try :
         Contient.query.filter_by(RidQCM=qcm_modif.idQCM).delete()    # Suppression des relations liées au qcm
@@ -757,16 +766,14 @@ def supprimerQCM(id):
         return "Erreur dans la suppréssion du QCM"
     return redirect("/listeQCM")                 # Redirection vers la liste des qcm
 
-@app.route("/stats", methods=['GET'])            # Route pour les statistiques
-def stats():
-    Reponses = Test.query.all()
-    return render_template("statistiques.html", Reponses = Reponses)
-
 reponses_ouvertes = []                  # Variable globale contenant les réponses des étudiants
 question_ouverte_nom = ""               # Variable globale contenant le titre de la question ouverte
 
 @app.route("/question-ouverte", methods=['POST', 'GET'])    # Route pour lancer une question ouverte
 def question_ouverte():
+    if 'nomU' not in session:                   # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
     global question_ouverte_nom
     if request.method == 'POST':
         if 'question-ouverte' in  request.form:             # Envoie du titre de la question
@@ -788,6 +795,9 @@ nlp = spacy.load('fr_core_news_sm')
 
 @app.route("/reponse-ouverte", methods=['POST', 'GET'])    # Route pour répondre à la question ouverte
 def reponse_ouverte():
+    if 'nomU' not in session:                   # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
 
     if request.method == 'POST':
         proposition = request.form['reponse']    # Mot écrit par un étudiant
@@ -812,6 +822,10 @@ def reponse_ouverte():
 
 @app.route("/donnees-reponses",methods=['GET'])  # Route des données
 def donnees_reponses():
+    if 'nomU' not in session:                   # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+
     reponses_ouvertes_2 = {"mots": [],"titre":question_ouverte_nom}  
 
     for r in reponses_ouvertes:         # Création de l'object adapté pour le nuage de mots
@@ -820,6 +834,9 @@ def donnees_reponses():
             reponses_ouvertes_2["mots"].append(ajustement)
 
     return reponses_ouvertes_2
+
+
+
 
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)
