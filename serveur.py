@@ -497,6 +497,8 @@ def is_same_qcm(questions_qcm, previous_qcms):
     Prend une liste de questions et une liste de qcm en paramètres, et vérifie si l'un des qcm possède
     déjà exactement les questions données, rend True si l'un des qcm les possèdent False sinon
     """
+    if not questions_qcm:
+        return True
     if previous_qcms:
         for qcm in previous_qcms:
             listeIdQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==qcm.idQCM).all()
@@ -525,9 +527,14 @@ def create_qcm():
         num_qcm = int(request.form['num_qcm'])                  # nombre de QCM à créer
         nom_qcm = request.form['nom_qcm']                       # nom du QCM
         etiquettes_id = request.form.getlist('etiquette_id[]')  # étiquettes des questions
-        nb_questions = {}
-        for etiquette_id in etiquettes_id:                      # nombre de question par étiquette
-            nb_questions[etiquette_id] = int(request.form['nb_question[{}]'.format(etiquette_id)])
+        nb_questions_min = {}
+        nb_questions_max = {}
+        for etiquette_id in etiquettes_id:
+            nb_questions_min[etiquette_id] = int(request.form['nb_questions_min[{}]'.format(etiquette_id)])
+            nb_questions_max[etiquette_id] = int(request.form['nb_questions_max[{}]'.format(etiquette_id)])
+            if nb_questions_min[etiquette_id]>nb_questions_max[etiquette_id]:
+                nb_questions_min[etiquette_id],nb_questions_max[etiquette_id]=nb_questions_max[etiquette_id],nb_questions_min[etiquette_id]
+
 
         qcms_crees = []                                         # Liste pour stocker les QCMs créés
         questions = {}                                          # Liste pour stocker les Questions des étiquettes
@@ -535,14 +542,14 @@ def create_qcm():
         # Trouver toutes les questions avec l'étiquette spécifiée dans la base de données
         for etiquette_id in etiquettes_id:
             questions[etiquette_id] = Question.query.join(Associe).filter(Associe.RidE == etiquette_id).all()
-
+            etiq = db.session.query(Etiquette.nom).filter(Etiquette.idE==etiquette_id,Etiquette.idU==session['idU']).first()
             # Vérifier si des questions ont été trouvées pour l'étiquette spécifiée
             if not questions[etiquette_id]:
-                flash(f"Aucune question trouvée pour l'étiquette {etiquette_id}")
+                flash(f"Aucune question trouvée pour l'étiquette {etiq.nom}")
                 return redirect(url_for('lQuestion'))
 
-            if len(questions[etiquette_id]) < nb_questions[etiquette_id]:
-                flash(f"Pas assez de question trouvée pour l'étiquette {etiquette_id}")
+            if len(questions[etiquette_id]) < nb_questions_min[etiquette_id]:
+                flash(f"Pas assez de question trouvée pour l'étiquette {etiq.nom}")
                 return redirect(url_for('lQuestion'))
 
         # Créer num_qcm QCMs avec des questions aléatoires sélectionnées à partir de la liste de questions trouvées
@@ -550,28 +557,23 @@ def create_qcm():
             selected_questions = []   # Liste pour stocker les questions sélectionnées pour le QCM
             selected_question_ids = set()
 
-            # Sélectionner nb_question questions aléatoires parmi les questions récupérées pour chaque étiquette
+            # Sélectionner un nombre aléatoire de questions entre la fourchette spécifiée pour chaque étiquette
             for etiquette_id in etiquettes_id:
-                questions_subset = random.sample(questions[etiquette_id], nb_questions[etiquette_id])
-                for question in questions_subset:
-                    if question.idQ not in selected_question_ids:
-                        selected_questions.append(question)
-                        selected_question_ids.add(question.idQ)
-
-            # Vérifier si un QCM avec les mêmes questions a déjà été créé
-            if is_same_qcm(selected_questions, qcms_crees):
-                # Si c'est le cas, essayer avec une autre sélection de questions
-                continue
+                nb_questions_subset = random.randint(nb_questions_min[etiquette_id], nb_questions_max[etiquette_id])
+                questions_subset = random.sample(questions[etiquette_id], nb_questions_subset)
+                while is_same_qcm(selected_questions, qcms_crees):
+                    for question in questions_subset:
+                        if question.idQ not in selected_question_ids:
+                            selected_questions.append(question)
+                            selected_question_ids.add(question.idQ)
 
             # Générer un ID unique pour le QCM
             qcm_id = createId()
             while QCM.query.get(qcm_id):
                 qcm_id = createId()
-
-            # Créer un nouveau QCM
+            #Créer un nouveau QCM
             new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
             db.session.add(new_qcm)
-
             # Ajouter les questions sélectionnées au QCM
             for question in selected_questions:
                 new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ)
