@@ -532,6 +532,8 @@ def create_qcm():
         for etiquette_id in etiquettes_id:
             nb_questions_min[etiquette_id] = int(request.form['nb_questions_min[{}]'.format(etiquette_id)])
             nb_questions_max[etiquette_id] = int(request.form['nb_questions_max[{}]'.format(etiquette_id)])
+            if nb_questions_min[etiquette_id]>nb_questions_max[etiquette_id]:
+                nb_questions_min[etiquette_id],nb_questions_max[etiquette_id]=nb_questions_max[etiquette_id],nb_questions_min[etiquette_id]
 
 
         qcms_crees = []                                         # Liste pour stocker les QCMs créés
@@ -552,7 +554,6 @@ def create_qcm():
 
         # Créer num_qcm QCMs avec des questions aléatoires sélectionnées à partir de la liste de questions trouvées
         for i in range(num_qcm):
-            print("QCM num {i}")
             selected_questions = []   # Liste pour stocker les questions sélectionnées pour le QCM
             selected_question_ids = set()
 
@@ -570,11 +571,9 @@ def create_qcm():
             qcm_id = createId()
             while QCM.query.get(qcm_id):
                 qcm_id = createId()
-            print("QCM num boucle 3 {i}")
             #Créer un nouveau QCM
             new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
             db.session.add(new_qcm)
-            print("QCM num boucle 4 {i}")
             # Ajouter les questions sélectionnées au QCM
             for question in selected_questions:
                 new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ)
@@ -847,6 +846,11 @@ def donnees_reponses():
             reponses_ouvertes_2["mots"].append(ajustement)
 
     return reponses_ouvertes_2
+
+
+@socket.on('testQP')
+def testQP():
+    print("success mon frere")
 
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)
