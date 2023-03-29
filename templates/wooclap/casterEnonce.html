@@ -10,7 +10,7 @@
         listeQuestions = '{{listeQuestions}}'.replaceAll('Question ', '').replaceAll('&#39;', '').replaceAll('[', '').replaceAll(']', '').replaceAll('&#39;,)', '').replaceAll(' ', '').split(',')
         listeReponses = '{{listeReponses}}'.replaceAll('Reponse', '').replaceAll('(', '').replaceAll(',)', '').replaceAll(' ', '').replaceAll('[', '').replaceAll('],', ';').replaceAll(']]', '').split(';')
         //envoi au serveur des IDs formaté et du rang
-        socket.emit('oneByOne', q, listeQuestions, listeReponses, '{{idElement}}');
+        socket.emit('oneByOne', q, listeQuestions, listeReponses);
     });
 
     //réception de la question et des réponses numéro q
@@ -56,7 +56,13 @@
 <div class="menu">
 
     <h3>Code : <span id='code'>{{idElement}}</span></h3>
-    <button onclick="nextQuestion()">Question suivante</button>
+    <button id="nextQuestion" onclick="nextQuestion()">Question suivante</button>
+    <script>
+        //cacher le bouton nextQuestion s'il n'y en a qu'une
+        if ('{{typeElement}}' == 'question'){
+            document.querySelector('#nextQuestion').hidden = true;
+        }
+    </script>
     <hr/>
     <div>
         <button id="Q" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
