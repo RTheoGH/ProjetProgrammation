@@ -6,6 +6,7 @@ import string
 import csv
 from datetime import datetime
 from flask_socketio import SocketIO
+import time
 
 app = Flask(__name__)                                         # Création de app, instance de Flask
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'                      # Clé de session (utilisateurs)
@@ -526,11 +527,12 @@ def create_qcm():
         # Récupérer les données du formulaire
         num_qcm = int(request.form['num_qcm'])                      # nombre de QCM à créer
         nom_qcm = request.form['nom_qcm']                           # nom du QCM
-        etiquettes_id = request.form.getlist('etiquette_id[]')      # étiquettes des questions
-        etiquettes_ordre = request.form.getlist('etiquette_ordre[]')# Ordre des étiquettes 
+        etiquettes_id_form = request.form.getlist('etiquette_id[]') # étiquettes des questions
+        etiquettes_ordre = {}
         nb_questions_min = {}
         nb_questions_max = {}
-        for etiquette_id in etiquettes_id:
+        for etiquette_id in etiquettes_id_form:
+            etiquettes_ordre[etiquette_id] = int(request.form['etiquettes_ordre[{}]'.format(etiquette_id)])
             nb_questions_min[etiquette_id] = int(request.form['nb_questions_min[{}]'.format(etiquette_id)])
             nb_questions_max[etiquette_id] = int(request.form['nb_questions_max[{}]'.format(etiquette_id)])
             if nb_questions_min[etiquette_id]>nb_questions_max[etiquette_id]:
@@ -539,6 +541,24 @@ def create_qcm():
 
         qcms_crees = []                                         # Liste pour stocker les QCMs créés
         questions = {}                                          # Liste pour stocker les Questions des étiquettes
+        toutes_les_valeurs_sont_zero = True
+        for valeur in etiquettes_ordre.values():
+            if valeur != 0:
+                toutes_les_valeurs_sont_zero = False
+                break
+
+        if toutes_les_valeurs_sont_zero == True:
+            etiquettes_id = etiquettes_id_form
+        else :
+            etiquettes_id_form_triees = []
+            for valeur in sorted(etiquettes_ordre.values()):
+                for cle in etiquettes_ordre.keys():
+                    if etiquettes_ordre[cle] == valeur:
+                        if cle in etiquettes_id_form:
+                            etiquettes_id_form_triees.append(cle)
+
+            etiquettes_id = etiquettes_id_form_triees
+            print(etiquettes_id)
 
         # Trouver toutes les questions avec l'étiquette spécifiée dans la base de données
         for etiquette_id in etiquettes_id:
@@ -555,32 +575,57 @@ def create_qcm():
 
         # Créer num_qcm QCMs avec des questions aléatoires sélectionnées à partir de la liste de questions trouvées
         for i in range(num_qcm):
+            print(i)
             selected_questions = []   # Liste pour stocker les questions sélectionnées pour le QCM
             selected_question_ids = set()
 
-            # Sélectionner un nombre aléatoire de questions entre la fourchette spécifiée pour chaque étiquette
-            for etiquette_id in etiquettes_id:
-                nb_questions_subset = random.randint(nb_questions_min[etiquette_id], nb_questions_max[etiquette_id])
-                questions_subset = random.sample(questions[etiquette_id], nb_questions_subset)
-                while is_same_qcm(selected_questions, qcms_crees):
-                    for question in questions_subset:
-                        if question.idQ not in selected_question_ids:
-                            selected_questions.append(question)
-                            selected_question_ids.add(question.idQ)
+            # Définir la limite de temps en secondes
+            time_limit = 5
 
+            # Mesurer le temps de début
+            start_time = time.time()
+
+            questions_subset = []
+
+            print('etiquettes_id_form_triees : ',etiquettes_id_form_triees )
+            # Sélectionner un nombre aléatoire de questions entre la fourchette spécifiée pour chaque étiquette
+            for etiquette_id in etiquettes_id_form_triees:
+                print('Question choisi pour etiquette : ',etiquette_id)
+                nb_questions_subset = random.randint(nb_questions_min[etiquette_id], nb_questions_max[etiquette_id])
+                questions_subset += random.sample(questions[etiquette_id], nb_questions_subset)
+            while is_same_qcm(selected_questions, qcms_crees):
+                print('questions_subset = ',questions_subset)
+                # Vérifier si le temps limite est dépassé
+                if time.time() - start_time > time_limit:
+                    etiq = db.session.query(Etiquette.nom).filter(Etiquette.idE==etiquette_id,Etiquette.idU==session['idU']).first()
+                    flash(f"Veuillez augmentée le nombre de question possédant l'étiquette {etiq.nom}")
+                    return redirect(url_for('lQuestion'))
+                
+                for question in questions_subset:
+                    print('question : ',question.enonce)
+                    selected_questions.append(question)
+                    selected_question_ids.add(question.idQ)
+
+            print(i)
             # Générer un ID unique pour le QCM
             qcm_id = createId()
-            while QCM.query.get(qcm_id):
+            while db.session.query(QCM).filter_by(idQCM=qcm_id).first() is not None:
+                # Si l'ID existe déjà dans la base de données, on en génère un nouveau
                 qcm_id = createId()
+
 
             #Créer un nouveau QCM
             new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
             db.session.add(new_qcm)
 
+            print(i)
+            Position = 0
             # Ajouter les questions sélectionnées au QCM
             for question in selected_questions:
-                new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ, Position=i)
+                new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ, Position=Position)
                 db.session.add(new_contient)
+                Position +=1
+                print('new_contient.RidQ : ',new_contient.RidQ,'new_contient.Position : ',new_contient.Position)
 
             # Ajouter le nouveau QCM à la liste des QCMs créés
             qcms_crees.append(new_qcm)
@@ -849,11 +894,6 @@ def donnees_reponses():
             reponses_ouvertes_2["mots"].append(ajustement)
 
     return reponses_ouvertes_2
-
-
-@socket.on('testQP')
-def testQP():
-    print("success mon frere")
 
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)
