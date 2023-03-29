@@ -5,7 +5,7 @@
     var ReponseChoixJS = [];
     const socket = io(); // Variable socket
     socket.on('connect', function() { // Détection quand on arrive sur la page
-        socket.emit('testRQ', "Je suis dans repondre au question");
+        console.log("Je suis dans repondre au question");
     });
     socket.on('afficheQuestion', (questionCastee, reponsesAssociees) => { // Reception de la question à afficher
         $("#rien").hide();
@@ -23,7 +23,7 @@
                 ReponseAssJS = reponsesAssociees;
             });
         }
-        $("#soumettre").show();
+        $("#soumettre").show(); 
     });
 
     function reponseE() {

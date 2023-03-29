@@ -10,7 +10,7 @@
         listeQuestions = '{{listeQuestions}}'.replaceAll('Question ', '').replaceAll('&#39;', '').replaceAll('[', '').replaceAll(']', '').replaceAll('&#39;,)', '').replaceAll(' ', '').split(',')
         listeReponses = '{{listeReponses}}'.replaceAll('Reponse', '').replaceAll('(', '').replaceAll(',)', '').replaceAll(' ', '').replaceAll('[', '').replaceAll('],', ';').replaceAll(']]', '').split(';')
         //envoi au serveur des IDs formaté et du rang
-        socket.emit('oneByOne', q, listeQuestions, listeReponses);
+        socket.emit('oneByOne', q, listeQuestions, listeReponses, '{{idElement}}');
     });
 
     //réception de la question et des réponses numéro q
@@ -28,7 +28,7 @@
             }
         }
 
-        socket.emit('recupDataForRep', questionCastee, reponsesAssociees)
+        socket.emit('recupDataForRep', questionCastee, reponsesAssociees,'{{idElement}}')
     })
 
     function nextQuestion() {
@@ -40,23 +40,16 @@
         }
     }
     socket.on('retourReponseEtudiant',function(reponse_choix,ReponseChoixJS){
-        
         if(progressBlock == 0){
             progressBlock = 1;
         }
         else{
             ReponseChoixJS.forEach((r)=>{
-                console.log(r)
-                console.log("avant max = ",document.getElementById(r).max)
                 document.getElementById(r).setAttribute("max",document.getElementById(r).max+1)
-                console.log("apres max = ",document.getElementById(r).max)
             })
         }
         reponse_choix.forEach((r)=>{
-            console.log(r)
-            console.log("avant value = ",document.getElementById(r).max)
             document.getElementById(r).setAttribute("value",document.getElementById(r).value+1)
-            console.log("apres value = ",document.getElementById(r).max)
         })
      
     })
@@ -64,7 +57,12 @@
 {% endblock %} {% block main %}
 <div class="menu">
     <h3>Code : {{idElement}}</h3>
-    <button onclick="nextQuestion()">Question suivante</button>
+    <button id="nextQuestion" onclick="nextQuestion()">Question suivante</button>
+    <script>
+        if ('{{typeElement}}' == "question"){
+            document.querySelector('#nextQuestion').hidden = true;
+        }
+    </script>
     <hr/>
     <div>
         <button id="Q" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>

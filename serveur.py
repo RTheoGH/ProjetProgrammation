@@ -642,45 +642,23 @@ def afficheQCM(id):                    # Remarque : le [0] sert à isoler la cha
     return render_template("qcm/affichage.html",title=title,nomQcm=nomQcm,listeQuestions=checked_questions,\
         listeReponses=checked_reponses,len=len(checked_questions),page="ListeQCM")
 
-@app.route("/repondreQCM",methods =["POST","GET"])
-def repondreQCM():
+@app.route("/entrerCodeEtu",methods =["POST","GET"])
+def entrerCodeEtu():
     title='Repondez aux questions'
     if 'nomU' not in session:                   # Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     
     if request.method == "POST":
-        # reponse = request.form.getlist('reponse_choix')
-        # reponseN = request.form.getlist("reponse_num")
-        # question = request.form.getlist("question")
-        # idq = EnvoyerQCM.query.first()
-        # ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
-        # ListeReponseQcm = []
-        # for key in ListeQuestionsQcm:
-        #     add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
-        #     ListeReponseQcm.append(add)
-        # lena = len(ListeQuestionsQcm) 
-        # # prepare la bdd
-        # idE = session['idU']
-        # preE = session['preU']
-        # nomE = session['nomU'] 
-        # dateA = str(datetime.now())
-        # idQbdd = idq.idQCM
-        return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i)
+        code = request.form["code"]
+        if (db.session.query(Question.idQ).filter(Question.idQ==code).all() != []) or (db.session.query(QCM.idQCM).filter(QCM.idQCM==code).all() != []):
+            print("le code existe")
+            return render_template("wooclap/repondreQCM.html",page="RepondreQCM",title=title,code=code)
+        else:
+            flash(f"Le code entré n'existe pas!")
+            return render_template("wooclap/entrerCodeEtu.html",page="RepondreQCM",title=title)
     else:
-        # idq = EnvoyerQCM.query.first()
-        # if idq == None:
-        #     return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test",lena=0,ListeReponseQcm = [],ListeQuestionsQcm = [],i= 0)
-        # i= 0
-        # idq = EnvoyerQCM.query.first()
-        # ListeQuestionsQcm = db.session.query(Question).join(Contient,Contient.RidQCM == idq.idQCM).all()
-        # ListeReponseQcm = []
-        # for key in ListeQuestionsQcm:
-        #     add = db.session.query(Reponse).filter(key.idQ == Reponse.idQ).all()
-        #     ListeReponseQcm.append(add)
-        # lena = len(ListeQuestionsQcm)  
-        #lena=lena,ListeReponseQcm = ListeReponseQcm,ListeQuestionsQcm = ListeQuestionsQcm,i= i
-        return render_template("wooclap/repondreQCM.html",page="RepondreQCM",nomQcm = "test")
+        return render_template("wooclap/entrerCodeEtu.html",page="RepondreQCM",title=title)
 
 @app.route("/envoyerEnonce",methods = ["POST","GET"])
 def caster():
@@ -722,38 +700,22 @@ def caster():
 # Socket réception des données envoyés depuis casterEnonce.html
 @socket.on('oneByOne')
 def oneByOne(q,questions,reponses):
+    idClient = request.sid
     questionCastee = str(db.session.query(Question.enonce).filter(Question.idQ==questions[q]).all())
     idReponsesAssociees = reponses[q].split(',')
     reponsesAssociees = []
     if idReponsesAssociees != []:
         for id in idReponsesAssociees:
             reponsesAssociees.append(str(db.session.query(Reponse.reponse).filter(Reponse.idR==id).all()))
-    socket.emit('emitOneByOne',(questionCastee,reponsesAssociees))
+    socket.emit('emitOneByOne',(questionCastee,reponsesAssociees),room=idClient)
 
-
-# Socket réception du numéro de la question actuelle
-@socket.on('setQuestion')
-def setQuestion(data):
-    print(data)
-    socket.emit('afficheQuestion',data) # Renvoie le numéro de la question à afficher
-
-# Socket réception des reponses des éléves et les mettres dans la bdd
-@socket.on('reponseE')
-def reponseE(enonce,reponse_choix,reponse_num):
-#         idE = session['idU']
-#     add = ReponseQCM(numeroEtu=idE,idQCM=,RidQ=,date=str(datetime.now()),estNumerique=,Value=)
-#     db.session.add(add)
-#     db.session.commit()
-    print("enonce = ",enonce," reponse choix = ",reponse_choix," reponse num = ",reponse_num)
 
 @socket.on('recupDataForRep')
-def recupDataForRep( questionCastee, reponsesAssociees):
-    print( "QC = ",questionCastee," Reponse associer = ", reponsesAssociees)
-    socket.emit('afficheQuestion',(questionCastee, reponsesAssociees))
+def recupDataForRep(questionCastee, reponsesAssociees,idElement):
+    socket.emit('afficheQuestion',(questionCastee, reponsesAssociees,idElement))
 
 @socket.on('reponseEtuChoixmultiple')
 def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS):
-    print(reponse_choix)
     socket.emit("retourReponseEtudiant",(reponse_choix,ReponseChoixJS))
 
 ##########################################################

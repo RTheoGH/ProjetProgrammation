@@ -29,6 +29,29 @@ h1 {
     padding: 0.5em;
 }
 
+/* Progress bar pour tous les navigateurs*/
+progress {
+    background-color: grey;
+    border-radius: 25px;
+}
+progress::-webkit-progress-bar {
+    background-color: grey;
+    border-radius: 25px;
+}
+
+progress::-webkit-progress-value {
+    border-radius: 25px;
+    background-color: rgb(65, 65, 255) !important;
+}
+progress::-moz-progress-bar {
+    border-radius: 25px;
+    background-color: rgb(65, 65, 255) !important;
+}
+progress{
+    border-radius: 25px;
+    color: rgb(65, 65, 255);
+}
+
 /* Classe basique affichage du menu au centre */
 .menu {
     border: 0.5em solid black;
