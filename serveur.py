@@ -25,6 +25,7 @@ socket = SocketIO(app)
 nombreIdQuestion=0               # Variables utilisés pour 
 nombreIdCheck=0                  # La génération de réponses
 nombreIdQCM=0
+checkCodeQcmProf = {}
 
 def createId():                  # Fonction appelée à chaque fois qu'on a besoin de générer un nouvel id
     id=""
@@ -688,6 +689,19 @@ def caster():
 
 ##################### Partie Socket #####################
 
+@socket.on('connect')
+def test_disconnect():
+    print('Client connected') 
+@socket.on('disconnect')
+def test_disconnect():
+    idProf = session['idU']
+    if idProf in checkCodeQcmProf.keys():
+        socket.emit('profDeco', checkCodeQcmProf[idProf])
+        checkCodeQcmProf.pop(idProf)
+    print("Client disconnect")
+
+
+
 # Socket réception des données envoyés depuis casterEnonce.html
 @socket.on('oneByOne')
 def oneByOne(q,questions,reponses):
@@ -724,6 +738,15 @@ def recupDataForRep( questionCastee, reponsesAssociees):
 def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS):
     print(reponse_choix)
     socket.emit("retourReponseEtudiant",(reponse_choix,ReponseChoixJS))
+@socket.on('testQP')
+def testQP():
+    print("sucess !!!!")
+@socket.on('recupCodeQCM')
+def recupCodeQCM(code):
+    idProf = session['idU']
+    checkCodeQcmProf[idProf] = code
+
+
 
 ##########################################################
 
@@ -848,9 +871,7 @@ def donnees_reponses():
     return reponses_ouvertes_2
 
 
-@socket.on('testQP')
-def testQP():
-    print("success mon frere")
+
 
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)

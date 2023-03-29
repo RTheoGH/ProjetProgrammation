@@ -1,35 +1,43 @@
-{% extends 'partials/base.html' %}
+{% extends 'partials/base.html' %} {% block main %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 
-{% block main %}
 <script>
+    var ty = 56432132;
+    const socket = io(); // Variable socket
     function supp() {
-        socket.emit('testQP');
-      }
-      
-      window.addEventListener('unload', supp());
+        socket.emit('testQP')
+    };
+    window.addEventListener('unload', supp);
 </script>
 <div class="menu">
     <h1>Statistiques</h1>
     <div class="stats">
         <!-- faut faire un diagramme surement en baton au fil du temps donc deux batons (question/séquence) -->
-        <p>Nombre de participants : 10000</p>      <!-- récupérer le nombre de participants en temps réel -->
+        <p>Nombre de participants : 10000</p>
+        <!-- récupérer le nombre de participants en temps réel -->
     </div>
     <div class="stats">
         <h2>Résultats :</h2>
         <div class="liste">
             <table>
                 <tr class="top">
-                    <td>Date</td>                   <!-- Date -->
-                    <td>Etudiant</td>               <!-- Nom prénom de l'étudiant-->
-                    <td>Question seule</td>         <!-- Nombre de questions réussis -->
-                    <td>Séquence</td>               <!-- Pourcentage de questions bien répondus -->
+                    <td>Date</td>
+                    <!-- Date -->
+                    <td>Etudiant</td>
+                    <!-- Nom prénom de l'étudiant-->
+                    <td>Question seule</td>
+                    <!-- Nombre de questions réussis -->
+                    <td>Séquence</td>
+                    <!-- Pourcentage de questions bien répondus -->
                 </tr>
                 <!-- un for ici -->
                 <tr>
                     <td>22/02/2023</td>
                     <td>Robert</td>
-                    <td>-</td>      <!-- if question seule then id question + reussi/raté else vide -->
-                    <td>-</td>                      <!-- if séquence then id séquence + pourcentage question réussi else vide -->
+                    <td>-</td>
+                    <!-- if question seule then id question + reussi/raté else vide -->
+                    <td>-</td>
+                    <!-- if séquence then id séquence + pourcentage question réussi else vide -->
                 </tr>
                 <!-- effacer les réponses des étudiants ? -->
             </table>
@@ -42,5 +50,5 @@
     une date, 
     un mode (question->1 ou séquence 2), 
     et un id(Question/Séquence) -->
-    
+
 {% endblock %}
