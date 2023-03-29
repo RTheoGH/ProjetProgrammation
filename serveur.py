@@ -16,8 +16,8 @@ db.init_app(app)
 socket = SocketIO(app)
 
 # with app.app_context(): 
-    # db.drop_all()
-    # db.create_all()
+#     db.drop_all()
+#     db.create_all()
 # si le "with" n'est pas commenté:
 #       si vous rechargez le serveur sans vous deconnecter, une erreur arrive au niveau de l'accueil,
 #          utilisez la route /deconnexion pour corriger le probleme
@@ -525,9 +525,10 @@ def create_qcm():
     # Si la méthode est POST, l'utilisateur a soumis un formulaire
     if request.method == 'POST':
         # Récupérer les données du formulaire
-        num_qcm = int(request.form['num_qcm'])                  # nombre de QCM à créer
-        nom_qcm = request.form['nom_qcm']                       # nom du QCM
-        etiquettes_id = request.form.getlist('etiquette_id[]')  # étiquettes des questions
+        num_qcm = int(request.form['num_qcm'])                      # nombre de QCM à créer
+        nom_qcm = request.form['nom_qcm']                           # nom du QCM
+        etiquettes_id = request.form.getlist('etiquette_id[]')      # étiquettes des questions
+        etiquettes_ordre = request.form.getlist('etiquette_ordre[]')# Ordre des étiquettes 
         nb_questions_min = {}
         nb_questions_max = {}
         for etiquette_id in etiquettes_id:
@@ -572,12 +573,14 @@ def create_qcm():
             qcm_id = createId()
             while QCM.query.get(qcm_id):
                 qcm_id = createId()
+
             #Créer un nouveau QCM
             new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
             db.session.add(new_qcm)
+
             # Ajouter les questions sélectionnées au QCM
             for question in selected_questions:
-                new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ)
+                new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ, Position=i)
                 db.session.add(new_contient)
 
             # Ajouter le nouveau QCM à la liste des QCMs créés
