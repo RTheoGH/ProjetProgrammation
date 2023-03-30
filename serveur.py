@@ -587,11 +587,14 @@ def create_qcm():
 
             # Sélectionner un nombre aléatoire de questions entre la fourchette spécifiée pour chaque étiquette
             for etiquette_id in etiquettes_id:
-                print('Question choisi pour etiquette : ',etiquette_id)
+                before = len(questions_subset)
                 nb_questions_subset = random.randint(nb_questions_min[etiquette_id], nb_questions_max[etiquette_id])
-                questions_subset += random.sample(questions[etiquette_id], nb_questions_subset)
+                while nb_questions_subset > len(questions_subset)-before:
+                    question = random.choice(questions[etiquette_id])
+                    if question not in questions_subset:
+                        questions_subset.append(question)
+
             while is_same_qcm(selected_questions, qcms_crees):
-                print('questions_subset = ',questions_subset)
                 # Vérifier si le temps limite est dépassé
                 if time.time() - start_time > time_limit:
                     etiq = db.session.query(Etiquette.nom).filter(Etiquette.idE==etiquette_id,Etiquette.idU==session['idU']).first()
@@ -619,7 +622,6 @@ def create_qcm():
                 new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ, Position=Position)
                 db.session.add(new_contient)
                 Position +=1
-                print('new_contient.RidQ : ',new_contient.RidQ,'new_contient.Position : ',new_contient.Position)
 
             # Ajouter le nouveau QCM à la liste des QCMs créés
             qcms_crees.append(new_qcm)
