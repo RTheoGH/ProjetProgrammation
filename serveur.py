@@ -652,6 +652,25 @@ def dl():
     nom = request.form['nom']
     delete = QCM.query.filter(QCM.idU == session['idU'],QCM.Nom==nom).all()
     num_del = len(delete)
+    ##################### Partie Download #####################
+
+    data = {}
+    for Qcm in delete:
+        data_indice = []
+        question = Question.query.join(Contient, Contient.RidQCM == Qcm.idQCM).filter(Question.idU == session['idU'],Question.idQ==Contient.RidQ,).first()
+        data_indice.append(question.enonce)
+        print(question)
+        reponses = Reponse.query.filter(Question.idU == session['idU'],Reponse.idQ==question.idQ).all()
+        print(question)
+        reponses_reponse = []
+        for reponse in reponses:
+            reponses_reponse.append(reponse.reponse)
+        data_indice.append(reponses_reponse)
+        data[Qcm]=data_indice
+    print("data",data)
+
+
+    ##################### Fin Download #####################
     print(delete,"a delete")
     for Qcm in delete:
         print(Qcm)
