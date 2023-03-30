@@ -4,27 +4,7 @@
     var ReponseAssJS;
     var ReponseChoixJS = [];
     const socket = io(); // Variable socket
-    socket.on('connect', function() { // Détection quand on arrive sur la page
-        console.log("Je suis dans repondre au question");
-    });
-    socket.on('afficheQuestion', (questionCastee, reponsesAssociees) => { // Reception de la question à afficher
-        $("#rien").hide();
-        document.getElementById('reponses').innerHTML = "";
-        $("#enonce").text(questionCastee); // Son énoncé
 
-        if (reponsesAssociees == "[]") { //si numérique 
-            $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?" name="reponse_num"></p>'); //ajoute un input avec la limitation 
-            ReponseAssJS = reponsesAssociees;
-        } else {
-            ReponseChoixJS = [];
-            reponsesAssociees.forEach((r) => { //affiche toutes les reponses possibles avec leurs checkbox
-                ReponseChoixJS.push(r.replaceAll("[('", "").replaceAll("',)]", ""));
-                $("#reponses").append('<p><input type="checkbox" id="' + r + '.idR" name="reponse_choix" value="' + r + '.idR" /> ' + r.replaceAll("[('", "").replaceAll("',)]", "") + '</p>');
-                ReponseAssJS = reponsesAssociees;
-            });
-        }
-        $("#soumettre").show(); 
-    });
 
     function reponseE() {
         console.log("RA = ", ReponseAssJS)
@@ -56,6 +36,7 @@
     })
 </script>
 {% endblock %} {% block main %}
+<span id='code'>{{code}}</span>
 <div class="menu">
     <p id="rien">Il n'y a rien ici pour le moment</p>
     <form>
@@ -79,5 +60,31 @@
 
 </div>
 
+<script>
+    socket.on('connect', function() { // Détection quand on arrive sur la page
+        console.log("Je suis dans repondre au question");
+    });
+    socket.on('afficheQuestion', (questionCastee, reponsesAssociees, codeQcm) => { // Reception de la question à afficher
+        var code = document.getElementById('code').textContent;
+        if (code == codeQcm) {
 
+
+            $("#rien").hide();
+            document.getElementById('reponses').innerHTML = "";
+            $("#enonce").text(questionCastee); // Son énoncé
+            if (reponsesAssociees == "[]") { //si numérique 
+                $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?" name="reponse_num"></p>'); //ajoute un input avec la limitation 
+                ReponseAssJS = reponsesAssociees;
+            } else {
+                ReponseChoixJS = [];
+                reponsesAssociees.forEach((r) => { //affiche toutes les reponses possibles avec leurs checkbox
+                    ReponseChoixJS.push(r.replaceAll("[('", "").replaceAll("',)]", ""));
+                    $("#reponses").append('<p><input type="checkbox" id="' + r + '.idR" name="reponse_choix" value="' + r + '.idR" /> ' + r.replaceAll("[('", "").replaceAll("',)]", "") + '</p>');
+                    ReponseAssJS = reponsesAssociees;
+                });
+            }
+            $("#soumettre").show();
+        }
+    });
+</script>
 {% endblock %}

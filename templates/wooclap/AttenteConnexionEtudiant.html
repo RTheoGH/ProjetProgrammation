@@ -1,0 +1,27 @@
+{% extends 'partials/base.html' %} {% block head %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    const socket = io();
+</script>
+{% endblock %} {% block main %}
+
+<div class="menu">
+    <h2>Connecter vous en entrant le code ci-dessous : </h2>
+
+    <h1><span id="code">{{idElement}}</span></h1>
+    <form action="lancerCaste" method="POST">
+        <input type="text" id='{{idElement}}' name="ARecup" value='{{idElement}}' readonly hidden=true>
+        <input type="text" id='{{listeQuestions}}' name="ARecup" value='{{listeQuestions}}' readonly hidden=true>
+        <input type="text" id='{{listeReponses}}' name="ARecup" value='{{listeReponses}}' readonly hidden=true>
+        <input type="text" id='{{typeElement}}' name="ARecup" value='{{typeElement}}' readonly hidden=true>
+        <!-- idElement,listeQuestions,listeReponses,typeElement,page -->
+        <button>C'est Parti</button>
+    </form>
+    <script>
+        var codeQcm = document.getElementById('code').textContent;
+        console.log(codeQcm)
+        socket.emit('recupCodeQCM', codeQcm)
+    </script>
+</div>
+{% endblock %}

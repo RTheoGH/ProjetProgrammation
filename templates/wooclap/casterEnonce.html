@@ -9,26 +9,11 @@
         //formatage des IDsreçus du serveur
         listeQuestions = '{{listeQuestions}}'.replaceAll('Question ', '').replaceAll('&#39;', '').replaceAll('[', '').replaceAll(']', '').replaceAll('&#39;,)', '').replaceAll(' ', '').split(',')
         listeReponses = '{{listeReponses}}'.replaceAll('Reponse', '').replaceAll('(', '').replaceAll(',)', '').replaceAll(' ', '').replaceAll('[', '').replaceAll('],', ';').replaceAll(']]', '').split(';')
-        //envoi au serveur des IDs formaté et du rang
+            //envoi au serveur des IDs formaté et du rang
         socket.emit('oneByOne', q, listeQuestions, listeReponses);
     });
 
-    //réception de la question et des réponses numéro q
-    socket.on('emitOneByOne', function(questionCastee, reponsesAssociees) {
-        questionCastee = questionCastee.replaceAll("[(", "").replaceAll(",)]", "").replaceAll('"', "").replaceAll("'", "").replaceAll("\\r\\n", "<br/>")
-        $("#question").html(questionCastee) //affichage de la question
-        for (reponse of reponsesAssociees) { //affichage des réponses
-            reponse = reponse.replaceAll("[('", "").replaceAll("',)]", "")
-            if (reponse == "[]") {
-                $("#reponse").append('<input type="number"><br/>') //réponse numérique
 
-            } else {
-                $("#reponse").append(reponse + '<br/><progress value="0" max="0" id="' + reponse + '"></progress> <br/></div>')
-            }
-        }
-
-        socket.emit('recupDataForRep', questionCastee, reponsesAssociees,'{{idElement}}')
-    })
 
     function nextQuestion() {
         if (q < listeQuestions.length - 1) { //interdit d'incrémenter q s'il n'y a plus de questions
@@ -46,8 +31,8 @@
                 document.getElementById(r).setAttribute("max", document.getElementById(r).max + 1)
             })
         }
-        reponse_choix.forEach((r)=>{
-            document.getElementById(r).setAttribute("value",document.getElementById(r).value+1)
+        reponse_choix.forEach((r) => {
+            document.getElementById(r).setAttribute("value", document.getElementById(r).value + 1)
         })
 
     })
@@ -59,7 +44,7 @@
     <button id="nextQuestion" onclick="nextQuestion()">Question suivante</button>
     <script>
         //cacher le bouton nextQuestion s'il n'y en a qu'une
-        if ('{{typeElement}}' == 'question'){
+        if ('{{typeElement}}' == 'question') {
             document.querySelector('#nextQuestion').hidden = true;
         }
     </script>
@@ -87,8 +72,21 @@
 </div>
 
 <script>
-    var codeQcm = document.getElementById('code').textContent;
-    console.log(codeQcm)
-    socket.emit('recupCodeQCM', codeQcm)
+    //réception de la question et des réponses numéro q
+    socket.on('emitOneByOne', function(questionCastee, reponsesAssociees) {
+        questionCastee = questionCastee.replaceAll("[(", "").replaceAll(",)]", "").replaceAll('"', "").replaceAll("'", "").replaceAll("\\r\\n", "<br/>")
+        $("#question").html(questionCastee) //affichage de la question
+        for (reponse of reponsesAssociees) { //affichage des réponses
+            reponse = reponse.replaceAll("[('", "").replaceAll("',)]", "")
+            if (reponse == "[]") {
+                $("#reponse").append('<input type="number"><br/>') //réponse numérique
+
+            } else {
+                $("#reponse").append(reponse + '<br/><progress value="0" max="0" id="' + reponse + '"></progress> <br/></div>')
+            }
+        }
+        var codeQcm = document.getElementById('code').textContent;
+        socket.emit('recupDataForRep', questionCastee, reponsesAssociees, codeQcm)
+    })
 </script>
 {% endblock %}

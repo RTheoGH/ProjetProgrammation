@@ -662,7 +662,11 @@ def entrerCodeEtu():
     
     if request.method == "POST":
         code = request.form["code"]
-        if (db.session.query(Question.idQ).filter(Question.idQ==code).all() != []) or (db.session.query(QCM.idQCM).filter(QCM.idQCM==code).all() != []):
+        existe = False
+        for key in checkCodeQcmProf.values():
+            if code == key:
+                existe = True
+        if (existe):
             print("le code existe")
             return render_template("wooclap/repondreQCM.html",page="RepondreQCM",title=title,code=code)
         else:
@@ -700,11 +704,27 @@ def caster():
                 else:
                     reponses.append(listeReponse)    
             typeElement = "sequence"
-        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,listeReponses=reponses,typeElement=typeElement,page = "EnvoyerEnonce")
+        return render_template('wooclap/AttenteConnexionEtudiant.html',title=title,idElement=idElementCaste,listeQuestions=questions,listeReponses=reponses,typeElement=typeElement,page = "EnvoyerEnonce")
     else:
         listeQuestions = db.session.query(Question).filter(Question.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
         return render_template("wooclap/envoyerEnonce.html",title=title,listeQCM=listeQCM,listeQuestions=listeQuestions,page = "EnvoyerEnonce")
+@app.route("/lancerCaste",methods = ["POST","GET"])
+def lancerCaste():
+    title = 'Envoyer un énoncé'
+    if 'nomU' not in session:                   # Sécurité connexion
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+    if request.method == "POST":
+        donneesRecup = request.form.getlist('ARecup')
+        idElementCaste = donneesRecup[0]
+        questions = donneesRecup[1]
+        reponses = donneesRecup[2]
+        print("donne 3 = ",donneesRecup[3])
+
+        typeElement = donneesRecup[3]
+        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,listeReponses=reponses,typeElement=typeElement,page = "EnvoyerEnonce")
+    return render_template("/index.html")
 
 ##################### Partie Socket #####################
 
@@ -717,7 +737,7 @@ def test_disconnect():
     if idProf in checkCodeQcmProf.keys():
         socket.emit('profDeco', checkCodeQcmProf[idProf])
         checkCodeQcmProf.pop(idProf)
-    print("Client disconnect")
+    print("Client disconnect ", checkCodeQcmProf)
 
 
 
@@ -749,11 +769,14 @@ def reponseE(enonce,reponse_choix,reponse_num):
     print("enonce = ",enonce," reponse choix = ",reponse_choix," reponse num = ",reponse_num)
 
 @socket.on('recupDataForRep')
-def recupDataForRep(questionCastee, reponsesAssociees,idElement):
-    socket.emit('afficheQuestion',(questionCastee, reponsesAssociees,idElement))
+def recupDataForRep(questionCastee, reponsesAssociees,codeQcm):
+    print("recupdataforrep liste = ",checkCodeQcmProf )
+    idProf = session['idU']
+    socket.emit('afficheQuestion',(questionCastee, reponsesAssociees,codeQcm))
 
 @socket.on('reponseEtuChoixmultiple')
 def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS):
+    print("rezponsechoix multiple = ", checkCodeQcmProf)
     socket.emit("retourReponseEtudiant",(reponse_choix,ReponseChoixJS))
 @socket.on('testQP')
 def testQP():
@@ -762,6 +785,8 @@ def testQP():
 def recupCodeQCM(code):
     idProf = session['idU']
     checkCodeQcmProf[idProf] = code
+    print("check prof = ", checkCodeQcmProf)
+
 
 
 
