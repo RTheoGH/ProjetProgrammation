@@ -258,6 +258,8 @@ def ajout():
             # rep_num2 = request.form["rep_num2"]
             # rep_num = float(rep_num1) + float(float(rep_num2)*0.01)
             rep_num = request.form["Rep_num"]
+            print("rep num = ", rep_num)
+                
 
         #try:
         db.session.add(new_question)                # Ajout question -> base de donnée            
@@ -443,6 +445,7 @@ def supprimer(id):
     questionSupp = Question.query.get_or_404(id)        # Récupération question correspondant id, sinon erreur
     toutAssocie = db.session.query(Associe).all()    
     reponseSupp = db.session.query(Reponse.idR).filter(Reponse.idQ==id).all()
+    qcmAssocie = db.session.query(Contient).filter(Contient.RidQ==id).all()
 
     try:
         for key in reponseSupp:                         # Supprime toutes les réponses
@@ -452,6 +455,8 @@ def supprimer(id):
             if(assoc.RidQ==id):
                 db.session.delete(assoc)
                 db.session.commit()
+        for key in qcmAssocie:
+            db.session.delete(key)
         db.session.delete(questionSupp)                 # Suppression question de la base de données
         db.session.commit()                             # Envoi des modifications à la base de données
         return redirect(url_for('lQuestion'))           # Redirection vers la page de liste des questions

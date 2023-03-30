@@ -15,7 +15,7 @@
                     window.addEventListener('load', () => {
                         document.querySelector('#demandereponse').disabled = true;
                         document.querySelector('#demandereponse').hidden = true;
-                        document.querySelector('#Rep_num').disabled = true;
+                        //document.querySelector('#Rep_num').disabled = true; // si on disable une balise alors le require ne fonctionne pas
                         document.querySelector('#Rep_num').hidden = true;
                     });
                 </script>
@@ -23,8 +23,9 @@
                     <fieldset>
                         <legend>Étiquettes</legend>
                         <ul>
-                            {% for etiquette in etiquettes %} <!-- Pour chaque etiquette parmi les etiquettes -->
-                                <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
+                            {% for etiquette in etiquettes %}
+                            <!-- Pour chaque etiquette parmi les etiquettes -->
+                            <li><input type="checkbox" name="tag" value="{{ etiquette.idE }}"> {{ etiquette.nom }}</li>
                             {% endfor %}
                         </ul>
                     </fieldset>
@@ -36,7 +37,7 @@
             <p><button type="button" id="Quest_QCM" onclick="Question_QCM()">Passer en question à choix multiple</button></p>
             <p><button type="button" id="demandereponse" onclick="demandePlusReponse()">Ajouter une réponse</button></p>
             <p id="rep_num">
-                <p><input type="text" pattern="\d*([.]\d{0,2})?" id="Rep_num" name="Rep_num" onkeyup="visualiser()"></p>
+                <p><input type="text" pattern="\d*([.]\d{0,2})?" id="Rep_num" name="Rep_num" onkeyup="visualiser()" required></p>
             </p>
             <p><input class="button" type="submit" value="Ajouter la question" /></p>
         </form>
