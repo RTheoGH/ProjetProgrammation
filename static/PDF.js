@@ -64,8 +64,8 @@ async function telechargementMultiple(anonyme){
     // let questions = document.getElementsByClassName('affQuestion')
     let controles = data.slice(1,data.length);
     Array.from(controles).forEach((controle) => {
-        // let questions = controle[];
-        Array.from(questions).from((question) => {
+        console.log(controle)
+        Array.from(controle).forEach((question) => {
             doc.setFontSize(18);
             doc.text(5,pivot,question[0]);
             pivot+=10;
