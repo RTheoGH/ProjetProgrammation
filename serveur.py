@@ -528,8 +528,8 @@ def create_qcm():
         # Récupérer les données du formulaire
         num_qcm = int(request.form['num_qcm'])                      # nombre de QCM à créer
         nom_qcm = request.form['nom_qcm']                           # nom du QCM
-        etiquettes_id_form = request.form.getlist('etiquette_id[]') # étiquettes des questions
-        etiquettes_ordre = {}
+        etiquettes_id_form = request.form.getlist('etiquette_id[]') # étiquettes existantes
+        etiquettes_ordre = {}                                       #ordres fournis
         nb_questions_min = {}
         nb_questions_max = {}
         for etiquette_id in etiquettes_id_form:
@@ -595,7 +595,7 @@ def create_qcm():
                 # Vérifier si le temps limite est dépassé
                 if time.time() - start_time > time_limit:
                     etiq = db.session.query(Etiquette.nom).filter(Etiquette.idE==etiquette_id,Etiquette.idU==session['idU']).first()
-                    flash(f"Veuillez augmentée le nombre de question possédant l'étiquette {etiq.nom}")
+                    flash(f"Veuillez augmenter le nombre de questions possédant l'étiquette {etiq.nom}")
                     return redirect(url_for('lQuestion'))
                 
                 for question in questions_subset:
