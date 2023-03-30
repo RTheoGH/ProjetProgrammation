@@ -532,17 +532,18 @@ def create_qcm():
         etiquettes_ordre = {}                                       #ordres fournis
         nb_questions_min = {}
         nb_questions_max = {}
-        pop = 0
+
         for etiquette_id in etiquettes_id_form:
             etiquettes_ordre[etiquette_id] = int(request.form['etiquettes_ordre[{}]'.format(etiquette_id)])
             nb_questions_min[etiquette_id] = int(request.form['nb_questions_min[{}]'.format(etiquette_id)])
             nb_questions_max[etiquette_id] = int(request.form['nb_questions_max[{}]'.format(etiquette_id)])
             if nb_questions_min[etiquette_id]>nb_questions_max[etiquette_id]:
                 nb_questions_min[etiquette_id],nb_questions_max[etiquette_id]=nb_questions_max[etiquette_id],nb_questions_min[etiquette_id]
-            if nb_questions_max[etiquette_id]==0:
-                etiquettes_id_form.pop(pop)
-            pop +=1
 
+        for key, etiquette_id in enumerate(etiquettes_id_form):
+        #for etiquette_id in etiquettes_id_form:
+            if nb_questions_max[etiquette_id]==0:
+                etiquettes_id_form.pop(key)
 
         qcms_crees = []                                         # Liste pour stocker les QCMs créés
         questions = {}                                          # Liste pour stocker les Questions des étiquettes
@@ -556,7 +557,7 @@ def create_qcm():
             etiquettes_id = etiquettes_id_form
         else :
             etiquettes_id_form_triees = []
-            for valeur in sorted(etiquettes_ordre.values()):
+            for valeur in etiquettes_ordre.values():
                 for cle in etiquettes_ordre.keys():
                     if etiquettes_ordre[cle] == valeur:
                         if cle in etiquettes_id_form:
@@ -593,14 +594,12 @@ def create_qcm():
             # Sélectionner un nombre aléatoire de questions entre la fourchette spécifiée pour chaque étiquette
             for etiquette_id in etiquettes_id:
                 before = len(questions_subset)
-                print('Questions choisies pour l\'étiquette :', etiquette_id)
                 nb_questions_subset = random.randint(nb_questions_min[etiquette_id], nb_questions_max[etiquette_id])
                 while nb_questions_subset > len(questions_subset)-before:
                     question = random.choice(questions[etiquette_id])
                     if question not in questions_subset:
                         questions_subset.append(question)
 
-            print(selected_questions, qcms_crees)
             while is_same_qcm(selected_questions, qcms_crees):
                 # Vérifier si le temps limite est dépassé
                 if time.time() - start_time > time_limit:
