@@ -18,6 +18,7 @@
 {% endblock %}
 
 {% block main %}
+<span id="nomDuProf" style="display: none;">{{session['nomU']}}</span> <!-- Pour récupérer le nom du professeur dans nuage.js -->
 <div id="container"></div>
 
 <script src="static/nuage.js"></script>

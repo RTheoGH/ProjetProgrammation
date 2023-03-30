@@ -874,9 +874,8 @@ def supprimerQCM(id):
         return "Erreur dans la suppréssion du QCM"
     return redirect("/listeQCM")                 # Redirection vers la liste des qcm
 
-# reponses_ouvertes = []                  # Variable globale contenant les réponses des étudiants
 question_ouverte_nom = ""               # Variable globale contenant le titre de la question ouverte
-codeQuestions = {}
+reponses_par_prof = {}                  # Variable globale contenant les réponses des étudiants par profs
 
 @app.route("/question-ouverte", methods=['POST', 'GET'])    # Route pour lancer une question ouverte
 def question_ouverte():
@@ -884,7 +883,7 @@ def question_ouverte():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     global question_ouverte_nom
-    nomProf = session['nomU']
+    nomProf = session['nomU']              # Récupération du nom du professeur dans la session
     
     if request.method == 'POST':
         if 'question-ouverte' in  request.form:             # Envoie du titre de la question
@@ -892,11 +891,9 @@ def question_ouverte():
             return render_template("ouverte/questionOuverte.html",title='Question ouverte',page="QuestionOuverte",question_ouverte=question_ouverte_nom)
         else:                                               # Affichage des réponses
             return render_template("ouverte/nuage.html",title='Nuage de réponses',page="QuestionOuverte")
-    else:
-        global reponses_ouvertes 
-        # reponses_ouvertes = []              # Reset des données pour une nouvelle question
-        codeQuestions[nomProf] = []
-        print(codeQuestions)
+    else:   
+        reponses_par_prof[nomProf] = []        # Reset des données de l'enseignant pour une nouvelle question
+        print(reponses_par_prof)
         print("on reset !")
         return render_template("ouverte/questionOuverte.html",title='Question ouverte',page="QuestionOuverte")
 
@@ -913,26 +910,50 @@ def reponse_ouverte():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        nomProf = request.form['nomP']
-        proposition = request.form['reponse']    # Mot écrit par un étudiant
-        correcteur = tool.correct(proposition)   # Correction grammaticale du mot
-        minuscule = correcteur.lower()           # Mise en minuscule du mot
-        mot = nlp(minuscule)                     # Mise au singulier du mot
+        nomProf = request.form['nomP']          # On entre le nom du professeur à qui on répond
 
-        for token in mot:                        # Sélection du dernier mot
-            mot = token.lemma_
+        ##########################################################
+        # Vérification si l'élève est élève du professeur 
+        idEleve = session['idU']                                                           # On récupère l'id de session de l'élève
+        idProf = db.session.query(Utilisateur).filter(Utilisateur.nomU == nomProf).first() # On récupère l'id du prof à partir du nom entré
+        print(idEleve)
+        print(idProf.idU)                                     # On vérifie qu'ils sont dans la même "classe"
+        filterEleve = db.session.query(Classe).filter(Classe.idCE==idEleve).filter(Classe.idCU==idProf.idU).first()
+        print(filterEleve)
+        ##########################################################
 
-        dejaLa = False                           # Si le mot est déja la
-        for r in codeQuestions[nomProf]:              # Pour chaque réponse
-            if mot in r.keys():                  # Si on voit que le mot est déja la
-                r[mot] += 1                      # On augmente 
-                dejaLa = True
-        if not dejaLa:                           # Si c'est un nouveau mot
-            codeQuestions[nomProf].append({mot:1})
-        print(codeQuestions)
-        return redirect("/")
+        if filterEleve!=None:             # Si on trouve une classe
+            proposition = request.form['reponse']    # proposition écrite par un étudiant
+            correcteur = tool.correct(proposition)   # Correction grammaticale du/des mot(s)
+            minuscule = correcteur.lower()           # Mise en minuscule du/des mot(s)
+            singulier = nlp(minuscule)               # Mise au singulier du/des mot(s)
+
+            mots = ""                        # Initalisation de la chaine de caractères
+            for mot in singulier:            # Pour chaque mot de singulier, on ajout à "mots" le singulier du mot
+                mots += mot.lemma_+" "
+            mots = mots[:-1]                 # On supprime l'espace en trop en bout de chaine
+
+            dejaLa = False                           # Si le mot est déja la
+
+            if nomProf not in reponses_par_prof.keys():  # Si le prof n'a pas lancé de question ouverte
+                flash("Veuillez patienter, la question va bientôt démarrer")
+                return redirect("/")
+            else:
+                for r in reponses_par_prof[nomProf]:      # Pour chaque réponse
+                    if mots in r.keys():                  # Si on voit que le mot est déja la
+                        r[mots] += 1                      # On augmente 
+                        dejaLa = True
+                if not dejaLa:                            # Si le mot est nouveau
+                    reponses_par_prof[nomProf].append({mots:1}) # On l'ajoute
+                print(reponses_par_prof)
+                return redirect("/")
+        else:
+            flash("vous n'êtes pas élève de ce professeur")
+            return redirect("/")
     else:
         return render_template("ouverte/reponseOuverte.html",title='Réponse ouverte',page="ReponseOuverte")
+
+reponses_par_prof_2 = {}
 
 @app.route("/donnees-reponses",methods=['GET'])  # Route des données
 def donnees_reponses():
@@ -942,16 +963,16 @@ def donnees_reponses():
 
     nomProf = session['nomU']
     reponses_ouvertes_2 = {"mots": [],"titre":question_ouverte_nom}
-    reponses_par_prof = {nomProf:[]}
+    reponses_par_prof_2[nomProf] = []          # On initialise un dictionnaire vide pour pouvoir récuperer les données correctement
 
-    for r in codeQuestions[nomProf]:         # Création de l'objet adapté pour le nuage de mots
+    for r in reponses_par_prof[nomProf]:         # Création de l'objet adapté pour le nuage de mots
         for cle, valeur in r.items():
             ajustement = {"x": cle, "value": valeur}
             reponses_ouvertes_2["mots"].append(ajustement)
 
-    reponses_par_prof[nomProf].append(reponses_ouvertes_2)
-
-    return reponses_par_prof
+    reponses_par_prof_2[nomProf].append(reponses_ouvertes_2)
+    
+    return reponses_par_prof_2                # On envoie les données sur la route
 
 @socket.on('testQP')
 def testQP():
