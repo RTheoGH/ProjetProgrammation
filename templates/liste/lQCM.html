@@ -1,5 +1,10 @@
 {% extends 'partials/base.html' %}
 
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+<script src="static/PDF.js"></script>
+{% endblock %}
+
 {% block main %}
 <div class="mid double">
     <div class="menuLQcm">   <!-- Partie liste de QCM -->
@@ -10,12 +15,6 @@
                 <tr class="top">
                     <td>QCM</td>
                 </tr>
-                    <form action="/download&delete" method="POST">
-                        <label >Nom du QCM à supprimer et télécharger :</label>
-                        <input type="text" name="nom" required>
-                        <input type="submit" value="Supprimer et Télécharger">
-                    </form>
-                
                 {% for QCM in listeQCM %} <!-- Affichage de tous les QCM -->
                     <tr>
                         <td class="left" id="{{QCM.idQCM}}"> <a href="{{ url_for('afficheQCM', id=QCM.idQCM)}}">{{QCM.Nom}}</a> </td> 
@@ -30,6 +29,16 @@
                     </tr>
                 {% endfor %}
             </table>
+        </div>
+        <hr/>
+        <div class="telechargementMultiple">
+            <form action="#">
+                <h2>Téléchargement Multiple</h2>
+                <p>(Le téléchargement supprime les contrôles de la base)</p>
+                <input style="width:15em;" type="text" id="nom" name="nom" placeholder="Nom du contrôle souhaité" required>
+                <p><input class="button" type="button" onClick="telechargementMultiple()" value="Télécharger">
+                    <input class="button" type="button" onClick="telechargementMultiple({'anonyme': true})" value="Télécharger (anonyme)"></p>
+            </form>
         </div>
     </div>
     <div class="menuNQcm">   <!-- Partie nouveau QCM -->

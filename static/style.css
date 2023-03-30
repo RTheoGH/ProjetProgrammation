@@ -111,7 +111,7 @@ progress{
     border-radius: 10px;
     padding: 2em;
     width: 45em;
-    height:70vh;
+    height:78vh;
     background-color: whitesmoke;
     text-align: center;
     margin-left: 5em;
@@ -120,7 +120,7 @@ progress{
 /* Modification dans menuNQcm */
 .menuNQcm .liste{
     font-size: 1em;
-    height: 20vh;
+    height: 25vh;
 }
 .menuNQcm .liste table{
     width: 44em;
@@ -128,6 +128,11 @@ progress{
 .menuNQcm h1{
     padding:0em;
     margin: 0;
+}
+.menuLQcm h1{
+    padding:0em;
+    margin: 0;
+    margin-bottom: 0.5em;
 }
 
 .generationParEtiquette{
@@ -529,6 +534,11 @@ fieldset {
     transform: translate(-50%, -50%);
     text-align: center;
     background-color: whitesmoke;
+}
+
+/* Classe pour le téléchargement multiple pour les contrôles */
+.telechargementMultiple{
+    border: 1px solid black;
 }
 
 /* ------------------------------------------------------------------ */

@@ -643,7 +643,7 @@ def create_qcm():
         flash(f"Vos QCM(s) n'ont pas pu être créé(s)... ")
         return redirect(url_for('listeQCM'))
 
-@app.route("/download&delete",methods=['POST'])
+@app.route("/download-delete",methods=['POST'])
 def dl():
     # Vérifier si l'utilisateur est connecté
     if 'nomU' not in session:
@@ -657,6 +657,7 @@ def dl():
     data = []
     data.append(nom)
     for Qcm in delete:
+        data_qcm = []
         questions = Question.query.join(Contient, Contient.RidQCM == Qcm.idQCM).filter(Question.idU == session['idU'],Question.idQ==Contient.RidQ,).all()
         for question in questions:
             data_indice = []
@@ -666,21 +667,24 @@ def dl():
             for reponse in reponses: #Liste des énoncé des réponses
                 reponses_reponse.append(reponse.reponse) 
             data_indice.append(reponses_reponse)
-            data.append(data_indice)
+            print('data_indice ',data_indice)
+            data_qcm.append(data_indice)
+        print('data_qcm',data_qcm)
+        data.append(data_qcm)
     print("data",data)
 
     ##################### Fin Download #####################
-    print(delete,"a delete")
-    for Qcm in delete:
-        print(Qcm)
-        db.session.query(QCM).filter(QCM.idU == session['idU'],QCM.idQCM==Qcm.idQCM).delete()
-    db.session.commit()
-    print("sortie")
-    if num_del > 0:
-        flash(f"{num_del} QCM(s) ont été supprimée(s) avec succès!", 'success')
-    else:
-        flash(f"Aucun QCM trouvé avec ce nom.", 'danger')
-    return redirect(url_for('listeQCM'))
+    # print(delete,"a delete")
+    # for Qcm in delete:
+    #     print(Qcm)
+    #     db.session.query(QCM).filter(QCM.idU == session['idU'],QCM.idQCM==Qcm.idQCM).delete()
+    # db.session.commit()
+    # print("sortie")
+    # if num_del > 0:
+    #     flash(f"{num_del} QCM(s) ont été supprimée(s) avec succès!", 'success')
+    # else:
+    #     flash(f"Aucun QCM trouvé avec ce nom.", 'danger')
+    return data
 
 @app.route("/afficheQCM/<string:id>")  # Affichage des questions du Qcm avec leurs réponses
 def afficheQCM(id):                    # Remarque : le [0] sert à isoler la chaine de char, puisque la requête renvoie un objet 
