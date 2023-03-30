@@ -654,21 +654,20 @@ def dl():
     num_del = len(delete)
     ##################### Partie Download #####################
 
-    data = {}
+    data = []
+    data.append(nom)
     for Qcm in delete:
-        data_indice = []
-        question = Question.query.join(Contient, Contient.RidQCM == Qcm.idQCM).filter(Question.idU == session['idU'],Question.idQ==Contient.RidQ,).first()
-        data_indice.append(question.enonce)
-        print(question)
-        reponses = Reponse.query.filter(Question.idU == session['idU'],Reponse.idQ==question.idQ).all()
-        print(question)
-        reponses_reponse = []
-        for reponse in reponses:
-            reponses_reponse.append(reponse.reponse)
-        data_indice.append(reponses_reponse)
-        data[Qcm]=data_indice
+        questions = Question.query.join(Contient, Contient.RidQCM == Qcm.idQCM).filter(Question.idU == session['idU'],Question.idQ==Contient.RidQ,).all()
+        for question in questions:
+            data_indice = []
+            data_indice.append(question.enonce) # énoncé de la question
+            reponses = Reponse.query.filter(Question.idU == session['idU'],Reponse.idQ==question.idQ).all()
+            reponses_reponse = []
+            for reponse in reponses: #Liste des énoncé des réponses
+                reponses_reponse.append(reponse.reponse) 
+            data_indice.append(reponses_reponse)
+            data.append(data_indice)
     print("data",data)
-
 
     ##################### Fin Download #####################
     print(delete,"a delete")
