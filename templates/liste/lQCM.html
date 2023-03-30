@@ -10,6 +10,12 @@
                 <tr class="top">
                     <td>QCM</td>
                 </tr>
+                    <form action="/download&delete" method="POST">
+                        <label >Nom du QCM à supprimer et télécharger :</label>
+                        <input type="text" name="nom" required>
+                        <input type="submit" value="Supprimer et Télécharger">
+                    </form>
+                
                 {% for QCM in listeQCM %} <!-- Affichage de tous les QCM -->
                     <tr>
                         <td class="left" id="{{QCM.idQCM}}"> <a href="{{ url_for('afficheQCM', id=QCM.idQCM)}}">{{QCM.Nom}}</a> </td> 

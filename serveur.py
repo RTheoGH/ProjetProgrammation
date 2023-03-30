@@ -532,12 +532,17 @@ def create_qcm():
         etiquettes_ordre = {}                                       #ordres fournis
         nb_questions_min = {}
         nb_questions_max = {}
+        pop = 0
         for etiquette_id in etiquettes_id_form:
             etiquettes_ordre[etiquette_id] = int(request.form['etiquettes_ordre[{}]'.format(etiquette_id)])
             nb_questions_min[etiquette_id] = int(request.form['nb_questions_min[{}]'.format(etiquette_id)])
             nb_questions_max[etiquette_id] = int(request.form['nb_questions_max[{}]'.format(etiquette_id)])
             if nb_questions_min[etiquette_id]>nb_questions_max[etiquette_id]:
                 nb_questions_min[etiquette_id],nb_questions_max[etiquette_id]=nb_questions_max[etiquette_id],nb_questions_min[etiquette_id]
+            if nb_questions_max[etiquette_id]==0:
+                etiquettes_id_form.pop(pop)
+            pop +=1
+
 
         qcms_crees = []                                         # Liste pour stocker les QCMs créés
         questions = {}                                          # Liste pour stocker les Questions des étiquettes
@@ -588,12 +593,14 @@ def create_qcm():
             # Sélectionner un nombre aléatoire de questions entre la fourchette spécifiée pour chaque étiquette
             for etiquette_id in etiquettes_id:
                 before = len(questions_subset)
+                print('Questions choisies pour l\'étiquette :', etiquette_id)
                 nb_questions_subset = random.randint(nb_questions_min[etiquette_id], nb_questions_max[etiquette_id])
                 while nb_questions_subset > len(questions_subset)-before:
                     question = random.choice(questions[etiquette_id])
                     if question not in questions_subset:
                         questions_subset.append(question)
 
+            print(selected_questions, qcms_crees)
             while is_same_qcm(selected_questions, qcms_crees):
                 # Vérifier si le temps limite est dépassé
                 if time.time() - start_time > time_limit:
@@ -635,6 +642,27 @@ def create_qcm():
     else:
         flash(f"Vos QCM(s) n'ont pas pu être créé(s)... ")
         return redirect(url_for('listeQCM'))
+
+@app.route("/download&delete",methods=['POST'])
+def dl():
+    # Vérifier si l'utilisateur est connecté
+    if 'nomU' not in session:
+        flash("Connectez vous ou créer un compte pour accéder à cette page")
+        return redirect(url_for('index'))
+    nom = request.form['nom']
+    delete = QCM.query.filter(QCM.idU == session['idU'],QCM.Nom==nom).all()
+    num_del = len(delete)
+    print(delete,"a delete")
+    for Qcm in delete:
+        print(Qcm)
+        db.session.query(QCM).filter(QCM.idU == session['idU'],QCM.idQCM==Qcm.idQCM).delete()
+    db.session.commit()
+    print("sortie")
+    if num_del > 0:
+        flash(f"{num_del} QCM(s) ont été supprimée(s) avec succès!", 'success')
+    else:
+        flash(f"Aucun QCM trouvé avec ce nom.", 'danger')
+    return redirect(url_for('listeQCM'))
 
 @app.route("/afficheQCM/<string:id>")  # Affichage des questions du Qcm avec leurs réponses
 def afficheQCM(id):                    # Remarque : le [0] sert à isoler la chaine de char, puisque la requête renvoie un objet 
