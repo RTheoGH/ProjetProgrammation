@@ -102,20 +102,20 @@
     <div class="affQCM">
         {% for i in range(len) %}
             <div class="affQuestion">
-            <div class="affEnonce" id="{{listeQuestions[i].idQ}}">{{listeQuestions[i].enonce}}</div>
-            <script>                                            /* Conversion de l'énoncé avec showdown */
-                $('#{{listeQuestions[i].idQ}}').html(converter.makeHtml($('#{{listeQuestions[i].idQ}}').text()));
-            </script>
-                {% if listeReponses[i] == [] %}           <!-- Si c'est une question numérique -->
-                    <p><input type="text" pattern="\d*([.]\d{0,2})?"></p>
-                {% else %}
-                    {% for reponse in listeReponses[i] %}
-                        <div class="affReponse"><input class="bigCheckbox" id="{{reponse.idR}}" type="checkbox"/> <label for="{{reponse.idR}}">{{reponse.reponse}}</label></div>
-                        <script>
-                            $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
-                        </script>
-                    {% endfor %}
-                {% endif %}
+                <div class="affEnonce" id="{{listeQuestions[i].idQ}}">{{listeQuestions[i].enonce}}</div>
+                <script>                                            /* Conversion de l'énoncé avec showdown */
+                    $('#{{listeQuestions[i].idQ}}').html(converter.makeHtml($('#{{listeQuestions[i].idQ}}').text()));
+                </script>
+                    {% if listeReponses[i] == [] %}           <!-- Si c'est une question numérique -->
+                        <p><input type="text" pattern="\d*([.]\d{0,2})?"></p>
+                    {% else %}
+                        {% for reponse in listeReponses[i] %}
+                            <div class="affReponse"><input class="bigCheckbox" id="{{reponse.idR}}" type="checkbox"/> <label for="{{reponse.idR}}">{{reponse.reponse}}</label></div>
+                            <script>
+                                $('#{{reponse.idR}}').html(converter.makeHtml($('#{{reponse.idR}}').text()));
+                            </script>
+                        {% endfor %}
+                    {% endif %}
             </div>
             <hr/>
         {% endfor %}

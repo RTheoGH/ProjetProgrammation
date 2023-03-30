@@ -1,0 +1,27 @@
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous">
+</script>
+{% endblock %}
+
+<!-- /////////////////////////// TRAVAUX \\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->
+
+{% block main %}
+    <span id='titre' hidden=true><!-- titre de chaque controle --></span>
+    {% for j in range() %}
+        {% for i in range(len) %}
+            <!-- <div class="affQuestion"> -->
+            <!-- <div class="affEnonce" id="{{listeQuestions[j][i].idQ}}">{{listeQuestions[j][i].enonce}}</div> -->
+            <span id='affQuestion' hidden="true">{{listeQuestions[j][i].enonce}}</span>
+                {% if listeReponses[j][i] == [] %}           <!-- Si c'est une question numérique -->
+                    
+                    <span id='affReponse' hidden=true>{{listeReponses[j][i]}}</span>
+                {% else %}
+                    {% for reponse in listeReponses[j][i] %}
+                        <span id='affReponse' hidden=true>{{reponse.reponse}}</span>
+                    {% endfor %}
+                {% endif %}
+            <!-- </div> -->
+            <!-- <hr/> -->
+        {% endfor %}
+    {% endfor %}
+{% endblock %}
