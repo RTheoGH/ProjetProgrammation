@@ -844,8 +844,9 @@ def supprimerQCM(id):
         return "Erreur dans la suppréssion du QCM"
     return redirect("/listeQCM")                 # Redirection vers la liste des qcm
 
-reponses_ouvertes = []                  # Variable globale contenant les réponses des étudiants
+# reponses_ouvertes = []                  # Variable globale contenant les réponses des étudiants
 question_ouverte_nom = ""               # Variable globale contenant le titre de la question ouverte
+codeQuestions = {}
 
 @app.route("/question-ouverte", methods=['POST', 'GET'])    # Route pour lancer une question ouverte
 def question_ouverte():
@@ -853,7 +854,7 @@ def question_ouverte():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     global question_ouverte_nom
-    idProf = session['idU'] 
+    nomProf = session['nomU']
     
     if request.method == 'POST':
         if 'question-ouverte' in  request.form:             # Envoie du titre de la question
@@ -863,7 +864,9 @@ def question_ouverte():
             return render_template("ouverte/nuage.html",title='Nuage de réponses',page="QuestionOuverte")
     else:
         global reponses_ouvertes 
-        reponses_ouvertes = []              # Reset des données pour une nouvelle question
+        # reponses_ouvertes = []              # Reset des données pour une nouvelle question
+        codeQuestions[nomProf] = []
+        print(codeQuestions)
         print("on reset !")
         return render_template("ouverte/questionOuverte.html",title='Question ouverte',page="QuestionOuverte")
 
@@ -880,6 +883,7 @@ def reponse_ouverte():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
+        nomProf = request.form['nomP']
         proposition = request.form['reponse']    # Mot écrit par un étudiant
         correcteur = tool.correct(proposition)   # Correction grammaticale du mot
         minuscule = correcteur.lower()           # Mise en minuscule du mot
@@ -889,13 +893,13 @@ def reponse_ouverte():
             mot = token.lemma_
 
         dejaLa = False                           # Si le mot est déja la
-        for r in reponses_ouvertes:              # Pour chaque réponse
+        for r in codeQuestions[nomProf]:              # Pour chaque réponse
             if mot in r.keys():                  # Si on voit que le mot est déja la
                 r[mot] += 1                      # On augmente 
                 dejaLa = True
         if not dejaLa:                           # Si c'est un nouveau mot
-            reponses_ouvertes.append({mot:1})
-        print(reponses_ouvertes)
+            codeQuestions[nomProf].append({mot:1})
+        print(codeQuestions)
         return redirect("/")
     else:
         return render_template("ouverte/reponseOuverte.html",title='Réponse ouverte',page="ReponseOuverte")
@@ -906,13 +910,18 @@ def donnees_reponses():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
 
-    reponses_ouvertes_2 = {"mots": [],"titre":question_ouverte_nom}  
+    nomProf = session['nomU']
+    reponses_ouvertes_2 = {"mots": [],"titre":question_ouverte_nom}
+    reponses_par_prof = {nomProf:[]}
 
-    for r in reponses_ouvertes:         # Création de l'objet adapté pour le nuage de mots
+    for r in codeQuestions[nomProf]:         # Création de l'objet adapté pour le nuage de mots
         for cle, valeur in r.items():
             ajustement = {"x": cle, "value": valeur}
             reponses_ouvertes_2["mots"].append(ajustement)
-    return reponses_ouvertes_2
+
+    reponses_par_prof[nomProf].append(reponses_ouvertes_2)
+
+    return reponses_par_prof
 
 @socket.on('testQP')
 def testQP():
