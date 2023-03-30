@@ -828,6 +828,7 @@ def question_ouverte():
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
     global question_ouverte_nom
+    idProf = session['idU'] 
     
     if request.method == 'POST':
         if 'question-ouverte' in  request.form:             # Envoie du titre de la question
