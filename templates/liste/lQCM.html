@@ -55,12 +55,12 @@
             <fieldset><legend>Choisir étiquettes</legend>
                 <ul style="list-style-type: none;">
                     {% for etiquette in etiquettes %}
-                    <li style="float: left;width: 33%;"><label>{{ etiquette.nom }}</label>
-                        <input type="hidden" name="etiquette_id[]" value="{{ etiquette.idE }}">
-                        <input style="width:3em" type="number" name="etiquettes_ordre[{{etiquette.idE}}]" value="0" min="0" max="{{ etiquette.questions }}" required>
-                        <input style="width:3em" type="number" name="nb_questions_min[{{etiquette.idE}}]" value="0" min="0" max="{{ etiquette.questions }}" required>
-                        <input style="width:3em" type="number" name="nb_questions_max[{{etiquette.idE}}]" value="0" min="0" max="{{ etiquette.questions }}" required>
-                        </li>  
+                        <li style="float: left;width: 100%;"><label>{{ etiquette.nom }}</label>
+                            <input type="hidden" name="etiquette_id[]" value="{{ etiquette.idE }}">
+                            | ordre : <input style="width:2em" type="number" name="etiquettes_ordre[{{etiquette.idE}}]" value="0" min="0" max="{{ etiquette.questions }}" required>
+                            | min : <input style="width:2em" type="number" name="nb_questions_min[{{etiquette.idE}}]" value="0" min="0" max="{{ etiquette.questions }}" required>
+                            | max : <input style="width:2em" type="number" name="nb_questions_max[{{etiquette.idE}}]" value="0" min="0" max="{{ etiquette.questions }}" required>
+                        </li><br/> 
                     {% endfor %}
                 </ul>
             </fieldset>

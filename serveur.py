@@ -638,7 +638,7 @@ def create_qcm():
 def afficheQCM(id):                    # Remarque : le [0] sert à isoler la chaine de char, puisque la requête renvoie un objet 
     nomQcm = db.session.query(QCM.Nom).filter(QCM.idQCM==id).first()[0]   
     title = nomQcm 
-    listeIdQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==id).all() # Liste des idQuestions cochées
+    listeIdQuestions = db.session.query(Contient.RidQ).filter(Contient.RidQCM==id).order_by(Contient.Position).all() # Liste des idQuestions cochées
     checked_questions = []                            # Liste des questions du QCM (objets Question entiers)
     checked_reponses = []                             # Leurs reponses respectives (liste de listes)
     for idQuestion in listeIdQuestions:               # Pour chaque idQuestion, on récupère
