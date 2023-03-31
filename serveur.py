@@ -872,19 +872,21 @@ def recupDataNum(reponse,idQ,date, q, idRep):
     
     idRep_list = list(idRep)
     idRep_corrige = []
+    mot = ""
     for Char in idRep_list:
-        mot = ""
-        if "[":
-            while not "," or not "]":
-                mot.append(Char)
-        for key, lettre in enumerate(mot):
-            if lettre=="[" or lettre=="," or lettre==" " or lettre=="]":
-                mot.pop(key)
+        if Char == "[":
+            mot = ""
+        elif Char == "]":
+            idRep_corrige.append(mot.strip().split(", "))
+        else:
+            mot += Char
+    
+    idRep_utile = idRep_corrige[0]
 
-    print("id question en cours = ",idRep_list)
+    print("id question en cours = ",idRep_utile)
     idEtu = session['idU']
     print("id eleves = ", idEtu)
-    valeurRep = [idRep[q],valV]
+    valeurRep = [idRep_utile[q],valV]
     if idEtu not in ReponseEtuGlobal:
     #if not(isinstance(ReponseEtuGlobal[idEtu],list)):
         ReponseEtuGlobal[idEtu] = []
