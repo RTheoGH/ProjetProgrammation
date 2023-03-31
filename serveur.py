@@ -649,12 +649,20 @@ def create_qcm():
             new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
             db.session.add(new_qcm)
 
-            Position = 0
+            if toutes_les_valeurs_sont_zero:
+                liste_position = []
+                for i in range(nb_Question_total_form):
+                    liste_position.append(i)
+
             # Ajouter les questions sélectionnées au QCM
             for question in selected_questions:
+                Position = random.choice(liste_position)
+                for key, position in enumerate(liste_position):
+                    if liste_position[key]==Position:
+                        liste_position.pop(key)
+                print('question ',question.enonce,' Position ',Position,' liste_position ',liste_position)
                 new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ, Position=Position)
                 db.session.add(new_contient)
-                Position +=1
 
             # Ajouter le nouveau QCM à la liste des QCMs créés
             qcms_crees.append(new_qcm)
