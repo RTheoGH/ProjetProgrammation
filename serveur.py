@@ -673,8 +673,8 @@ def dl():
     nom = request.form['nom']
     delete = QCM.query.filter(QCM.idU == session['idU'],QCM.Nom==nom).all()
     num_del = len(delete)
-    ##################### Partie Download #####################
 
+    ##################### Partie Download #####################
     data = []
     data.append(nom)
     for Qcm in delete:
@@ -695,16 +695,16 @@ def dl():
     print("data",data)
 
     ##################### Fin Download #####################
-    # print(delete,"a delete")
-    # for Qcm in delete:
-    #     print(Qcm)
-    #     db.session.query(QCM).filter(QCM.idU == session['idU'],QCM.idQCM==Qcm.idQCM).delete()
-    # db.session.commit()
-    # print("sortie")
-    # if num_del > 0:
-    #     flash(f"{num_del} QCM(s) ont été supprimée(s) avec succès!", 'success')
-    # else:
-    #     flash(f"Aucun QCM trouvé avec ce nom.", 'danger')
+    print(delete,"a delete")
+    for Qcm in delete:
+        print(Qcm)
+        db.session.query(QCM).filter(QCM.idU == session['idU'],QCM.idQCM==Qcm.idQCM).delete()
+    db.session.commit()
+    print("sortie")
+    if num_del > 0:
+        flash(f"{num_del} QCM(s) ont été supprimée(s) avec succès!", 'success')
+    else:
+        flash(f"Aucun QCM trouvé avec ce nom.", 'danger')
     return data
 
 @app.route("/afficheQCM/<string:id>")  # Affichage des questions du Qcm avec leurs réponses
@@ -782,12 +782,14 @@ def caster():
         listeQuestions = db.session.query(Question).filter(Question.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
         return render_template("wooclap/envoyerEnonce.html",title=title,listeQCM=listeQCM,listeQuestions=listeQuestions,page = "EnvoyerEnonce")
+
 @app.route("/lancerCaste",methods = ["POST","GET"])
 def lancerCaste():
     title = 'Envoyer un énoncé'
     if 'nomU' not in session:                   # Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
+
     if request.method == "POST":
         donneesRecup = request.form.getlist('ARecup')
         idElementCaste = donneesRecup[0]
@@ -812,8 +814,6 @@ def test_disconnect():
         checkCodeQcmProf.pop(idProf)
     print("Client disconnect ", checkCodeQcmProf)
 
-
-
 # Socket réception des données envoyés depuis casterEnonce.html
 @socket.on('oneByOne')
 def oneByOne(q,questions,reponses):
@@ -835,10 +835,10 @@ def setQuestion(data):
 # Socket réception des reponses des éléves et les mettres dans la bdd
 @socket.on('reponseE')
 def reponseE(enonce,reponse_choix,reponse_num):
-#         idE = session['idU']
-#     add = ReponseQCM(numeroEtu=idE,idQCM=,RidQ=,date=str(datetime.now()),estNumerique=,Value=)
-#     db.session.add(add)
-#     db.session.commit()
+#   idE = session['idU']
+#   add = ReponseQCM(numeroEtu=idE,idQCM=,RidQ=,date=str(datetime.now()),estNumerique=,Value=)
+#   db.session.add(add)
+#   db.session.commit()
     print("enonce = ",enonce," reponse choix = ",reponse_choix," reponse num = ",reponse_num)
 
 @socket.on('recupDataForRep')
@@ -851,17 +851,12 @@ def recupDataForRep(questionCastee, reponsesAssociees,codeQcm):
 def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS):
     print("rezponsechoix multiple = ", checkCodeQcmProf)
     socket.emit("retourReponseEtudiant",(reponse_choix,ReponseChoixJS))
-@socket.on('testQP')
-def testQP():
-    print("sucess !!!!")
+
 @socket.on('recupCodeQCM')
 def recupCodeQCM(code):
     idProf = session['idU']
     checkCodeQcmProf[idProf] = code
     print("check prof = ", checkCodeQcmProf)
-
-
-
 
 ##########################################################
 
@@ -1016,10 +1011,6 @@ def donnees_reponses():
     reponses_par_prof_2[nomProf].append(reponses_ouvertes_2)
     
     return reponses_par_prof_2                # On envoie les données sur la route
-
-@socket.on('testQP')
-def testQP():
-    print("success mon frere")
 
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)
