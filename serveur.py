@@ -617,6 +617,12 @@ def create_qcm():
                     nb_questions_subset = nb_Question_total
                     nb_Question_total = 0
                 while nb_questions_subset > len(before):
+                    # Vérifier si le temps limite est dépassé
+                    if time.time() - start_time > time_limit:
+                        etiq = db.session.query(Etiquette.nom).filter(Etiquette.idE==etiquette_id,Etiquette.idU==session['idU']).first()
+                        flash(f"Veuillez augmenter le nombre de questions possédant l'étiquette {etiq.nom}")
+                        return redirect(url_for('lQuestion'))
+                    print('nb_questions_subset ',nb_questions_subset,' before ',before)
                     question = random.choice(questions[etiquette_id])
                     if question not in questions_subset:
                         before.append(question)
