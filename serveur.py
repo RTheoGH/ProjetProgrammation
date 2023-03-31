@@ -644,7 +644,6 @@ def create_qcm():
                 # Si l'ID existe déjà dans la base de données, on en génère un nouveau
                 qcm_id = createId()
 
-
             #Créer un nouveau QCM
             new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
             db.session.add(new_qcm)
@@ -706,8 +705,8 @@ def dl():
         print('data_qcm',data_qcm)
         data.append(data_qcm)
     print("data",data)
-
     ##################### Fin Download #####################
+
     print(delete,"a delete")
     for Qcm in delete:
         print(Qcm)
@@ -885,12 +884,12 @@ def recupDataNum(reponse,idQ,date, q, idRep):
     #fin sauver idrep
     valV =False
     reponseReel = db.session.query(Reponse.reponse).join(Question,Question.idQ==Reponse.idQ).filter(Question.idQ == idRep_utile[q]).first()
-    if reponseReel == reponse:
+    if reponseReel[0] == reponse:
         valV = True
     print("id question en cours = ",idRep_utile)
     idEtu = session['idU']
     print("id eleves = ", idEtu)
-    valeurRep = [idRep_utile[q],valV]
+    valeurRep = [date,idRep_utile[q],valV]
     if idEtu not in ReponseEtuGlobal:
         ReponseEtuGlobal[idEtu] = []
     ReponseEtuGlobal[idEtu].append(valeurRep)
@@ -934,7 +933,7 @@ def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS,idQ,date, q, idRep):
         valV = True
     print(valV)
     idEtu = session['idU']
-    valeurRep =[idRep_utile[q],valV]
+    valeurRep =[date,idRep_utile[q],valV]
     if idEtu not in ReponseEtuGlobal:
         ReponseEtuGlobal[idEtu] = []
     ReponseEtuGlobal[idEtu].append(valeurRep)
@@ -948,8 +947,9 @@ def recupCodeQCM(code):
     print("check prof = ", checkCodeQcmProf)
 
 ##########################################################
-@app.route("/pourStat")
-def pourStat():
+
+@app.route("/pourStat")                  # Route pour envoyer les réponses sur une page
+def pourStat():                          # pour les récupérer pour les statistiques
     return ReponseEtuGlobal
 
 @app.route("/stats", methods=['GET'])            # Route pour les statistiques
@@ -1103,8 +1103,6 @@ def donnees_reponses():
     reponses_par_prof_2[nomProf].append(reponses_ouvertes_2)
     
     return reponses_par_prof_2                # On envoie les données sur la route
-
-
 
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)

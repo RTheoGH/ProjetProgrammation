@@ -1,45 +1,81 @@
-{% extends 'partials/base.html' %} {% block main %}
+{% extends 'partials/base.html' %} 
+
+{% block head %}
+
+{% endblock %}
+
+{% block main %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <div class="menu">
     <h1>Statistiques</h1>
     <div class="stats">
         <!-- faut faire un diagramme surement en baton au fil du temps donc deux batons (question/séquence) -->
-        <p>Nombre de participants : 10000</p>
+        <p>Nombre de participants : <span id="nbPart"></span></p>
         <!-- récupérer le nombre de participants en temps réel -->
     </div>
     <div class="stats">
         <h2>Résultats :</h2>
         <div class="liste">
-            <table>
+            <table id="tableauStats">
                 <tr class="top">
                     <td>Date</td>
-                    <!-- Date -->
                     <td>Etudiant</td>
-                    <!-- Nom prénom de l'étudiant-->
-                    <td>Question seule</td>
-                    <!-- Nombre de questions réussis -->
-                    <td>Séquence</td>
-                    <!-- Pourcentage de questions bien répondus -->
+                    <td>Score</td>
                 </tr>
-                <!-- un for ici -->
-                <tr>
-                    <td>22/02/2023</td>
-                    <td>Robert</td>
-                    <td>-</td>
-                    <!-- if question seule then id question + reussi/raté else vide -->
-                    <td>-</td>
-                    <!-- if séquence then id séquence + pourcentage question réussi else vide -->
-                </tr>
-                <!-- effacer les réponses des étudiants ? -->
             </table>
         </div>
     </div>
 </div>
 
-<!-- Pour la base de donnée surement faire une classe stats avec : 
-    un id, 
-    une date, 
-    un mode (question->1 ou séquence 2), 
-    et un id(Question/Séquence) -->
-
+<script>
+    function faireUneJolieDate(date){
+        var jj = date.getDate();
+        var mm = date.getMonth()+1;
+        if (mm<10){
+            mm="0"+mm;
+        }
+        var heures = date.getHours();
+        if (heures<10){
+            heures="0"+heures;
+        }
+        var minutes = date.getMinutes();
+        if (minutes<10){
+            minutes="0"+minutes;
+        }
+        var jolieDate = jj+"/"+mm+" "+heures+":"+minutes;
+        return jolieDate;
+    }
+    async function affichageStats(){
+        var response = await fetch('http://127.0.0.1:5000/pourStat');
+        var data = await response.json()
+        var nombreParticipants = Object.keys(data).length;
+        $('#nbPart').text(nombreParticipants);
+        console.log(data);
+        var tab = $('#tableauStats');
+        console.log(tab);
+        var compteur = 0;
+        $.each(data,(numEtu,repEtu) => {
+            console.log('yo');
+            console.log(numEtu,repEtu);
+            Array.from(repEtu).forEach((reponse) => {
+                console.log(reponse);
+                var d = new Date(reponse[0]);
+                var date = faireUneJolieDate(d);
+                console.log(date);
+                var numEtudiant = numEtu;
+                console.log(numEtudiant);
+                if (reponse[2] == true){
+                    compteur+=1;
+                    var pourcent = "100%"
+                }else{
+                    var pourcent = "0%"
+                }
+                tab.append("<tr><td>"+date+"</td><td>"+numEtudiant+"</td><td>"+pourcent+"</td></tr>")
+            })
+            var total = (compteur/repEtu.length)*100;
+            tab.append("<tr><td>Résultat :</td><td>"+numEtu+"</td><td>"+total+"%</td></tr>")
+        })
+    }
+    affichageStats();
+</script>
 {% endblock %}
