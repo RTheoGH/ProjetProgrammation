@@ -880,6 +880,9 @@ def recupDataNum(reponse,idQ,date, q, idRep):
             idRep_corrige.append(mot.strip().split(", "))
         else:
             mot += Char
+
+    new_list = [word.replace("'", "") for word in idRep_corrige]
+    idRep_corrige = new_list
     
     idRep_utile = idRep_corrige[0]
 
