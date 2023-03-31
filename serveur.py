@@ -741,6 +741,7 @@ def caster():
         idElementCaste = request.form['radio']
         reponses=[]
         questions=[]
+        idRep =[]
         if 'question' in request.form:
             questions = db.session.query(Question).filter(Question.idQ==idElementCaste).all()
             listeReponse = db.session.query(Reponse).filter(Reponse.idQ==idElementCaste).all()
@@ -757,10 +758,12 @@ def caster():
                 listeReponse = db.session.query(Reponse).filter(Reponse.idQ==quest[0]).all()
                 if (listeReponse[0].estNumerique):
                     reponses.append([])
+                    idRep.append(quest[0])
                 else:
-                    reponses.append(listeReponse)    
+                    reponses.append(listeReponse)
+                    idRep.append(quest[0])    
             typeElement = "sequence"
-        return render_template('wooclap/AttenteConnexionEtudiant.html',title=title,idElement=idElementCaste,listeQuestions=questions,listeReponses=reponses,typeElement=typeElement,page = "EnvoyerEnonce")
+        return render_template('wooclap/AttenteConnexionEtudiant.html',title=title,idElement=idElementCaste,listeQuestions=questions,idRep = idRep,listeReponses=reponses,typeElement=typeElement,page = "EnvoyerEnonce")
     else:
         listeQuestions = db.session.query(Question).filter(Question.idU==session['idU']).all()
         listeQCM = db.session.query(QCM).filter(QCM.idU==session['idU']).all()
@@ -778,10 +781,12 @@ def lancerCaste():
         idElementCaste = donneesRecup[0]
         questions = donneesRecup[1]
         reponses = donneesRecup[2]
+        idRep = donneesRecup[4]
         print("donne 3 = ",donneesRecup[3])
+        print("donne 4 = ",donneesRecup[4])
 
         typeElement = donneesRecup[3]
-        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,listeQuestions=questions,listeReponses=reponses,typeElement=typeElement,page = "EnvoyerEnonce")
+        return render_template('wooclap/casterEnonce.html',title=title,idElement=idElementCaste,idRep = idRep,listeQuestions=questions,listeReponses=reponses,typeElement=typeElement,page = "EnvoyerEnonce")
     return render_template("/index.html")
 
 ##################### Partie Socket #####################
@@ -825,15 +830,35 @@ def reponseE(enonce,reponse_choix,reponse_num):
     print("enonce = ",enonce," reponse choix = ",reponse_choix," reponse num = ",reponse_num)
 
 @socket.on('recupDataForRep')
-def recupDataForRep(questionCastee, reponsesAssociees,codeQcm):
+def recupDataForRep(questionCastee, reponsesAssociees,codeQcm, q, idRep):
     print("recupdataforrep liste = ",checkCodeQcmProf )
     idProf = session['idU']
-    socket.emit('afficheQuestion',(questionCastee, reponsesAssociees,codeQcm))
+    socket.emit('afficheQuestion',(questionCastee, reponsesAssociees,codeQcm, q, idRep))
+
+ReponseEtuGlobal = {}
+@socket.on('recupDataNum')
+def recupDataNum(reponse,idQ,date, q, idRep):
+    valV =False
+    
+    idRep_list = list(idRep)
+    idRep_corrige = []
+
+    print("id question en cours = ",idRep_list)
+    idEtu = session['idU']
+    print("id eleves = ", idEtu)
+    valeurRep = [idRep[q],valV]
+    if idEtu not in ReponseEtuGlobal:
+    #if not(isinstance(ReponseEtuGlobal[idEtu],list)):
+        ReponseEtuGlobal[idEtu] = []
+    ReponseEtuGlobal[idEtu].append(valeurRep)
+    print(ReponseEtuGlobal)
 
 @socket.on('reponseEtuChoixmultiple')
-def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS):
-    print("rezponsechoix multiple = ", checkCodeQcmProf)
+def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS,idQ,date, q, idRep):
+    print("reponsechoix multiple = ", checkCodeQcmProf)
+    print("base de donnée Contien = ",db.session.query(Contient).all)
     socket.emit("retourReponseEtudiant",(reponse_choix,ReponseChoixJS))
+    print("id question en cours = ",idRep[q])
 
 @socket.on('recupCodeQCM')
 def recupCodeQCM(code):
@@ -842,6 +867,9 @@ def recupCodeQCM(code):
     print("check prof = ", checkCodeQcmProf)
 
 ##########################################################
+@app.route("/pourStat")
+def pourStat():
+    return ReponseEtuGlobal
 
 @app.route("/stats", methods=['GET'])            # Route pour les statistiques
 def stats():
@@ -994,6 +1022,8 @@ def donnees_reponses():
     reponses_par_prof_2[nomProf].append(reponses_ouvertes_2)
     
     return reponses_par_prof_2                # On envoie les données sur la route
+
+
 
 if __name__ == '__main__':
     socket.run(app, host='0.0.0.0', port=5000, debug=True)

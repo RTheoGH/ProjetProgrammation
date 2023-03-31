@@ -73,7 +73,7 @@ class ReponseEtudiant(db.Model):
     RidQ = db.Column(db.String(50),db.ForeignKey(Question.idQ),nullable=False,primary_key=True)
     date = db.Column(db.String(100),nullable = False)
     estNumerique = db.Column(db.Boolean,default = False, nullable = False)
-    Value = db.Column(db.Integer,nullable = False)
+    Value = db.Column(db.Integer,nullable = False)#si numerique = false alors si value = 0 => false, sinon true
 
 class Test(db.Model):
     numeroEtu = db.Column(db.Integer,db.ForeignKey(Etudiant.numeroEtu),primary_key=True)

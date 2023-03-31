@@ -49,10 +49,12 @@
         }
     </script>
     <hr/>
+    <span id="idRep" hidden="true">{{idRep}}</span>
     <div>
         <button id="Q" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
         <div id="hideDivQ">
             <div class="affQuestion" id="question"></div>
+
             <script>
                 $('#question').html(converter.makeHtml($('#question').text()));
             </script>
@@ -86,7 +88,8 @@
             }
         }
         var codeQcm = document.getElementById('code').textContent;
-        socket.emit('recupDataForRep', questionCastee, reponsesAssociees, codeQcm)
+        var idRep = document.getElementById('idRep').textContent;
+        socket.emit('recupDataForRep', questionCastee, reponsesAssociees, codeQcm, q, idRep)
     })
 </script>
 {% endblock %}

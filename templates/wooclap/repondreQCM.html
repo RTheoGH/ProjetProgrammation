@@ -3,34 +3,12 @@
 <script>
     var ReponseAssJS;
     var ReponseChoixJS = [];
+    var qRep;
+    var idRepRep;
     const socket = io(); // Variable socket
 
 
-    function reponseE() {
-        console.log("RA = ", ReponseAssJS)
-        if (ReponseAssJS == "[]") {
-            reponse_num = document.getElementsByName('reponse_num')[0].value;
-            console.log(reponse_num)
-                //socket.emit('reponseE', enonce, reponse_choix, reponse_num)
-        } else {
-            reponse_choix = [];
-            console.log("RCJS = ", ReponseChoixJS);
-            for (i = 0; i < ReponseChoixJS.length; i++) {
-                if (document.getElementsByName("reponse_choix")[i].checked == true) {
-                    reponse_choix.push(ReponseChoixJS[i]);
-                }
-            }
-            console.log("reponse_choix = ", reponse_choix)
-            socket.emit('reponseEtuChoixmultiple', reponse_choix, ReponseChoixJS)
 
-        }
-        reponse_div = document.getElementById('reponses').value;
-        enonce = document.getElementById('enonce').value;
-        console.log("reponse div = ", reponse_div)
-        console.log("finish")
-        $("#soumettre").hide();
-        //socket.emit('reponseE', enonce, reponse_choix, reponse_num)
-    };
     socket.on('profDeco', (data) => {
         //data egale au qcm en cours
     })
@@ -63,11 +41,11 @@
     socket.on('connect', function() { // Détection quand on arrive sur la page
         console.log("Je suis dans repondre au question");
     });
-    socket.on('afficheQuestion', (questionCastee, reponsesAssociees, codeQcm) => { // Reception de la question à afficher
+    socket.on('afficheQuestion', (questionCastee, reponsesAssociees, codeQcm, q, idRep) => { // Reception de la question à afficher
+        qRep = q
+        idRepRep = idRep
         var code = document.getElementById('code').textContent;
         if (code == codeQcm) {
-
-
             $("#rien").hide();
             document.getElementById('reponses').innerHTML = "";
             $("#enonce").text(questionCastee); // Son énoncé
@@ -85,5 +63,33 @@
             $("#soumettre").show();
         }
     });
+
+    function reponseE() {
+        var codePourRep = document.getElementById('code').textContent;
+        const d = new Date();
+        console.log("RA = ", ReponseAssJS)
+        if (ReponseAssJS == "[]") {
+            reponse_num = document.getElementsByName('reponse_num')[0].value;
+            console.log(reponse_num)
+            socket.emit('recupDataNum', reponse_num, codePourRep, d, qRep, idRepRep)
+        } else {
+            reponse_choix = [];
+            console.log("RCJS = ", ReponseChoixJS);
+            for (i = 0; i < ReponseChoixJS.length; i++) {
+                if (document.getElementsByName("reponse_choix")[i].checked == true) {
+                    reponse_choix.push(ReponseChoixJS[i]);
+                }
+            }
+            console.log("reponse_choix = ", reponse_choix)
+            socket.emit('reponseEtuChoixmultiple', reponse_choix, ReponseChoixJS, codePourRep, d, qRep, idRepRep)
+
+        }
+        reponse_div = document.getElementById('reponses').value;
+        enonce = document.getElementById('enonce').value;
+        console.log("reponse div = ", reponse_div)
+        console.log("finish")
+        $("#soumettre").hide();
+        //socket.emit('reponseE', enonce, reponse_choix, reponse_num)
+    };
 </script>
 {% endblock %}
