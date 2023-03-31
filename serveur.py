@@ -537,6 +537,7 @@ def create_qcm():
         etiquettes_ordre = {}                                       #ordres fournis
         nb_questions_min = {}
         nb_questions_max = {}
+        nb_Question_total_form = int(request.form['nb_quest'])
 
         for etiquette_id in etiquettes_id_form:
             etiquettes_ordre[etiquette_id] = int(request.form['etiquettes_ordre[{}]'.format(etiquette_id)])
@@ -567,8 +568,12 @@ def create_qcm():
                     if etiquettes_ordre[cle] == valeur:
                         if cle in etiquettes_id_form:
                             etiquettes_id_form_triees.append(cle)
+            liste_sans_doublon = []
+            for etiquette_id_doublons in etiquettes_id_form_triees:
+                if etiquette_id_doublons not in liste_sans_doublon:
+                    liste_sans_doublon.append(etiquette_id_doublons)
 
-            etiquettes_id = etiquettes_id_form_triees
+            etiquettes_id = liste_sans_doublon
 
         # Trouver toutes les questions avec l'étiquette spécifiée dans la base de données
         for etiquette_id in etiquettes_id:
@@ -585,6 +590,7 @@ def create_qcm():
 
         # Créer num_qcm QCMs avec des questions aléatoires sélectionnées à partir de la liste de questions trouvées
         for i in range(num_qcm):
+            nb_Question_total = nb_Question_total_form
             selected_questions = []   # Liste pour stocker les questions sélectionnées pour le QCM
             selected_question_ids = set()
 
@@ -598,11 +604,27 @@ def create_qcm():
 
             # Sélectionner un nombre aléatoire de questions entre la fourchette spécifiée pour chaque étiquette
             for etiquette_id in etiquettes_id:
-                before = len(questions_subset)
-                nb_questions_subset = random.randint(nb_questions_min[etiquette_id], nb_questions_max[etiquette_id])
-                while nb_questions_subset > len(questions_subset)-before:
+                if nb_Question_total == 0:
+                    break
+                before = []
+                if etiquette_id == etiquettes_id[len(etiquettes_id)-1]:
+                    nb_questions_subset = nb_Question_total
+
+                if nb_Question_total >= nb_questions_max[etiquette_id]:
+                    nb_questions_subset = random.randint(nb_questions_min[etiquette_id], nb_questions_max[etiquette_id])
+                    nb_Question_total -= nb_questions_subset
+                else :
+                    nb_questions_subset = nb_Question_total
+                    nb_Question_total = 0
+                while nb_questions_subset > len(before):
+                    # Vérifier si le temps limite est dépassé
+                    if time.time() - start_time > time_limit:
+                        etiq = db.session.query(Etiquette.nom).filter(Etiquette.idE==etiquette_id,Etiquette.idU==session['idU']).first()
+                        flash(f"Veuillez augmenter le nombre de questions possédant l'étiquette {etiq.nom}")
+                        return redirect(url_for('lQuestion'))
                     question = random.choice(questions[etiquette_id])
                     if question not in questions_subset:
+                        before.append(question)
                         questions_subset.append(question)
 
             while is_same_qcm(selected_questions, qcms_crees):
@@ -627,12 +649,20 @@ def create_qcm():
             new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
             db.session.add(new_qcm)
 
-            Position = 0
+            if toutes_les_valeurs_sont_zero:
+                liste_position = []
+                for i in range(nb_Question_total_form):
+                    liste_position.append(i)
+
             # Ajouter les questions sélectionnées au QCM
             for question in selected_questions:
+                Position = random.choice(liste_position)
+                for key, position in enumerate(liste_position):
+                    if liste_position[key]==Position:
+                        liste_position.pop(key)
+                print('question ',question.enonce,' Position ',Position,' liste_position ',liste_position)
                 new_contient = Contient(RidQCM=qcm_id, RidQ=question.idQ, Position=Position)
                 db.session.add(new_contient)
-                Position +=1
 
             # Ajouter le nouveau QCM à la liste des QCMs créés
             qcms_crees.append(new_qcm)
