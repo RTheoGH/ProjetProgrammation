@@ -885,7 +885,7 @@ def recupDataNum(reponse,idQ,date, q, idRep):
     #fin sauver idrep
     valV =False
     reponseReel = db.session.query(Reponse.reponse).join(Question,Question.idQ==Reponse.idQ).filter(Question.idQ == idRep_utile[q]).first()
-    if reponseReel == reponse:
+    if reponseReel[0] == reponse:
         valV = True
     print("id question en cours = ",idRep_utile)
     idEtu = session['idU']
