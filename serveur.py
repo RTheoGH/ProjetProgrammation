@@ -868,8 +868,7 @@ def recupDataForRep(questionCastee, reponsesAssociees,codeQcm, q, idRep):
 ReponseEtuGlobal = {}
 @socket.on('recupDataNum')
 def recupDataNum(reponse,idQ,date, q, idRep):
-    valV =False
-    
+    #sauver idrep
     idRep_list = list(idRep)
     idRep_corrige = []
     mot = ""
@@ -880,29 +879,68 @@ def recupDataNum(reponse,idQ,date, q, idRep):
             idRep_corrige.append(mot.strip().split(", "))
         else:
             mot += Char
-
-    new_list = [word.replace("'", "") for word in idRep_corrige]
+    new_list = [word.replace("'", "") for word in idRep_corrige[0]]
     idRep_corrige = new_list
-    
-    idRep_utile = idRep_corrige[0]
-
+    idRep_utile = idRep_corrige
+    #fin sauver idrep
+    valV =False
+    reponseReel = db.session.query(Reponse.reponse).join(Question,Question.idQ==Reponse.idQ).filter(Question.idQ == idRep_utile[q]).first()
+    if reponseReel == reponse:
+        valV = True
     print("id question en cours = ",idRep_utile)
     idEtu = session['idU']
     print("id eleves = ", idEtu)
     valeurRep = [idRep_utile[q],valV]
     if idEtu not in ReponseEtuGlobal:
-    #if not(isinstance(ReponseEtuGlobal[idEtu],list)):
         ReponseEtuGlobal[idEtu] = []
     ReponseEtuGlobal[idEtu].append(valeurRep)
-    print(ReponseEtuGlobal)
+    print("ReponseEtuGlobale = ",ReponseEtuGlobal)
 
 @socket.on('reponseEtuChoixmultiple')
 def reponseEtuChoixmultiple(reponse_choix,ReponseChoixJS,idQ,date, q, idRep):
-    print("reponsechoix multiple = ", checkCodeQcmProf)
-    print("base de donnée Contien = ",db.session.query(Contient).all)
-    socket.emit("retourReponseEtudiant",(reponse_choix,ReponseChoixJS))
-    print("id question en cours = ",idRep[q])
+    #sauver idrep
+    idRep_list = list(idRep)
+    idRep_corrige = []
+    mot = ""
+    for Char in idRep_list:
+        if Char == "[":
+            mot = ""
+        elif Char == "]":
+            idRep_corrige.append(mot.strip().split(", "))
+        else:
+            mot += Char
+    new_list = [word.replace("'", "") for word in idRep_corrige[0]]
+    idRep_corrige = new_list
+    idRep_utile = idRep_corrige
+    #fin sauver idrep
 
+    valV = False
+    reponseReel = db.session.query(Reponse.reponse).join(Question,Question.idQ==Reponse.idQ).filter(Question.idQ == idRep_utile[q]).all()
+    valVReel = db.session.query(Reponse.correction).join(Question,Question.idQ==Reponse.idQ).filter(Question.idQ == idRep_utile[q]).all()
+    print("reponseReel = ",reponseReel)
+    print("correction reel = ", valVReel)
+    print("reponse_choix = ", reponse_choix)
+    print("ReponseChoixJS = ", ReponseChoixJS)# a pas use enculer
+    Rep = []
+    print(len(reponseReel))
+    for i in range(len(reponseReel)):
+        print("valV = ", valV)
+        print(valVReel[i][0])
+        if valVReel[i][0] == 1:
+            Rep.append(reponseReel[i][0])
+            print("rep = ",Rep)
+    print("rep = ",Rep)
+    if Rep == reponse_choix:
+        valV = True
+    print(valV)
+    idEtu = session['idU']
+    valeurRep =[idRep_utile[q],valV]
+    if idEtu not in ReponseEtuGlobal:
+        ReponseEtuGlobal[idEtu] = []
+    ReponseEtuGlobal[idEtu].append(valeurRep)
+    print("ReponseEtuGlobale = ",ReponseEtuGlobal)
+    socket.emit("retourReponseEtudiant",(reponse_choix,ReponseChoixJS))
+    
 @socket.on('recupCodeQCM')
 def recupCodeQCM(code):
     idProf = session['idU']
