@@ -622,7 +622,6 @@ def create_qcm():
                         etiq = db.session.query(Etiquette.nom).filter(Etiquette.idE==etiquette_id,Etiquette.idU==session['idU']).first()
                         flash(f"Veuillez augmenter le nombre de questions possédant l'étiquette {etiq.nom}")
                         return redirect(url_for('lQuestion'))
-                    print('nb_questions_subset ',nb_questions_subset,' before ',before)
                     question = random.choice(questions[etiquette_id])
                     if question not in questions_subset:
                         before.append(question)
