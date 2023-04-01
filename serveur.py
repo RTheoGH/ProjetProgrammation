@@ -958,7 +958,7 @@ def stats():
     if 'nomU' not in session:                   # Sécurité connexion
         flash("Connectez vous ou créer un compte pour accéder à cette page")
         return redirect(url_for('index'))
-    return render_template("statistiques.html",title=title,page="Stats")
+    return render_template("wooclap/statistiques.html",title=title,page="Stats")
 
 @app.route("/modifierQCM/<string:id>", methods=['POST', 'GET'])       # Route pour modifier un qcm
 def modifierQCM(id):

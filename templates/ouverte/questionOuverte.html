@@ -7,18 +7,18 @@
 <div class="ouverte">
     <h1>Question Ouverte</h1>
     <h2>Répondez à cette question !</h2>
-    {% if question_ouverte %}
+    {% if question_ouverte %}  <!-- Remplacement du texte de la balise h3 par la question écrite par l'enseignant -->
         <h3>{{question_ouverte}}</h3>
     {% else %}
         <h3>(Si vous le souhaitez bien entendu...)</h3>
     {% endif %}
     <hr/>
-    {% if not question_ouverte %}
+    {% if not question_ouverte %} <!-- Affichage de la fenêtre pour formuler une question -->
         <form name="envoie-question" action="/question-ouverte" method="POST">
             <textarea name="question-ouverte" rows="4" cols="40" placeholder="Entrez votre question ici"></textarea>
             <p><input class="button" type="submit" value="Envoie"/></p>
         </form>
-    {% else %}
+    {% else %}          <!-- Affichage de la fenêtre pour afficher les réponses -->
         <form name="affichage-réponses" action="/question-ouverte" method="POST">
             <input class="button" type="submit" value="Voir les réponses !"/>
         </form>

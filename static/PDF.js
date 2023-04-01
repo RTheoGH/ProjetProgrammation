@@ -7,12 +7,12 @@ async function telechargementMultiple(anonyme){
     var data = await response.json();
     console.log(data);
 
-    var titre = data[0];
+    var titre = data[0];     // Récupération du titre des contrôles
     console.log(titre);
 
     const doc = new jsPDF({anonyme});
 
-    // Entête :
+    // Entête pour chaque sujet :
     var pivot = 95;
     function entete(){
         const months = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
@@ -61,41 +61,41 @@ async function telechargementMultiple(anonyme){
     
     // Affichage
 
-    let controles = data.slice(1,data.length);
-    Array.from(controles).forEach((controle) => {
+    let controles = data.slice(1,data.length); // Récupération des données sauf le titre
+    Array.from(controles).forEach((controle) => {    // Pour chaque sujet
         console.log(controle);
         entete();
-        Array.from(controle).forEach((question) => {
+        Array.from(controle).forEach((question) => {   // Pour chaque question des sujets
             doc.setFontSize(18);
-            doc.text(5,pivot,question[0]);
+            doc.text(5,pivot,question[0]);   // Récupération de l'énoncé de la question
             pivot+=10;
-            let reponses = question[1];
-            if(reponses.length>1){
-                Array.from(reponses).forEach((reponse) => {
+            let reponses = question[1];      // Récupération des réponses de la question
+            if(reponses.length>1){     // Si plusieurs réponses (choix multiples)
+                Array.from(reponses).forEach((reponse) => {  // Pour chaque réponse des questions
                     doc.setFontSize(15);
                     doc.text(15,pivot+10,reponse);
                     doc.rect(5,pivot+6,5,5);
                     pivot+=10;
-                    if (pivot >= 260) {
+                    if (pivot >= 260) {  // Si on arrive en bas de page, on passe à la page suivante
                         doc.addPage();
                         pivot = 30;
                     }
                 });
-            }else{
+            }else{   // Si une seule réponse (numérique)
                 doc.rect(5,pivot+6,100,20);
                 pivot+=30;
-                if (pivot >= 270) {
+                if (pivot >= 270) {   // Si on arrive en bas de page, on passe à la page suivante
                     doc.addPage();
                     pivot = 20;
                 }
             }
-            doc.line(0, pivot+5, 220, pivot+5);
+            doc.line(0, pivot+5, 220, pivot+5);  // Ligne pour séparer chaque question
             pivot+=15;
         })
-        doc.addPage();
+        doc.addPage();   // Saut de page entre chaque sujet
     });
-    var nombreDePages = doc.internal.getNumberOfPages();
-    for(var i=1;i<=nombreDePages;i++){
+    var nombreDePages = doc.internal.getNumberOfPages(); // Récupération du nombre de pages du fichier
+    for(var i=1;i<=nombreDePages;i++){  // Numérotage de chaque page
         doc.setPage(i);
         doc.text(106,290,String(i));
     }

@@ -135,6 +135,7 @@ progress{
     margin-bottom: 0.5em;
 }
 
+/* Classe pour la génération */
 .generationParEtiquette{
     height:10vh;
     border: 1px solid black;
@@ -515,6 +516,7 @@ fieldset {
     margin-left: 5em;
 }
 
+/* Texte nombre de participants (statistiques) */
 .stats p{
     text-align: center;
     font-size: large;
@@ -584,10 +586,12 @@ fieldset {
     .menuLQcm{
         font-size: 0.7em;
         margin-right: 2em;
+        height:75vh;
     }
     .menuNQcm{
         font-size: 0.7em;
         margin-left: 2em;
+        height:75vh;
     }
 }
 
@@ -626,12 +630,14 @@ fieldset {
         height: 40vh;
     }
     .menuLQcm{
-        font-size: 0.8em;
+        font-size: 0.75em;
         margin-right: 2em;
+        height:72vh;
     }
     .menuNQcm{
-        font-size: 0.8em;
+        font-size: 0.75em;
         margin-left: 2em;
+        height:72vh;
     }
     .listeCaster{
         height: 30vh;
@@ -805,9 +811,10 @@ fieldset {
     }
     .menuLQcm{
         margin:0;
-        height:50vh;
+        height:45vh;
         width:70vw;
         font-size: 0.75em;
+        overflow-y: scroll;
     }
     .menuLQcm .listeQCM{
         height: 40vh;
@@ -824,7 +831,7 @@ fieldset {
     }
     .menuNQcm{
         margin:0;
-        height:75vh;
+        height:85vh;
         width:70vw;
         font-size: 0.75em;
     }
