@@ -9,8 +9,8 @@ anychart.onDocumentReady(async function() {
     var titre = data[nomProf][0].titre;      // Récupération du titre du nuage
     console.log(titre);
     var nuage = anychart.tagCloud(mots);     // Initialise le nuage de mots
-    nuage.title(titre)   // Titre du nuage
-    nuage.angles([0])                        // Angle des mots
+    nuage.title(titre)                       // Titre du nuage
+    nuage.angles([0])
 
     nuage.colorRange(true);
     nuage.colorRange().length('80%');

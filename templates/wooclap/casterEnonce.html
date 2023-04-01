@@ -1,4 +1,6 @@
-{% extends 'partials/base.html' %} {% block head %}
+{% extends 'partials/base.html' %} 
+
+{% block head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
     //q est le rang de la question à afficher à un moment M
@@ -12,8 +14,6 @@
             //envoi au serveur des IDs formaté et du rang
         socket.emit('oneByOne', q, listeQuestions, listeReponses);
     });
-
-
 
     function nextQuestion() {
         if (q < listeQuestions.length - 1) { //interdit d'incrémenter q s'il n'y a plus de questions
@@ -37,7 +37,9 @@
 
     })
 </script>
-{% endblock %} {% block main %}
+{% endblock %} 
+
+{% block main %}
 <div class="menu">
 
     <h3>Code : <span id='code'>{{idElement}}</span></h3>
@@ -61,7 +63,6 @@
         </div>
     </div>
 
-
     <div>
         <button id="R" onclick="hideAndShow(this.id)"> Cacher/Afficher </button>
         <div id="hideDivR">
@@ -82,7 +83,6 @@
             reponse = reponse.replaceAll("[('", "").replaceAll("',)]", "")
             if (reponse == "[]") {
                 $("#reponse").append('<input type="number"><br/>') //réponse numérique
-
             } else {
                 $("#reponse").append(reponse + '<br/><progress value="0" max="0" id="' + reponse + '"></progress> <br/></div>')
             }

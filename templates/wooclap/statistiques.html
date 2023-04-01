@@ -28,8 +28,11 @@
 </div>
 
 <script>
-    function faireUneJolieDate(date){
+    function faireUneJolieDate(date){  // Amélioration de l'affichage de la date de réponse
         var jj = date.getDate();
+        if (jj<10){
+            jj="0"+jj;
+        }
         var mm = date.getMonth()+1;
         if (mm<10){
             mm="0"+mm;
@@ -46,33 +49,34 @@
         return jolieDate;
     }
     async function affichageStats(){
-        var response = await fetch('http://127.0.0.1:5000/pourStat');
+        var response = await fetch('http://127.0.0.1:5000/pourStat');  // Récupération des réponses des étudiants
         var data = await response.json()
-        var nombreParticipants = Object.keys(data).length;
+        
+        var nombreParticipants = Object.keys(data).length;  // Récupération du nombre d'étudiants qui ont répondu
         $('#nbPart').text(nombreParticipants);
         console.log(data);
         var tab = $('#tableauStats');
         console.log(tab);
         var compteur = 0;
-        $.each(data,(numEtu,repEtu) => {
+        $.each(data,(numEtu,repEtu) => {         // Pour chaque étudiant, on récupère ses réponses
             console.log('yo');
             console.log(numEtu,repEtu);
-            Array.from(repEtu).forEach((reponse) => {
+            Array.from(repEtu).forEach((reponse) => { // Pour chaque réponse
                 console.log(reponse);
                 var d = new Date(reponse[0]);
                 var date = faireUneJolieDate(d);
                 console.log(date);
                 var numEtudiant = numEtu;
                 console.log(numEtudiant);
-                if (reponse[2] == true){
+                if (reponse[2] == true){  // S'il a juste
                     compteur+=1;
                     var pourcent = "100%"
                 }else{
                     var pourcent = "0%"
-                }
+                } // Résultat à une question
                 tab.append("<tr><td>"+date+"</td><td>"+numEtudiant+"</td><td>"+pourcent+"</td></tr>")
             })
-            var total = (compteur/repEtu.length)*100;
+            var total = (compteur/repEtu.length)*100;  // Résultat final de l'étudiant en pourcentage
             tab.append("<tr><td>Résultat :</td><td>"+numEtu+"</td><td>"+total+"%</td></tr>")
         })
     }

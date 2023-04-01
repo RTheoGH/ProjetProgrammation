@@ -1,4 +1,6 @@
-{% extends 'partials/base.html' %} {% block head %}
+{% extends 'partials/base.html' %} 
+
+{% block head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
     var ReponseAssJS;
@@ -7,22 +9,18 @@
     var idRepRep;
     const socket = io(); // Variable socket
 
-
-
     socket.on('profDeco', (data) => {
-        //data egale au qcm en cours
+        // Data egale au qcm en cours
     })
 </script>
-{% endblock %} {% block main %}
+{% endblock %} 
+
+{% block main %}
 <span id='code' hidden=true>{{code}}</span>
 <div class="menu">En attente de validation de l'enseignant </p>
     <form>
         <h1 id="enonce" name="enonce"></h1>
-
-        <div id="reponses">
-
-        </div>
-
+        <div id="reponses"></div>
     </form>
     <button id="soumettre" onclick="reponseE()" onclick="repondre()">Soumettre</button>
 
@@ -32,9 +30,6 @@
         }
         $("#soumettre").hide();
     </script>
-
-
-
 </div>
 
 <script>
@@ -49,12 +44,12 @@
             $("#rien").hide();
             document.getElementById('reponses').innerHTML = "";
             $("#enonce").text(questionCastee); // Son énoncé
-            if (reponsesAssociees == "[]") { //si numérique 
-                $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?" name="reponse_num"></p>'); //ajoute un input avec la limitation 
+            if (reponsesAssociees == "[]") { // Si numérique 
+                $("#reponses").append('<p><input type="text" pattern="\d*([.]\d{0,2})?" name="reponse_num"></p>'); // Ajoute un input avec la limitation 
                 ReponseAssJS = reponsesAssociees;
             } else {
                 ReponseChoixJS = [];
-                reponsesAssociees.forEach((r) => { //affiche toutes les reponses possibles avec leurs checkbox
+                reponsesAssociees.forEach((r) => { // Affiche toutes les reponses possibles avec leurs checkbox
                     ReponseChoixJS.push(r.replaceAll("[('", "").replaceAll("',)]", ""));
                     $("#reponses").append('<p><input type="checkbox" id="' + r + '.idR" name="reponse_choix" value="' + r + '.idR" /> ' + r.replaceAll("[('", "").replaceAll("',)]", "") + '</p>');
                     ReponseAssJS = reponsesAssociees;
@@ -89,7 +84,7 @@
         console.log("reponse div = ", reponse_div)
         console.log("finish")
         $("#soumettre").hide();
-        //socket.emit('reponseE', enonce, reponse_choix, reponse_num)
+        // socket.emit('reponseE', enonce, reponse_choix, reponse_num)
     };
 </script>
 {% endblock %}

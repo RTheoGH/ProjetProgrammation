@@ -1,11 +1,13 @@
-{% extends 'partials/base.html' %} {% block head %}
+{% extends 'partials/base.html' %} 
 
+{% block head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
     const socket = io();
 </script>
-{% endblock %} {% block main %}
+{% endblock %} 
 
+{% block main %}
 <div class="menu">
     <h2>Connecter vous en entrant le code ci-dessous : </h2>
 

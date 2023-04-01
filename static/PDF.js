@@ -60,7 +60,6 @@ async function telechargementMultiple(anonyme){
     }
     
     // Affichage
-
     let controles = data.slice(1,data.length); // Récupération des données sauf le titre
     Array.from(controles).forEach((controle) => {    // Pour chaque sujet
         console.log(controle);
