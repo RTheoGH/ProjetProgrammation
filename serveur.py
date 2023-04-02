@@ -648,7 +648,7 @@ def create_qcm():
             new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
             db.session.add(new_qcm)
 
-            if toutes_les_valeurs_sont_zero:
+            if toutes_les_valeurs_sont_zero==False:
                 liste_position = []
                 for i in range(nb_Question_total_form):
                     liste_position.append(i)
@@ -710,11 +710,12 @@ def dl():
     print(delete,"a delete")
     for Qcm in delete:
         print(Qcm)
+        Contient.query.filter_by(RidQCM=Qcm.idQCM).delete()
         db.session.query(QCM).filter(QCM.idU == session['idU'],QCM.idQCM==Qcm.idQCM).delete()
     db.session.commit()
     print("sortie")
     if num_del > 0:
-        flash(f"{num_del} QCM(s) ont été supprimée(s) avec succès!", 'success')
+        flash(f"{num_del} QCM(s) ont été supprimé(s) avec succès!", 'success')
     else:
         flash(f"Aucun QCM trouvé avec ce nom.", 'danger')
     return data
