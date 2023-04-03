@@ -648,10 +648,10 @@ def create_qcm():
             new_qcm = QCM(idQCM=qcm_id, Nom=nom_qcm, idU=session['idU'])
             db.session.add(new_qcm)
 
-            if toutes_les_valeurs_sont_zero==False:
-                liste_position = []
-                for i in range(nb_Question_total_form):
-                    liste_position.append(i)
+            # if toutes_les_valeurs_sont_zero==False:
+            liste_position = []
+            for i in range(nb_Question_total_form):
+                liste_position.append(i)
 
             # Ajouter les questions sélectionnées au QCM
             for question in selected_questions:
